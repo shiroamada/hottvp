@@ -1,61 +1,69 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Hot TV - Code Redemption & Agent System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This project is a Laravel-based application designed for managing code redemptions and an agent system. It utilizes the Keenthemes Metronic Tailwind CSS theme (Demo 6) for its frontend.
 
-## About Laravel
+## Project Overview
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+*   **Framework:** Laravel 12
+*   **Frontend Theme:** Keenthemes Metronic (Tailwind CSS 4.0 - Demo 6)
+*   **Database:** SQLite (for local development, consider PostgreSQL/MySQL for production)
+*   **Core Features:**
+    *   Agent Dashboard: Displays key metrics like HOTCOIN balance, code generation statistics, and downline agent performance.
+    *   Activation Code Generation: Allows agents to generate different types of activation codes based on predefined presets, deducting costs from their HOTCOIN balance.
+    *   Agent Hierarchy: Supports upline and downline agent relationships.
+    *   User Authentication: Laravel Breeze (Blade + Alpine.js stack) for secure login for agents.
+    *   (Planned) License Code Management, Trial Code Management, Agent Listing, etc.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Key Technologies & Structure
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+*   **Backend:**
+    *   Laravel Eloquent ORM for database interaction.
+    *   Laravel Controllers for handling business logic.
+    *   Laravel Blade templating engine for views.
+    *   Migrations for database schema management.
+*   **Frontend:**
+    *   Tailwind CSS 4.0 (integrated with Keenthemes Metronic).
+    *   JavaScript for interactive elements (as provided by Keenthemes).
+    *   Blade views located in `resources/views/`.
+        *   Main Layout: `resources/views/layouts/master.blade.php`
+        *   Sidebar Partial: `resources/views/layouts/partials/_sidebar.blade.php`
+        *   Dashboard View: [resources/views/dashboard/index.blade.php](cci:7://file:///c:/Users/Administrator/Documents/GitHub/hottvp/resources/views/dashboard/index.blade.php:0:0-0:0)
+*   **Assets:**
+    *   Keenthemes core CSS and JS are imported into `resources/css/app.css` and `resources/js/app.js` respectively. These are then processed and bundled by Vite.
+    *   Static assets from Keenthemes (e.g., images, fonts, icons) are typically placed in `public/assets/media/` or structured within `resources/metronic/` and referenced appropriately.
+    *   The original Keenthemes demo files are located in the [demo/](cci:7://file:///C:/Users/Administrator/Documents/GitHub/hottvp/demo:0:0-0:0) directory in the project root for reference.
 
-## Learning Laravel
+## Setup & Installation (General Steps)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1.  Clone the repository.
+2.  Install PHP dependencies: `composer install`
+3.  Install NPM dependencies (if any, for frontend asset building): `npm install && npm run dev`
+4.  Copy `.env.example` to `.env` and configure environment variables (database, app URL, etc.).
+5.  Generate application key: `php artisan key:generate`
+6.  Run database migrations: `php artisan migrate`
+7.  (Optional) Seed database: `php artisan db:seed`
+8.  Serve the application: `php artisan serve`
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Important Directories
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+*   `app/Http/Controllers/`: Contains application controllers.
+    *   [DashboardController.php](cci:7://file:///c:/Users/Administrator/Documents/GitHub/hottvp/app/Http/Controllers/DashboardController.php:0:0-0:0): Handles logic for the agent dashboard.
+*   `app/Models/`: Contains Eloquent models.
+    *   `User.php` (extended for agent features)
+    *   `ActivationCodePreset.php`
+    *   `ActivationCode.php`
+    *   `HotcoinTransaction.php`
+    *   `AgentMonthlyProfit.php`
+*   `database/migrations/`: Contains database migration files.
+*   `resources/views/`: Contains Blade template files.
+*   [routes/web.php](cci:7://file:///c:/Users/Administrator/Documents/GitHub/hottvp/routes/web.php:0:0-0:0): Defines web routes.
+*   `public/`: Publicly accessible files (CSS, JS, images).
+    *   `public/assets/`: May contain static media (images, fonts). Core Keenthemes styles/scripts are bundled by Vite from `resources`.
+    *   `resources/metronic/`: Contains Keenthemes source assets (CSS, JS, vendors) for import into `app.css` and `app.js`.
+*   [demo/](cci:7://file:///C:/Users/Administrator/Documents/GitHub/hottvp/demo:0:0-0:0): Original Keenthemes demo files.
 
-## Laravel Sponsors
+## Development Notes
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+*   Ensure PHP is correctly configured in your system's PATH environment variable.
+*   The application uses custom Keenicon classes for icons (e.g., `ki-filled ki-wallet`). Refer to Keenthemes documentation for available icons.
+*   The application uses Laravel Breeze for authentication and authorization.
