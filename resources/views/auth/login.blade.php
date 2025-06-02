@@ -21,16 +21,31 @@
             </div>
 
             <!-- Session Status -->
-            <x-auth-session-status class="mb-4" :status="session('status')" />
+            @if (session('status'))
+                <div class="kt-alert kt-alert-outline kt-alert-success mb-4">
+                    <div class="kt-alert-icon">
+                        <i class="ki-filled ki-check-circle"></i>
+                    </div>
+                    <div class="kt-alert-content">
+                        <span class="kt-alert-description">{{ session('status') }}</span>
+                    </div>
+                </div>
+            @endif
 
             <!-- Validation Errors -->
             @if ($errors->any())
-                <div class="bg-danger/10 text-danger text-sm rounded-md p-4 mb-0">
-                    <ul class="list-disc list-inside">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                <div class="kt-alert kt-alert-outline kt-alert-destructive mb-4">
+                    <div class="kt-alert-icon">
+                        <i class="ki-filled ki-information"></i>
+                    </div>
+                    <div class="kt-alert-content">
+                        <span class="kt-alert-title">{{ __('Whoops! Something went wrong.') }}</span>
+                        <ul class="kt-alert-description list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
             @endif
 

@@ -1,5 +1,6 @@
 <x-guest-layout title="Reset Password">
-    <form method="POST" action="{{ route('password.store') }}" class="kt-card-content flex flex-col gap-5 p-10" id="reset_password_change_password_form">
+    <div class="kt-card max-w-[370px] w-full">
+        <form method="POST" action="{{ route('password.store') }}" class="kt-card-content flex flex-col gap-5 p-10" id="reset_password_change_password_form">
         @csrf
 
         <!-- Password Reset Token -->
@@ -64,5 +65,6 @@
         <button type="submit" class="kt-btn kt-btn-primary flex justify-center grow">
             {{ __('Reset Password') }}
         </button>
-    </form>
+        </form>
+    </div>
 </x-guest-layout>

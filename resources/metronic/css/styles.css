@@ -5,13 +5,13 @@
 @source '../../../node_modules/@keenthemes/ktui/src/';
 
 /* Theme configs */
-@import "./config.ktui";
+@import "./config.ktui.css";
 
 /* KTUI styles */
 @import '../../../node_modules/@keenthemes/ktui/styles/main.css';
 
 /* Metronic components  */
-@import "./components/index";
+@import "./components/index.css";
 
 /* Demos */
 @import "./demos/demo1.css";
