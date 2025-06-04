@@ -2,6 +2,15 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redirect;
+
+Route::get('language/{locale}', function ($locale) {
+    if (in_array($locale, config('app.supported_locales'))) {
+        Session::put('locale', $locale);
+    }
+    return Redirect::back();
+})->name('language.switch');
 
 Route::get('/', function () {
     return view('index');

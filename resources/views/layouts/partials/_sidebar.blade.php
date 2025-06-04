@@ -13,45 +13,6 @@
          <span class="text-base font-medium text-mono grow justify-start">
           HOT TV+
          </span>
-         <span class="kt-menu-arrow">
-          <i class="ki-filled ki-down">
-          </i>
-         </span>
-        </div>
-        <div class="kt-menu-dropdown w-48 py-2">
-         <div class="kt-menu-item">
-          <a class="kt-menu-link" href="html/demo6/public-profile/profiles/default.html" tabindex="0">
-           <span class="kt-menu-icon">
-            <i class="ki-filled ki-profile-circle">
-            </i>
-           </span>
-           <span class="kt-menu-title">
-            English
-           </span>
-          </a>
-         </div>
-         <div class="kt-menu-item">
-          <a class="kt-menu-link" href="html/demo6.html" tabindex="0">
-           <span class="kt-menu-icon">
-            <i class="ki-filled ki-setting-2">
-            </i>
-           </span>
-           <span class="kt-menu-title">
-            中文
-           </span>
-          </a>
-         </div>
-         <div class="kt-menu-item">
-          <a class="kt-menu-link" href="html/demo6/network/get-started.html" tabindex="0">
-           <span class="kt-menu-icon">
-            <i class="ki-filled ki-users">
-            </i>
-           </span>
-           <span class="kt-menu-title">
-            Bahasa
-           </span>
-          </a>
-         </div>
         </div>
        </div>
       </div>
@@ -70,7 +31,7 @@
           </i>
          </span>
          <span class="kt-menu-title text-sm text-foreground font-medium kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-          Dashboard
+          {{ __('messages.sidebar.dashboard') }}
          </span>
         </a>
        </div>
@@ -81,7 +42,7 @@
           </i>
          </span>
          <span class="kt-menu-title font-medium text-sm text-foreground kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-          License Code Management
+          {{ __('messages.sidebar.license_code_management.title') }}
          </span>
          <span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
           <span class="inline-flex kt-menu-item-show:hidden">
@@ -98,14 +59,14 @@
          <div class="kt-menu-item">
           <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="html/demo6/public-profile/works.html">
            <span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-            Generate License Code
+            {{ __('messages.sidebar.license_code_management.generate') }}
            </span>
           </a>
          </div>
          <div class="kt-menu-item">
           <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="html/demo6/public-profile/teams.html">
            <span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-            List Code
+            {{ __('messages.sidebar.license_code_management.list') }}
            </span>
           </a>
          </div>
@@ -118,7 +79,7 @@
           </i>
          </span>
          <span class="kt-menu-title font-medium text-sm text-foreground kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-          Trial Code Management
+          {{ __('messages.sidebar.trial_code_management.title') }}
          </span>
          <span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
           <span class="inline-flex kt-menu-item-show:hidden">
@@ -139,14 +100,14 @@
          <div class="kt-menu-item">
           <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="html/demo6/account/integrations.html">
            <span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-            Generate Trial Code
+            {{ __('messages.sidebar.trial_code_management.generate') }}
            </span>
           </a>
          </div>
          <div class="kt-menu-item">
           <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="html/demo6/account/notifications.html">
            <span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-            List Trial Code
+            {{ __('messages.sidebar.trial_code_management.list') }}
            </span>
           </a>
          </div>
@@ -161,7 +122,7 @@
           </i>
          </span>
          <span class="kt-menu-title font-medium text-sm text-foreground kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-          Agent Management
+          {{ __('messages.sidebar.agent_management.title') }}
          </span>
          <span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
           <span class="inline-flex kt-menu-item-show:hidden">
@@ -178,14 +139,14 @@
          <div class="kt-menu-item">
           <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="html/demo6/network/get-started.html">
            <span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-            Agent List
+            {{ __('messages.sidebar.agent_management.list') }}
            </span>
           </a>
          </div>
          <div class="kt-menu-item">
           <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="html/demo6/network/get-started.html">
            <span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-            Add New Agent
+            {{ __('messages.sidebar.agent_management.add_new') }}
            </span>
           </a>
          </div>
@@ -199,7 +160,7 @@
           </i>
          </span>
          <span class="kt-menu-title text-sm text-foreground font-medium kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-          HotCoin Transaction
+          {{ __('messages.sidebar.hotcoin_transaction') }}
          </span>
         </a>
        </div>
@@ -210,7 +171,7 @@
           </i>
          </span>
          <span class="kt-menu-title text-sm text-foreground font-medium kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-          All Agents
+          {{ __('messages.sidebar.all_agents') }}
          </span>
         </a>
        </div>
@@ -235,7 +196,7 @@
            </span>
           </span>
           <span class="kt-menu-title text-sm text-foreground font-medium">
-           Settings
+           {{ __('messages.sidebar.settings.title') }}
           </span>
          </div>
         </div>
@@ -247,7 +208,7 @@
             </i>
            </span>
            <span class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-active:font-medium kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-            Change Password
+            {{ __('messages.sidebar.change_password') }}
            </span>
           </a>
          </div>
@@ -258,7 +219,7 @@
             </i>
            </span>
            <span class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-active:font-medium kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-            Profile
+            {{ __('messages.sidebar.profile') }}
            </span>
           </a>
          </div>
@@ -269,7 +230,7 @@
             </i>
            </span>
            <span class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-active:font-medium kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-            Costing Management
+            {{ __('messages.sidebar.costing_management') }}
            </span>
           </a>
          </div>
@@ -280,7 +241,7 @@
             </i>
            </span>
            <span class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-active:font-medium kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-            Delete Account
+            {{ __('messages.sidebar.delete_account') }}
            </span>
           </a>
          </div>
@@ -327,59 +288,12 @@
          <a class="kt-dropdown-menu-link" href="html/demo6/account/home/user-profile.html">
           <i class="ki-filled ki-profile-circle">
           </i>
-          My Profile
+          {{ __('messages.sidebar.my_profile') }}
          </a>
         </li>
+       
+        @include('layouts/partials/_sidebar_language_switch')
         
-        <li data-kt-dropdown="true" data-kt-dropdown-placement="right-start" data-kt-dropdown-trigger="hover">
-         <button class="kt-dropdown-menu-toggle py-1" data-kt-dropdown-toggle="true">
-          <span class="flex items-center gap-2">
-           <i class="ki-filled ki-icon">
-           </i>
-           Language
-          </span>
-          <span class="ms-auto kt-badge kt-badge-stroke shrink-0">
-           English
-           <img alt="" class="inline-block size-3.5 rounded-full" src="assets/media/flags/united-states.svg"/>
-          </span>
-         </button>
-         <div class="kt-dropdown-menu w-[180px]" data-kt-dropdown-menu="true">
-          <ul class="kt-dropdown-menu-sub">
-           <li class="active">
-            <a class="kt-dropdown-menu-link" href="?dir=ltr">
-             <span class="flex items-center gap-2">
-              <img alt="" class="inline-block size-4 rounded-full" src="assets/media/flags/united-states.svg"/>
-              <span class="kt-menu-title">
-               English
-              </span>
-             </span>
-             <i class="ki-solid ki-check-circle ms-auto text-green-500 text-base">
-             </i>
-            </a>
-           </li>
-           <li class="">
-            <a class="kt-dropdown-menu-link" href="?dir=rtl">
-             <span class="flex items-center gap-2">
-              <img alt="" class="inline-block size-4 rounded-full" src="assets/media/flags/china.svg"/>
-              <span class="kt-menu-title">
-               中文
-              </span>
-             </span>
-            </a>
-           </li>
-           <li class="">
-            <a class="kt-dropdown-menu-link" href="?dir=ltr">
-             <span class="flex items-center gap-2">
-              <img alt="" class="inline-block size-4 rounded-full" src="assets/media/flags/malaysia.svg"/>
-              <span class="kt-menu-title">
-               Bahasa
-              </span>
-             </span>
-            </a>
-           </li>
-          </ul>
-         </div>
-        </li>
         <li>
          <div class="kt-dropdown-menu-separator">
          </div>
@@ -391,13 +305,13 @@
           <i class="ki-filled ki-moon text-base text-muted-foreground">
           </i>
           <span class="font-medium text-2sm">
-           Dark Mode
+           {{ __('messages.sidebar.dark_mode') }}
           </span>
          </span>
          <input class="kt-switch" data-kt-theme-switch-state="dark" data-kt-theme-switch-toggle="true" name="check" type="checkbox" value="1"/>
         </div>
         <a class="kt-btn kt-btn-outline justify-center w-full" href="html/demo6/authentication/classic/sign-in.html">
-         Log out
+         {{ __('messages.sidebar.log_out') }}
         </a>
        </div>
       </div>
