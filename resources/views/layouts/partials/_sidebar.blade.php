@@ -310,9 +310,13 @@
          </span>
          <input class="kt-switch" data-kt-theme-switch-state="dark" data-kt-theme-switch-toggle="true" name="check" type="checkbox" value="1"/>
         </div>
-        <a class="kt-btn kt-btn-outline justify-center w-full" href="html/demo6/authentication/classic/sign-in.html">
-         {{ __('messages.sidebar.log_out') }}
-        </a>
+        {{--form logout --}}
+        <form id="logout-form" action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button class="kt-btn kt-btn-outline justify-center w-full" type="submit">
+               {{ __('messages.sidebar.log_out') }}
+            </button>
+        </form>
        </div>
       </div>
      </div>
@@ -321,10 +325,18 @@
      <div class="flex items-center gap-1.5">
       <!-- Notifications -->
       
-      <a class="kt-btn kt-btn-ghost kt-btn-icon size-8 hover:bg-background hover:[&_i]:text-primary" href="html/demo6/authentication/classic/sign-in.html">
+      <form id="logout-form2" action="{{ route('logout') }}" method="POST">
+            @csrf
+      <button class="kt-btn kt-btn-ghost kt-btn-icon size-8 hover:bg-background hover:[&_i]:text-primary" 
+      data-kt-tooltip="#external_tooltip"
+      data-kt-tooltip-placement="top-start" type="submit">
        <i class="ki-filled ki-exit-right">
        </i>
-      </a>
+      </button>
+      <div id="external_tooltip" class="kt-tooltip">
+         {{ __('messages.sidebar.log_out') }}
+      </div>
+      </form>
      </div>
     </div>
     <!-- End of Footer -->
