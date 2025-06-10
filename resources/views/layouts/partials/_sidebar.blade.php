@@ -197,6 +197,13 @@
          </div>
         </div>
         <div class="kt-menu-accordion">
+         <div class="kt-menu-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+          <a class="kt-menu-link py-1 px-2 my-0.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('profile.edit') }}">
+           <span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
+            {{ __('messages.sidebar.my_profile') }}
+           </span>
+          </a>
+         </div>
          <div class="kt-menu-item {{ request()->routeIs('password.change') ? 'active' : '' }}">
           <a class="kt-menu-link py-1 px-2 my-0.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('password.change') }}">
            <span class="kt-menu-icon text-secondary-foreground kt-menu-link-hover:text-mono rounded-md flex place-content-center size-7 me-2.5 bg-border border border-input kt-menu-item-active:border-none kt-menu-link-hover:border-light kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-none kt-menu-icon-xs">
@@ -227,6 +234,17 @@
            </span>
            <span class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-active:font-medium kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
             {{ __('messages.sidebar.costing_management') }}
+           </span>
+          </a>
+         </div>
+         <div class="kt-menu-item {{ request()->routeIs('license.list') ? 'active' : '' }}">
+          <a class="kt-menu-link py-1 px-2 my-0.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('license.list') }}">
+           <span class="kt-menu-icon text-secondary-foreground kt-menu-link-hover:text-mono rounded-md flex place-content-center size-7 me-2.5 bg-border border border-input kt-menu-item-active:border-none kt-menu-link-hover:border-light kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-none kt-menu-icon-xs">
+            <i class="ki-filled ki-abstract-39">
+            </i>
+           </span>
+           <span class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-active:font-medium kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
+            {{ __('messages.sidebar.license_code_management.list') }}
            </span>
           </a>
          </div>

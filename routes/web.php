@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LicenseCodeController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
@@ -25,9 +26,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('/license/list', [LicenseCodeController::class, 'index'])->name('license.list');
+
     // License Code Management
     Route::get('/license/generate', function () { return view('license.generate'); })->name('license.generate');
-    Route::get('/license/list', function () { return view('license.list'); })->name('license.list');
 
     // Trial Code Management
     Route::get('/trial/generate', function () { return view('trial.generate'); })->name('trial.generate');

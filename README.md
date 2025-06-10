@@ -67,3 +67,4 @@ This project is a Laravel-based application designed for managing code redemptio
 *   Ensure PHP is correctly configured in your system's PATH environment variable.
 *   The application uses custom Keenicon classes for icons (e.g., `ki-filled ki-wallet`). Refer to Keenthemes documentation for available icons.
 *   The application uses Laravel Breeze for authentication and authorization.
+*   All pages should extend the `resources/views/layouts/master.blade.php` layout for a consistent look and feel.
