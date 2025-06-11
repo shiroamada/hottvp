@@ -128,4 +128,26 @@ return [
             'action' => 'ACTION',
         ],
     ],
+
+    'agent_list' => [
+        'title' => 'Agent List',
+        'add_new_agent' => 'Add a New Agent',
+        'agent_name_placeholder' => 'Agent Name',
+        'search' => 'Search',
+        'table' => [
+            'id' => 'ID',
+            'agent_name' => 'Agent Name',
+            'agent_level' => 'Agent Level',
+            'balance' => 'Balance',
+            'accumulated_profit' => 'Accumulated Profit',
+            'remark' => 'Remark',
+            'created_time' => 'Created Time',
+            'action' => 'Action',
+        ],
+    ],
+
+    'agent_create' => [
+        'title' => 'Add New Agent',
+        'description' => 'This is the placeholder page for adding a new agent.',
+    ],
 ];

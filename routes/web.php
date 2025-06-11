@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TrialCodeController;
+use App\Http\Controllers\AgentController;
 use App\Http\Controllers\LicenseCodeController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -28,7 +29,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/license/list', [LicenseCodeController::class, 'index'])->name('license.list');
-    Route::get('/trial/list', [TrialCodeController::class, 'index'])->name('trial.list');
+    Route::get('/trial/list', [TrialCodeController::class, 'list'])->name('trial.list');
+
+    // Agent Management
+    Route::prefix('agents')->name('agent.')->group(function () {
+        Route::get('/', [AgentController::class, 'list'])->name('list');
+        Route::get('/create', [AgentController::class, 'create'])->name('create');
+    });
 
     // License Code Management
     Route::get('/license/generate', function () { return view('license.generate'); })->name('license.generate');

@@ -128,4 +128,26 @@ return [
             'action' => '操作',
         ],
     ],
+
+    'agent_list' => [
+        'title' => '代理列表',
+        'add_new_agent' => '添加新代理',
+        'agent_name_placeholder' => '代理名称',
+        'search' => '搜索',
+        'table' => [
+            'id' => 'ID',
+            'agent_name' => '代理名称',
+            'agent_level' => '代理级别',
+            'balance' => '余额',
+            'accumulated_profit' => '累计盈利',
+            'remark' => '备注',
+            'created_time' => '创建时间',
+            'action' => '操作',
+        ],
+    ],
+
+    'agent_create' => [
+        'title' => '添加新代理',
+        'description' => '这是用于添加新代理的占位页面。',
+    ],
 ];
