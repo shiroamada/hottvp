@@ -4,8 +4,8 @@
     <div id="sidebar_header">
      <div class="flex items-center gap-2.5 px-3.5 h-[70px]">
       <a href="html/demo6/index.html">
-       <img class="dark:hidden h-[42px]" src="assets/media/app/mini-logo-circle.svg"/>
-       <img class="hidden h-[42px]" src="assets/media/app/mini-logo-circle-dark.svg"/>
+       <img class="dark:hidden h-[42px]" src="/assets/media/app/mini-logo-circle.svg"/>
+       <img class="hidden h-[42px]" src="/assets/media/app/mini-logo-circle-dark.svg"/>
       </a>
       <div class="kt-menu kt-menu-default grow" data-kt-menu="true">
        <div class="kt-menu-item grow" data-kt-menu-item-offset="0px,0px" data-kt-menu-item-placement="bottom-start" data-kt-menu-item-toggle="dropdown" data-kt-menu-item-trigger="hover">
@@ -264,12 +264,12 @@
      <!-- User -->
      <div data-kt-dropdown="true" data-kt-dropdown-offset="10px, 10px" data-kt-dropdown-offset-rtl="-20px, 10px" data-kt-dropdown-placement="bottom-start" data-kt-dropdown-placement-rtl="bottom-end" data-kt-dropdown-trigger="click">
       <div class="cursor-pointer shrink-0" data-kt-dropdown-toggle="true">
-       <img alt="" class="size-9 rounded-full border-2 border-mono/25 shrink-0" src="assets/media/avatars/gray/5.png"/>
+       <img alt="" class="size-9 rounded-full border-2 border-mono/25 shrink-0" src="/assets/media/avatars/gray/5.png"/>
       </div>
       <div class="kt-dropdown-menu w-[250px]" data-kt-dropdown-menu="true">
        <div class="flex items-center justify-between px-2.5 py-1.5 gap-1.5">
         <div class="flex items-center gap-2">
-         <img alt="" class="size-9 shrink-0 rounded-full border-2 border-green-500" src="assets/media/avatars/300-2.png"/>
+         <img alt="" class="size-9 shrink-0 rounded-full border-2 border-green-500" src="/assets/media/avatars/300-2.png"/>
          <div class="flex flex-col gap-1.5">
           <span class="text-sm text-foreground font-semibold leading-none">
            Anwar Ibrahim

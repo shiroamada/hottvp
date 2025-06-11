@@ -87,6 +87,27 @@ return [
         ],
     ],
 
+    'trial_code_list' => [
+        'title' => 'Trial Code List',
+        'trial_code_id' => 'Trial Code ID',
+        'select_status' => 'Select Status',
+        'search' => 'Search',
+        'export_excel' => 'Export Excel',
+        'access_record' => 'Access Record',
+        'batch_generation' => 'Batch Generation of Trial Code',
+        'quantity_available' => 'Trial code quantity available',
+        'table' => [
+            'id' => 'ID',
+            'trial_code_id' => 'Trial Code ID',
+            'status' => 'Status',
+            'remarks' => 'Remarks',
+            'expired_date' => 'Expired Date',
+            'created_time' => 'Created Time',
+            'action' => 'Action',
+            'update_remarks' => 'Update Remarks',
+        ],
+    ],
+
     'activation_code_list' => [
         'title' => 'Activation Code List',
         'batch_generation' => 'BATCH GENERATION ACTIVATION CODE',

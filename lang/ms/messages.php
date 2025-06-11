@@ -57,7 +57,28 @@ return [
             'modal_title' => 'Adakah anda pasti mahu memadamkan akaun anda?',
             'modal_description' => 'Setelah akaun anda dipadamkan, semua sumber dan datanya akan dipadamkan secara kekal. Sila masukkan kata laluan anda untuk mengesahkan anda ingin memadamkan akaun anda secara kekal.',
         ],
-        'activation_code_list' => [
+        'trial_code_list' => [
+        'title' => 'Senarai Kod Percubaan',
+        'trial_code_id' => 'ID Kod Percubaan',
+        'select_status' => 'Pilih Status',
+        'search' => 'Cari',
+        'export_excel' => 'Eksport Excel',
+        'access_record' => 'Rekod Akses',
+        'batch_generation' => 'Penjanaan Kod Percubaan Berkelompok',
+        'quantity_available' => 'Kuantiti kod percubaan tersedia',
+        'table' => [
+            'id' => 'ID',
+            'trial_code_id' => 'ID Kod Percubaan',
+            'status' => 'Status',
+            'remarks' => 'Catatan',
+            'expired_date' => 'Tarikh Luput',
+            'created_time' => 'Masa Dicipta',
+            'action' => 'Tindakan',
+            'update_remarks' => 'Kemas kini Catatan',
+        ],
+    ],
+
+    'activation_code_list' => [
             'title' => 'Senarai Kod Pengaktifan',
             'batch_generation' => 'JANA KOD PENGAKTIFAN BERKELOMPOK',
             'activation_code_id' => 'ID Kod Pengaktifan',

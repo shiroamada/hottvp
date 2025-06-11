@@ -87,6 +87,27 @@ return [
         ],
     ],
 
+    'trial_code_list' => [
+        'title' => '试用码列表',
+        'trial_code_id' => '试用码ID',
+        'select_status' => '选择状态',
+        'search' => '搜索',
+        'export_excel' => '导出Excel',
+        'access_record' => '访问记录',
+        'batch_generation' => '批量生成试用码',
+        'quantity_available' => '可用试用码数量',
+        'table' => [
+            'id' => 'ID',
+            'trial_code_id' => '试用码ID',
+            'status' => '状态',
+            'remarks' => '备注',
+            'expired_date' => '到期日期',
+            'created_time' => '创建时间',
+            'action' => '操作',
+            'update_remarks' => '更新备注',
+        ],
+    ],
+
     'activation_code_list' => [
         'title' => '激活码列表',
         'batch_generation' => '批量生成激活码',
