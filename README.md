@@ -5,8 +5,9 @@ This project is a Laravel-based application designed for managing code redemptio
 ## Project Overview
 
 *   **Framework:** Laravel 12
-*   **Frontend Theme:** Keenthemes Metronic (Tailwind CSS 4.0 - Demo 6)
+*   **Frontend Theme:** Keenthemes Metronic (Tailwind CSS 4.0 - Demo 6), Alpine.JS v3 for js event, e.g ajax
 *   **Database:** SQLite (for local development, consider PostgreSQL/MySQL for production)
+    **Support i18n 3 languages:** English (en), Chinese(zh_CN), Bahasa Melayu(ms). In laravel 12 the path is root\lang not inside resources
 *   **Core Features:**
     *   Agent Dashboard: Displays key metrics like HOTCOIN balance, code generation statistics, and downline agent performance.
     *   Activation Code Generation: Allows agents to generate different types of activation codes based on predefined presets, deducting costs from their HOTCOIN balance.

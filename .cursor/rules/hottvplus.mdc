@@ -1,0 +1,6 @@
+---
+description: 
+globs: README.md
+alwaysApply: false
+---
+This is a laravel 12 project, and it is build with keentheme. The demo of the themes file is located in /demo. I have full reference in README.md how the structure work.

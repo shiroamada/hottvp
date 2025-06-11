@@ -157,4 +157,51 @@ return [
         'return' => 'Return',
         'select_level' => 'Select',
     ],
+    
+    // License Generation Page
+    'license_generate' => [
+        'title' => 'Batch Generation Activation Code',
+        'type' => 'Type',
+        'choose_code_type' => 'Please Choose the Code Type',
+        'quantity' => 'Quantity',
+        'remarks' => 'Remarks',
+        'need_hotcoin' => 'Need HOTCOIN',
+        'hotcoin_balance' => 'HOTCOIN Balance',
+        'batch_generate' => 'BATCH GENERATION ACTIVATION CODE',
+        'reset' => 'RESET',
+        'return' => 'RETURN',
+        'license_30_day' => '30-day license code 7.50 HOTCOIN',
+        'license_90_day' => '90-day license code 15.00 HOTCOIN',
+        'license_180_day' => '180-day license code 30.00 HOTCOIN',
+        'license_365_day' => '365-day license code 60.00 HOTCOIN',
+        'license_1_day' => '1-day license code 1.00 HOTCOIN',
+        'license_7_day' => '7-day license code 3.00 HOTCOIN',
+    ],
+
+    // Trial Generation Page
+    'trial_generate' => [
+        'title' => 'Apply for trial code',
+        'available_quantity' => 'Available quantity',
+        'generation_quantity' => 'Generation quantity',
+        'remarks' => 'Remarks',
+        'apply_for_trial_code' => 'APPLY FOR TRIAL CODE',
+        'reset' => 'RESET',
+        'return' => 'RETURN',
+    ],
+
+    // Costing Page
+    'costing' => [
+        'title' => 'Level Configuration List',
+        'table' => [
+            'license_code_type' => 'LICENSE CODE TYPE',
+            'retail_price' => 'RETAIL PRICE',
+            'your_cost' => 'YOUR COST',
+            'diamond_agent_cost' => 'DIAMOND AGENT COST',
+            'gold_agent_cost' => 'GOLD AGENT COST',
+            'silver_agent_cost' => 'SILVER AGENT COST',
+            'bronze_agent_cost' => 'BRONZE AGENT COST',
+            'customized_minimum_cost' => 'CUSTOMIZED MINIMUM COST',
+            'action' => 'ACTION',
+        ],
+    ],
 ];

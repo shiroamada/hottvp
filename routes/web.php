@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/license/list', [LicenseCodeController::class, 'index'])->name('license.list');
-    Route::get('/trial/list', [TrialCodeController::class, 'list'])->name('trial.list');
+    Route::get('/trial/list', [TrialCodeController::class, 'index'])->name('trial.list');
 
     // Agent Management
     Route::prefix('agents')->name('agent.')->group(function () {

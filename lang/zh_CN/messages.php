@@ -157,4 +157,51 @@ return [
         'return' => '返回',
         'select_level' => '选择',
     ],
+
+    // License Generation Page
+    'license_generate' => [
+        'title' => '批量生成激活码',
+        'type' => '类型',
+        'choose_code_type' => '请选择代码类型',
+        'quantity' => '数量',
+        'remarks' => '备注',
+        'need_hotcoin' => '需要热币',
+        'hotcoin_balance' => '热币余额',
+        'batch_generate' => '批量生成激活码',
+        'reset' => '重置',
+        'return' => '返回',
+        'license_30_day' => '30天许可证代码 7.50热币',
+        'license_90_day' => '90天许可证代码 15.00热币',
+        'license_180_day' => '180天许可证代码 30.00热币',
+        'license_365_day' => '365天许可证代码 60.00热币',
+        'license_1_day' => '1天许可证代码 1.00热币',
+        'license_7_day' => '7天许可证代码 3.00热币',
+    ],
+
+    // Trial Generation Page
+    'trial_generate' => [
+        'title' => '申请试用码',
+        'available_quantity' => '可用数量',
+        'generation_quantity' => '生成数量',
+        'remarks' => '备注',
+        'apply_for_trial_code' => '申请试用码',
+        'reset' => '重置',
+        'return' => '返回',
+    ],
+
+    // Costing Page
+    'costing' => [
+        'title' => '级别配置列表',
+        'table' => [
+            'license_code_type' => '许可证代码类型',
+            'retail_price' => '零售价格',
+            'your_cost' => '您的成本',
+            'diamond_agent_cost' => '钻石代理成本',
+            'gold_agent_cost' => '黄金代理成本',
+            'silver_agent_cost' => '白银代理成本',
+            'bronze_agent_cost' => '青铜代理成本',
+            'customized_minimum_cost' => '自定义最低成本',
+            'action' => '操作',
+        ],
+    ],
 ];

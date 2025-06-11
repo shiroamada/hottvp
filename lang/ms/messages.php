@@ -157,4 +157,51 @@ return [
         'return' => 'Kembali',
         'select_level' => 'Pilih',
     ],
+
+    // License Generation Page
+    'license_generate' => [
+        'title' => 'Penjanaan Kod Pengaktifan Secara Berkelompok',
+        'type' => 'Jenis',
+        'choose_code_type' => 'Sila Pilih Jenis Kod',
+        'quantity' => 'Kuantiti',
+        'remarks' => 'Catatan',
+        'need_hotcoin' => 'HOTCOIN Diperlukan',
+        'hotcoin_balance' => 'Baki HOTCOIN',
+        'batch_generate' => 'JANA KOD PENGAKTIFAN SECARA BERKELOMPOK',
+        'reset' => 'TETAPKAN SEMULA',
+        'return' => 'KEMBALI',
+        'license_30_day' => 'Kod lesen 30 hari 7.50 HOTCOIN',
+        'license_90_day' => 'Kod lesen 90 hari 15.00 HOTCOIN',
+        'license_180_day' => 'Kod lesen 180 hari 30.00 HOTCOIN',
+        'license_365_day' => 'Kod lesen 365 hari 60.00 HOTCOIN',
+        'license_1_day' => 'Kod lesen 1 hari 1.00 HOTCOIN',
+        'license_7_day' => 'Kod lesen 7 hari 3.00 HOTCOIN',
+    ],
+
+    // Trial Generation Page
+    'trial_generate' => [
+        'title' => 'Mohon Kod Percubaan',
+        'available_quantity' => 'Kuantiti tersedia',
+        'generation_quantity' => 'Kuantiti penjanaan',
+        'remarks' => 'Catatan',
+        'apply_for_trial_code' => 'MOHON KOD PERCUBAAN',
+        'reset' => 'TETAPKAN SEMULA',
+        'return' => 'KEMBALI',
+    ],
+
+    // Costing Page
+    'costing' => [
+        'title' => 'Senarai Konfigurasi Tahap',
+        'table' => [
+            'license_code_type' => 'JENIS KOD LESEN',
+            'retail_price' => 'HARGA RUNCIT',
+            'your_cost' => 'KOS ANDA',
+            'diamond_agent_cost' => 'KOS EJEN BERLIAN',
+            'gold_agent_cost' => 'KOS EJEN EMAS',
+            'silver_agent_cost' => 'KOS EJEN PERAK',
+            'bronze_agent_cost' => 'KOS EJEN GANGSA',
+            'customized_minimum_cost' => 'KOS MINIMUM TERSUAI',
+            'action' => 'TINDAKAN',
+        ],
+    ],
 ];
