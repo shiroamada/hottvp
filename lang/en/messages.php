@@ -148,6 +148,13 @@ return [
 
     'agent_create' => [
         'title' => 'Add New Agent',
-        'description' => 'This is the placeholder page for adding a new agent.',
+        'top_up_amount' => 'Top Up Amount',
+        'available_hotcoin' => 'Your Available HOTCOIN Amount',
+        'permission' => 'Permission',
+        'permission_normal' => 'Normal',
+        'permission_enhanced' => 'Enhanced',
+        'reset' => 'Reset',
+        'return' => 'Return',
+        'select_level' => 'Select',
     ],
 ];

@@ -148,6 +148,13 @@ return [
 
     'agent_create' => [
         'title' => 'Tambah Ejen Baharu',
-        'description' => 'Ini adalah halaman placeholder untuk menambah ejen baharu.',
+        'top_up_amount' => 'Jumlah Tambah Nilai',
+        'available_hotcoin' => 'Jumlah HOTCOIN Anda yang Tersedia',
+        'permission' => 'Kebenaran',
+        'permission_normal' => 'Biasa',
+        'permission_enhanced' => 'Dipertingkat',
+        'reset' => 'Set Semula',
+        'return' => 'Kembali',
+        'select_level' => 'Pilih',
     ],
 ];

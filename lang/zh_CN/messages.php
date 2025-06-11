@@ -148,6 +148,13 @@ return [
 
     'agent_create' => [
         'title' => '添加新代理',
-        'description' => '这是用于添加新代理的占位页面。',
+        'top_up_amount' => '充值金额',
+        'available_hotcoin' => '您可用的 HOTCOIN 金额',
+        'permission' => '权限',
+        'permission_normal' => '普通',
+        'permission_enhanced' => '增强',
+        'reset' => '重置',
+        'return' => '返回',
+        'select_level' => '选择',
     ],
 ];
