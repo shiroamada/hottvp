@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TrialCodeController;
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\LicenseCodeController;
+use App\Http\Controllers\CostingController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
@@ -51,7 +52,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/hotcoin/transaction', function () { return view('hotcoin.transaction'); })->name('hotcoin.transaction');
     Route::get('/all-agents/list', function () { return view('all-agents.list'); })->name('all-agents.list');
     Route::get('/password/change', function () { return view('password.change'); })->name('password.change');
-    Route::get('/costing', function () { return view('costing.index'); })->name('costing.index');
+    Route::get('/costing', [CostingController::class, 'index'])->name('costing.index');
+    Route::post('/costing/update', [CostingController::class, 'update'])->name('costing.update');
 });
 
 require __DIR__.'/auth.php';
