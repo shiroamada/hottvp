@@ -1,9 +1,8 @@
 <?php
-/**
- * @author  Eddy <cumtsjh@163.com>
- */
 
-namespace App\Model\Admin;
+namespace App\Models\Admin;
+
+use Illuminate\Database\Eloquent\Model;
 
 class Log extends Model
 {
@@ -24,6 +23,6 @@ class Log extends Model
 
     public function adminUser()
     {
-        return $this->belongsTo('App\Model\Admin\AdminUser', 'admin_user_id');
+        return $this->belongsTo('App\Models\Admin\AdminUser', 'admin_user_id');
     }
 }

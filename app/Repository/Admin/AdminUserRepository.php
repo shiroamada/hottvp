@@ -3,8 +3,7 @@
 
 namespace App\Repository\Admin;
 
-use App\Model\Admin\AdminUser;
-use App\Model\Admin\Menu;
+use App\Models\Admin\AdminUser;
 use App\Repository\Searchable;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +13,7 @@ class AdminUserRepository
 
     public static function list($perPage, $ids, $param = [], $keyword = [])
     {
-//        DB::connection()->enableQueryLog();#开启执行日志
+        //DB::connection()->enableQueryLog();#开启执行日志
         // 当前用户为国代，则获取下级注销用户，否则不获取
         if (auth()->guard('admin')->user()->level_id == 3) {
             // 获取该用户下级注销的用户
@@ -56,7 +55,8 @@ class AdminUserRepository
                 ->orderBy('level_id', 'ASC')
                 ->paginate($perPage);
         }
-//        print_r(DB::getQueryLog());   //获取查询语句、参数和执行时间
+        //
+       //dump(DB::getQueryLog());   //获取查询语句、参数和执行时间
 
         return $data;
     }

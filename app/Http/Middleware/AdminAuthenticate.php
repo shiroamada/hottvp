@@ -19,7 +19,7 @@ class AdminAuthenticate
     {
         // Example: check if user is authenticated as admin
         if (!auth()->guard('admin')->check()) {
-            return redirect()->route('login');
+            return redirect()->route('admin.login');
         }
         return $next($request);
     }

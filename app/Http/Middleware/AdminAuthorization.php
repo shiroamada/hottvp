@@ -20,7 +20,8 @@ class AdminAuthorization
         $user = auth()->guard('admin')->user();
         
         if (!$user) {
-            return redirect()->route('login');
+            dd('You are not authenticated as an admin.!!!');
+            return redirect()->route('admin.login');
         }
         
         // Check if user has admin permissions

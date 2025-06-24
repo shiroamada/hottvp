@@ -34,9 +34,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\AdminUtilityMiddleware::class,
         ]);
         $middleware->alias([
-           'auth:admin' => \App\Http\Middleware\AdminAuthenticate::class,
-            'log:admin' => \App\Http\Middleware\LogAdminMiddleware::class,
-            'authorization:admin' => \App\Http\Middleware\AdminAuthorization::class,
+            'guest.admin' => \App\Http\Middleware\AdminRedirectIfAdminAuthenticated::class,
+            'auth.admin' => \App\Http\Middleware\AdminAuthenticate::class,
+            'log.admin' => \App\Http\Middleware\LogAdminMiddleware::class,
+            'authorization.admin' => \App\Http\Middleware\AdminAuthorization::class,
             'admin.controller' => \App\Http\Middleware\AdminControllerMiddleware::class,
             'admin.utility' => \App\Http\Middleware\AdminUtilityMiddleware::class,
         ]);

@@ -18,6 +18,6 @@ class RoleSeeder extends Seeder
         Role::create(['name' => 'gold agent']);
         Role::create(['name' => 'silver agent']);
         Role::create(['name' => 'bronze agent']);
-        Role::create(['name' => 'customer agent']);
+        Role::create(['name' => 'custom agent']);
     }
 }

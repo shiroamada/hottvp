@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Model\Admin;
+namespace App\Models\Admin;
+
+use Illuminate\Database\Eloquent\Model;
 
 class TryCode extends Model
 {
@@ -8,6 +10,6 @@ class TryCode extends Model
 
     public function users()
     {
-        return $this->belongsTo('App\Model\Admin\AdminUser', 'user_id', 'id');
+        return $this->belongsTo('App\Models\Admin\AdminUser', 'user_id', 'id');
     }
 }

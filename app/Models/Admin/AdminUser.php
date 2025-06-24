@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Model\Admin;
+namespace App\Models\Admin;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 

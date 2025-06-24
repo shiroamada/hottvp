@@ -3,6 +3,37 @@
     {
       "name": "Metronic Tailwind",
       "url": "https://keenthemes.com/metronic/tailwind/docs/index.html"
+    },
+    {
+      "name": "Metronic Tailwind Components",
+      "url": "https://keenthemes.com/metronic/tailwind/docs/components/index.html"
+    },
+    {
+      "name": "Metronic Tailwind Icons",
+      "url": "https://keenthemes.com/metronic/tailwind/docs/icons/keenicons.html"
+    },
+    {
+      "name": "Metronic Tailwind Layouts",
+      "url": "https://keenthemes.com/metronic/tailwind/docs/layouts/index.html"
     }
-  ]
+  ],
+  "project": {
+    "name": "Hot TV Plus",
+    "framework": "Laravel 12",
+    "theme": {
+      "name": "Metronic Tailwind",
+      "version": "9.2.0",
+      "demo": "demo6",
+      "integration": {
+        "css": "resources/metronic/css/styles.css",
+        "js": "resources/metronic/core/index.ts",
+        "icons": [
+          "resources/metronic/vendors/keenicons/duotone/style.css",
+          "resources/metronic/vendors/keenicons/filled/style.css",
+          "resources/metronic/vendors/keenicons/outline/style.css",
+          "resources/metronic/vendors/keenicons/solid/style.css"
+        ]
+      }
+    }
+  }
 }

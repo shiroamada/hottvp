@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminUserRequest;
 use App\Http\Requests\Admin\LogoffUserRequest;
 use App\Http\Requests\Admin\PasswordRequest;
-use App\Model\Admin\AdminUser;
+use App\Models\Admin\AdminUser;
 use App\Model\Admin\Level;
 use App\Model\Admin\Assort;
 use App\Model\Admin\Equipment;
@@ -36,7 +36,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Model\Admin\Huobi;
 use App\Repository\APIHelper;
-use App\Model\Admin\AdminUser as AdminUserModel;
+use App\Models\Admin\AdminUser as AdminUserModel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redis;
@@ -58,14 +58,10 @@ class AdminUserController extends Controller
      * @Description: 代理人列表
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @Author: 李军伟
+     * 
      */
     public function index(Request $request)
     {
-        // Use proper Log facade method
-        Log::info('Admin users page accessed', ['user_id' => auth()->guard('admin')->user()->id ?? 'guest']);
-        
-        dd(auth()->guard('web')->user());
         $perPage = (int)$request->get('limit', env('APP_PAGE'));
         $this->formNames[] = 'created_at';
         $keyword = $request->only($this->formNames);
@@ -75,12 +71,18 @@ class AdminUserController extends Controller
 //        if (\Auth::guard('admin')->user()->name != 'admin') {
         $param['pid'] = ['=', auth()->guard('admin')->user()->id];
 //        }
-        $this->getLowerIdss(auth()->guard('admin')->user()->id);
+        //$this->getLowerIdss(auth()->guard('admin')->user()->id);
+         // Use utility middleware to get lower IDs
+        $utility = $request->attributes->get('utility');
+        $idss = $utility->getLowerIdss(auth()->guard('admin')->user()->id);
 
-        $data = AdminUserRepository::list($perPage, $this->idss, $param, $keyword);
+
+        $data = AdminUserRepository::list($perPage, $idss, $param, $keyword);
+        
         $data->name = $request->name;
-        $parent_id = $this->getParentId(auth()->guard('admin')->user()->id);
-dd($data);
+        $parent_id = $utility->getParentId(auth()->guard('admin')->user()->id);
+
+
         return view('admin.adminUser.index', [
             'lists' => $data,  //列表数据
             'condition' => $keyword,
