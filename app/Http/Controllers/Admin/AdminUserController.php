@@ -68,7 +68,7 @@ class AdminUserController extends Controller
         // 只显示没有注销的用户
         $param = [];
 //        $param['is_cancel'] = ['=', 0];
-//        if (\Auth::guard('admin')->user()->name != 'admin') {
+//        if (auth()->guard('admin')->user()->name != 'admin') {
         $param['pid'] = ['=', auth()->guard('admin')->user()->id];
 //        }
         //$this->getLowerIdss(auth()->guard('admin')->user()->id);
@@ -112,14 +112,16 @@ class AdminUserController extends Controller
         } else {
             unset($keyword['level_id']);
         }
+        
+        // Use utility middleware
+        $utility = $request->attributes->get('utility');
+        
         if (isset($keyword['level_id']) && !empty($keyword['level_id'])) {
-            $this->getLowerIdsByAll(auth()->guard('admin')->user()->id, $keyword['level_id']);
-            $sub_all = $this->ids_list_all;
+            $sub_all = $utility->getLowerIdsByAll(auth()->guard('admin')->user()->id, $keyword['level_id']);
         } else {
-            $this->getLowerIdsByAll(auth()->guard('admin')->user()->id, 0);
-            $sub_all = $this->ids_list_all_tt;
+            $sub_all = $utility->getLowerIdsByAll(auth()->guard('admin')->user()->id, 0);
         }
-//        dd($this->ids_list_all);
+//        dd($sub_all);
         $data = AdminUserRepository::list($perPage, $sub_all, $param, $keyword);
         $data->name = $request->name;
         $data->level_id = $request->level_id;
@@ -154,8 +156,10 @@ class AdminUserController extends Controller
         if (auth()->guard('admin')->user()->name != 'admin') {
             $condition['pid'] = ['=', auth()->guard('admin')->user()->id];
         }
-        $this->getLowerIdss(auth()->guard('admin')->user()->id);
-        $data = AdminUserRepository::logoff($perPage, $this->idss);
+        // Use utility middleware to get lower IDs
+        $utility = $request->attributes->get('utility');
+        $idss = $utility->getLowerIdss(auth()->guard('admin')->user()->id);
+        $data = AdminUserRepository::logoff($perPage, $idss);
         $data->name = $request->name;
 
         return view('admin.adminUser.logoff', [
@@ -182,8 +186,11 @@ class AdminUserController extends Controller
             $where[] = ['id', '>', auth()->guard('admin')->user()->level_id];
         }
 
-        $parent_id = $this->getParentId(auth()->guard('admin')->user()->id);
-        $level_cost = $this->getLevelCost($parent_id);
+        // Use utility middleware
+        $utility = request()->attributes->get('utility');
+        $parent_id = $utility->getParentId(auth()->guard('admin')->user()->id);
+        $level_cost = $utility->getLevelCost($parent_id);
+        
         $level = Level::query()->select(['id', 'level_name', 'mini_amount'])->where($where)->get();
         $level_list = [];
         if (auth()->guard('admin')->user()->id != 1) {
@@ -225,8 +232,11 @@ class AdminUserController extends Controller
     {
         DB::beginTransaction(); //开启事务
         try {
+            // Use utility middleware
+            $utility = $request->attributes->get('utility');
+            
             // 如果不是ajax方式，则非法请求
-            $this->isAjax($request);
+            $utility->isAjax($request);
             $this->formNames[] = 'daysOneList';
             $this->formNames[] = 'daysSevenList';
             $this->formNames[] = 'daysThirtyList';
@@ -240,7 +250,7 @@ class AdminUserController extends Controller
             if (!isset($parameter['type'])) {
                 $parameter['type'] = auth()->guard('admin')->user()->type;
             }
-            $parent_id = $this->getParentId(auth()->guard('admin')->user()->id);
+            $parent_id = $utility->getParentId(auth()->guard('admin')->user()->id);
             if (strstr($parameter['balance'], ",")) {
                 $balance = str_replace(",", "", $parameter['balance']);
                 $parameter['balance'] = str_replace(",", "", $parameter['balance']);
@@ -754,8 +764,11 @@ class AdminUserController extends Controller
     {
         DB::beginTransaction(); //开启事务
         try {
+            // Use utility middleware
+            $utility = $request->attributes->get('utility');
+            
             // 如果不是ajax方式，则非法请求
-            $this->isAjax($request);
+            $utility->isAjax($request);
             $data = $request->only($this->formNames);
 
             if ($request->input('password') == '') {
@@ -783,10 +796,10 @@ class AdminUserController extends Controller
             }
 
             // 如果级别调整的金额大于当前用户所拥有的金额，则报错
-            if ($data['balance'] > \Auth::guard('admin')->user()->balance) {
+            if ($data['balance'] > auth()->guard('admin')->user()->balance) {
                 throw new \Exception(trans('adminUser.recharge_tips'));
             }
-            $parent_id = $this->getParentId(\Auth::guard('admin')->user()->id);
+            $parent_id = $utility->getParentId(auth()->guard('admin')->user()->id);
             // 获取提交级别所需最低金额
             if ($data['level_id'] == 3) {
                 $level = LevelRepository::find($data['level_id']);
@@ -800,7 +813,7 @@ class AdminUserController extends Controller
                 throw new \Exception(trans('adminUser.recharge_tips1'));
             }
             // 减去上级相应的金额
-            $where_user = ['id' => \Auth::guard('admin')->user()->id];
+            $where_user = ['id' => auth()->guard('admin')->user()->id];
             AdminUserRepository::decr($where_user, $data['balance']);
             // 获取当前用户信息
             $info = AdminUserRepository::find($id);
@@ -821,7 +834,7 @@ class AdminUserController extends Controller
                     'updated_at' => date("Y-m-d H:i:s", time()),
                 ],
                 [
-                    'user_id' => \Auth::guard('admin')->user()->id,
+                    'user_id' => auth()->guard('admin')->user()->id,
                     'money' => $balance,
                     'status' => 1,
                     'type' => 2,
@@ -978,7 +991,7 @@ class AdminUserController extends Controller
      */
     public function agencyInfo($level_id)
     {
-        $parent_id = $this->getParentId(\Auth::guard('admin')->user()->id);
+        $parent_id = $this->getParentId(auth()->guard('admin')->user()->id);
         // 先验证该国代有没有自定义级别配置管理,如果没有则获取默认级别配置
         $guodai_where = ['user_id' => $parent_id];
         $res = EquipmentRepository::findByWhere($guodai_where);
@@ -986,19 +999,19 @@ class AdminUserController extends Controller
             // 获取选择的级别对应配置的金额
             $choice_money = Equipment::query()->where(['level_id' => $level_id, 'user_id' => $parent_id])->orderBy('money', 'ASC')->pluck('money');
             // 获取自己的级别对应配置的金额
-            if (\Auth::guard('admin')->user()->level_id == 8) {
-                $own_money = Defined::query()->where(['user_id' => \Auth::guard('admin')->user()->id])->orderBy('money', 'ASC')->pluck('money');
+            if (auth()->guard('admin')->user()->level_id == 8) {
+                $own_money = Defined::query()->where(['user_id' => auth()->guard('admin')->user()->id])->orderBy('money', 'ASC')->pluck('money');
             } else {
-                $own_money = Equipment::query()->where(['level_id' => \Auth::guard('admin')->user()->level_id, 'user_id' => $parent_id])->orderBy('money', 'ASC')->pluck('money');
+                $own_money = Equipment::query()->where(['level_id' => auth()->guard('admin')->user()->level_id, 'user_id' => $parent_id])->orderBy('money', 'ASC')->pluck('money');
             }
         } else {
             // 获取选择的级别对应配置的金额
             $choice_money = Equipment::query()->where(['level_id' => $level_id, 'user_id' => 1])->orderBy('money', 'ASC')->pluck('money');
             // 获取自己的级别对应配置的金额
-            if (\Auth::guard('admin')->user()->level_id == 8) {
-                $own_money = Defined::query()->where(['user_id' => \Auth::guard('admin')->user()->id])->orderBy('money', 'ASC')->pluck('money');
+            if (auth()->guard('admin')->user()->level_id == 8) {
+                $own_money = Defined::query()->where(['user_id' => auth()->guard('admin')->user()->id])->orderBy('money', 'ASC')->pluck('money');
             } else {
-                $own_money = Equipment::query()->where(['level_id' => \Auth::guard('admin')->user()->level_id, 'user_id' => 1])->orderBy('money', 'ASC')->pluck('money');
+                $own_money = Equipment::query()->where(['level_id' => auth()->guard('admin')->user()->level_id, 'user_id' => 1])->orderBy('money', 'ASC')->pluck('money');
             }
         }
         // 获取配置列表
@@ -1042,7 +1055,11 @@ class AdminUserController extends Controller
         $perPage = (int)$request->get('limit', env('APP_PAGE'));
         // 获取当前代理人信息
         $info = AdminUserRepository::find($id);
-        if (($info->level_id - \Auth::guard('admin')->user()->level_id) > 1) {
+        
+        // Use utility middleware
+        $utility = $request->attributes->get('utility');
+        
+        if (($info->level_id - auth()->guard('admin')->user()->level_id) > 1) {
             if ($info->level_id == 5 && $info->person_num < 10) {
                 $type = 2;  // 调整级别不可编辑
             } else {
@@ -1056,15 +1073,15 @@ class AdminUserController extends Controller
             }
         }
         // 获取当前代理人利润记录
-        if (\Auth::guard('admin')->user()->id == 1) {
+        if (auth()->guard('admin')->user()->id == 1) {
             $where = ['status' => 0, 'user_id' => $info->id];
         } else {
-            $where = ["create_id" => $info->id, 'status' => 0, 'type' => 1, 'user_id' => \Auth::guard('admin')->user()->id];
+            $where = ["create_id" => $info->id, 'status' => 0, 'type' => 1, 'user_id' => auth()->guard('admin')->user()->id];
         }
         $profit = HuobiRepository::levelByRecord($where);
         $user_lirun = Huobi::query()->where($where)->get();
         $user_pro = 0;
-        $parent_id = $this->getParentId(\Auth::guard('admin')->user()->id);
+        $parent_id = $utility->getParentId(auth()->guard('admin')->user()->id);
         foreach ($user_lirun as $value) {
             $assort_where = ['user_id' => $parent_id, 'assort_id' => $value['assort_id'], 'level_id' => 3];
             $assort_level = EquipmentRepository::findByWhere($assort_where);
@@ -1074,11 +1091,11 @@ class AdminUserController extends Controller
         $month = date('Y-m-d', strtotime(date('Y-m-01') . " - 1 month"));
         $profit_time = HuobiRepository::levelByRecordByTime($where, dates($month));
         // 当前代理人为自己创造的收益
-        if (\Auth::guard('admin')->user()->id == 1) {
+        if (auth()->guard('admin')->user()->id == 1) {
 //            $condition_profit = ['type' => 1, 'status' => 0, 'user_id' => $info->id];
             $condition_profit = ['status' => 0, 'user_id' => $info->id];
         } else {
-            $condition_profit = ['create_id' => $info->id, 'type' => 1, 'status' => 0, 'user_id' => \Auth::guard('admin')->user()->id];
+            $condition_profit = ['create_id' => $info->id, 'type' => 1, 'status' => 0, 'user_id' => auth()->guard('admin')->user()->id];
         }
         $user_profit = HuobiRepository::lists($perPage, $condition_profit);
         // 给当前代理人充值记录
@@ -1194,11 +1211,11 @@ class AdminUserController extends Controller
                 throw new \Exception(trans('adminUser.amount_require'));
             }
             // 验证充值金额是否大于当前自己所拥有的金额
-            if ($data['balance'] > \Auth::guard('admin')->user()->balance) {
+            if ($data['balance'] > auth()->guard('admin')->user()->balance) {
                 throw new \Exception(trans('adminUser.recharge_tips'));
             }
             // 减去上级相应的金额
-            $where_user = ['id' => \Auth::guard('admin')->user()->id];
+            $where_user = ['id' => auth()->guard('admin')->user()->id];
             AdminUserRepository::decr($where_user, $data['balance']);
             // 获取当前用户信息
             $info = AdminUserRepository::find($data['id']);
@@ -1219,7 +1236,7 @@ class AdminUserController extends Controller
                     'updated_at' => date("Y-m-d H:i:s", time()),
                 ],
                 [
-                    'user_id' => \Auth::guard('admin')->user()->id,
+                    'user_id' => auth()->guard('admin')->user()->id,
                     'money' => $balance,
                     'status' => 1,
                     'type' => 2,
@@ -1260,27 +1277,27 @@ class AdminUserController extends Controller
         // 获取级别信息
         $level_id = $info->level_id;
         // 如果级别为5（金牌代理）则可以给自己的下级代理升级为和自己同级
-        if (\Auth::guard('admin')->user()->level_id == 5) {
+        if (auth()->guard('admin')->user()->level_id == 5) {
             $level = Level::query()
                 ->select(['id', 'level_name', 'mini_amount'])
                 ->where('id', '<', $level_id)
-                ->where('id', '>=', \Auth::guard('admin')->user()->level_id)
+                ->where('id', '>=', auth()->guard('admin')->user()->level_id)
                 ->get();
             // 当前登录用户增加人员数量+1
-            $person_where = ['id' => \Auth::guard('admin')->user()->id];
+            $person_where = ['id' => auth()->guard('admin')->user()->id];
             AdminUserRepository::personIncr($person_where);
         } else {
             $level = Level::query()
                 ->select(['id', 'level_name', 'mini_amount'])
                 ->where('id', '<', $level_id)
-                ->where('id', '>', \Auth::guard('admin')->user()->level_id)
+                ->where('id', '>', auth()->guard('admin')->user()->level_id)
                 ->get();
         }
 
-        $parent_id = $this->getParentId(\Auth::guard('admin')->user()->id);
+        $parent_id = $this->getParentId(auth()->guard('admin')->user()->id);
         $level_cost = $this->getLevelCost($parent_id);
         $level_list = [];
-        if (\Auth::guard('admin')->user()->id != 1 || \Auth::guard('admin')->user()->level_id != 4) {
+        if (auth()->guard('admin')->user()->id != 1 || auth()->guard('admin')->user()->level_id != 4) {
             foreach ($level->toArray() as $k => $v) {
                 if ($v['id'] == 4) {
                     $level_list = $level;
@@ -1312,7 +1329,7 @@ class AdminUserController extends Controller
      */
     public function userInfo()
     {
-        $id = \Auth::guard('admin')->user()->id;
+        $id = auth()->guard('admin')->user()->id;
         $info = AdminUserRepository::find($id);
         return view('admin.adminUser.userInfo', [
             'info' => $info,
@@ -1327,7 +1344,7 @@ class AdminUserController extends Controller
      */
     public function userEdit()
     {
-        $id = \Auth::guard('admin')->user()->id;
+        $id = auth()->guard('admin')->user()->id;
         $info = AdminUserRepository::find($id);
         return view('admin.adminUser.userEdit', [
             'info' => $info,
@@ -1347,7 +1364,7 @@ class AdminUserController extends Controller
             $data = $request->only($this->formNames);
             unset($data['level_id']);
 
-            AdminUserRepository::update(\Auth::guard('admin')->user()->id, $data);
+            AdminUserRepository::update(auth()->guard('admin')->user()->id, $data);
             return [
                 'code' => 0,
                 'msg' => trans('general.updateSuccess'),
@@ -1386,7 +1403,7 @@ class AdminUserController extends Controller
             $data = $request->input();
             //验证原密码
             $old_password = $data['old_password'];
-            if (!Hash::check($old_password, \Auth::guard('admin')->user()->password)) {
+            if (!Hash::check($old_password, auth()->guard('admin')->user()->password)) {
                 return [
                     'code' => 1,
                     'msg' => trans('adminUser.old_password_fail'),
@@ -1402,7 +1419,7 @@ class AdminUserController extends Controller
                 ];
             }
             $param['password'] = $data['password'];
-            AdminUserRepository::update(\Auth::guard('admin')->user()->id, $param);
+            AdminUserRepository::update(auth()->guard('admin')->user()->id, $param);
             (new LoginController())->logout($request);
             return [
                 'code' => 0,
@@ -1433,7 +1450,7 @@ class AdminUserController extends Controller
     {
         // 发送验证码
         $code = getRandChar(6);
-        $email = \Auth::guard('admin')->user()->email;
+        $email = auth()->guard('admin')->user()->email;
         // 把code放入到redis中，保存10分钟
         if (!Redis::get($email)) {
             $to = $email;
@@ -1454,7 +1471,7 @@ class AdminUserController extends Controller
     {
         try {
             $code = $request->input('code');
-            $email = \Auth::guard('admin')->user()->email;
+            $email = auth()->guard('admin')->user()->email;
             $code_1 = Redis::get($email);
             if (!$code_1 || strtoupper($code) != $code_1) {
                 throw new \Exception(trans('home.code_exp'));
@@ -1481,7 +1498,7 @@ class AdminUserController extends Controller
      */
     public function reCancel()
     {
-        $money = \Auth::guard('admin')->user()->balance;
+        $money = auth()->guard('admin')->user()->balance;
         return view('admin.adminUser.reCancel', ['money' => $money]);
     }
 
@@ -1496,11 +1513,11 @@ class AdminUserController extends Controller
     {
         try {
             $parameter = $request->input();
-            $parameter['user_id'] = \Auth::guard('admin')->user()->id;
-            $parameter['parent_id'] = $this->getParentId(\Auth::guard('admin')->user()->id);
+            $parameter['user_id'] = auth()->guard('admin')->user()->id;
+            $parameter['parent_id'] = $this->getParentId(auth()->guard('admin')->user()->id);
             LogoffUserRepository::add($parameter);
             $data = ['is_cancel' => 1, 'is_relation' => 1];
-            AdminUserRepository::update(\Auth::guard('admin')->user()->id, $data);
+            AdminUserRepository::update(auth()->guard('admin')->user()->id, $data);
             (new Auth\LoginController())->guard()->logout();
             $request->session()->invalidate();
             return [
@@ -1654,26 +1671,26 @@ class AdminUserController extends Controller
      */
     public function cost($id)
     {
-        $parent_id = $this->getParentId(\Auth::guard('admin')->user()->id);
+        $parent_id = $this->getParentId(auth()->guard('admin')->user()->id);
         $guodai_where = ['user_id' => $parent_id];
         $res = EquipmentRepository::findByWhere($guodai_where);
         // 获取选择的级别对应配置的金额
         // 国代有配置
         if ($res) {
             $choice_where = ['level_id' => 8, 'user_id' => $parent_id];
-            if (\Auth::guard('admin')->user()->level_id == 8) {
-                $own_money = Defined::query()->where(['user_id' => \Auth::guard('admin')->user()->id])->orderBy('money', 'ASC')->pluck('money');
+            if (auth()->guard('admin')->user()->level_id == 8) {
+                $own_money = Defined::query()->where(['user_id' => auth()->guard('admin')->user()->id])->orderBy('money', 'ASC')->pluck('money');
             } else {
-                $own_money = Equipment::query()->where(['level_id' => \Auth::guard('admin')->user()->level_id, 'user_id' => $parent_id])->orderBy('money', 'ASC')->pluck('money');
+                $own_money = Equipment::query()->where(['level_id' => auth()->guard('admin')->user()->level_id, 'user_id' => $parent_id])->orderBy('money', 'ASC')->pluck('money');
             }
         } else {
             $choice_where = ['level_id' => 8, 'user_id' => 1];
             // 国代无配置
             // 获取自己的级别对应配置的金额
-            if (\Auth::guard('admin')->user()->level_id == 8) {
-                $own_money = Defined::query()->where(['user_id' => \Auth::guard('admin')->user()->id])->orderBy('money', 'ASC')->pluck('money');
+            if (auth()->guard('admin')->user()->level_id == 8) {
+                $own_money = Defined::query()->where(['user_id' => auth()->guard('admin')->user()->id])->orderBy('money', 'ASC')->pluck('money');
             } else {
-                $own_money = Equipment::query()->where(['level_id' => \Auth::guard('admin')->user()->level_id, 'user_id' => 1])->orderBy('money', 'ASC')->pluck('money');
+                $own_money = Equipment::query()->where(['level_id' => auth()->guard('admin')->user()->level_id, 'user_id' => 1])->orderBy('money', 'ASC')->pluck('money');
             }
         }
         $choice_money = Equipment::query()->where($choice_where)->pluck('money');
@@ -1722,7 +1739,7 @@ class AdminUserController extends Controller
             // 如果不是ajax方式，则非法请求
             $this->isAjax($request);
             $parameter = $request->only($this->formNames);
-            $parent_id = $this->getParentId(\Auth::guard('admin')->user()->id);
+            $parent_id = $this->getParentId(auth()->guard('admin')->user()->id);
             $cost = $this->getRetail($parent_id);
             // 先验证数据的完整性
             if ($parameter['agency'] == "") {
@@ -1958,7 +1975,7 @@ class AdminUserController extends Controller
         }
         $user_profit = HuobiRepository::listsByExport($where, $month);
         $list = [];
-        $parent_id = $this->getParentId(\Auth::guard('admin')->user()->id);
+        $parent_id = $this->getParentId(auth()->guard('admin')->user()->id);
         foreach ($user_profit as $key => $value) {
             $assort_where = ['user_id' => $parent_id, 'assort_id' => $value['assort_id'], 'level_id' => 3];
             $assort_level = EquipmentRepository::findByWhere($assort_where);

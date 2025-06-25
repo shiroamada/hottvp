@@ -1,6 +1,7 @@
 ---
 description: 
-globs: README.md
+globs: README.md,migrate.md
 alwaysApply: false
 ---
-This is a laravel 12 project, and it is build with keentheme. The demo of the themes file is located in /demo. I have full reference in README.md how the structure work.
+This is a laravel 12 project, and it is build with keentheme. The demo of the themes file is located in /demo. I have full reference in  [README.md](mdc:README.md) how the structure work.
+This laravel 12 project goal is migrate a old laravel project 6 which is located at /old_project_reference. you can reference [migrate.md](mdc:migrate.md) to update the project migrate. I want to migrate phase by phase
