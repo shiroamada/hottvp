@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Model\Admin\TryCode;
 use Carbon\Carbon;
-use PHPExcel;
-use PHPExcel_IOFactory;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminUserRequest;
@@ -34,13 +32,14 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use App\Model\Admin\Huobi;
+use App\Models\Admin\Huobi;
 use App\Repository\APIHelper;
 use App\Models\Admin\AdminUser as AdminUserModel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class AdminUserController extends Controller
 {
@@ -51,6 +50,20 @@ class AdminUserController extends Controller
     public function __construct()
     {
         // Middleware handles the functionality previously in parent::__construct()
+    }
+    
+    /**
+     * Check if request is AJAX
+     * 
+     * @param Request $request
+     * @return void
+     * @throws \Exception
+     */
+    public function isAjax(Request $request)
+    {
+        if (!$request->ajax()) {
+            abort(403, 'Only AJAX requests are allowed.');
+        }
     }
 
     /**
@@ -1113,6 +1126,7 @@ class AdminUserController extends Controller
             'tags' => isset($params['profit']) ? $params['profit'] : 0,
         ]);
     }
+    
 
     /**
      * @Title: examine
@@ -1518,7 +1532,7 @@ class AdminUserController extends Controller
             LogoffUserRepository::add($parameter);
             $data = ['is_cancel' => 1, 'is_relation' => 1];
             AdminUserRepository::update(auth()->guard('admin')->user()->id, $data);
-            (new Auth\LoginController())->guard()->logout();
+            Auth::guard('admin')->logout();
             $request->session()->invalidate();
             return [
                 'code' => 0,
@@ -1944,9 +1958,8 @@ class AdminUserController extends Controller
 
     /**
      * @Title: export
-     * @Description: 导入到excel
+     * @Description: 导出利润记录
      * @param Request $request
-     * @return array
      * @Author: 李军伟
      */
     public function export(Request $request)
@@ -1955,18 +1968,8 @@ class AdminUserController extends Controller
         $this->formNames[] = 'user_id';
         $parameter = $request->only($this->formNames);
         $title = trans('adminUser.profit_record') . "-";
-        $objExcel = new PHPExcel();
-        $objWriter = PHPExcel_IOFactory::createWriter($objExcel, 'Excel2007');
-        // $objWriter = PHPExcel_IOFactory::createWriter($objExcel, 'Excel5');
-        $objActSheet = $objExcel->getActiveSheet(0);
-        $objActSheet->setTitle($title); //设置excel的标题
-        $objActSheet->setCellValue('A1', trans('adminUser.create_time'));
-        $objActSheet->setCellValue('B1', trans('adminUser.code_func'));
-        $objActSheet->setCellValue('C1', trans('adminUser.make_profit'));
-
-        $baseRow = 2; //数据从N-1行开始往下输出 这里是避免头信息被覆盖
-
-        // 获取当前代理人利润记录
+        
+        // Get data for export
         $where = ['status' => 0, 'user_id' => $parameter['user_id'], 'money' > 0];
         if (empty($parameter['month'])) {
             $month = "";
@@ -1987,21 +1990,12 @@ class AdminUserController extends Controller
             ];
         }
 
-        foreach ($list as $key => $value) {
-            $i = $baseRow + $key;
-            $objExcel->getActiveSheet()->setCellValue('A' . $i, $value['create_time']);
-            $objExcel->getActiveSheet()->setCellValue('B' . $i, $value['event']);
-            $objExcel->getActiveSheet()->setCellValue('C' . $i, $value['money']);
-        }
-
-        $time = date('Y-m-d');
-        $objExcel->setActiveSheetIndex(0);
-        //4、输出
-        $objExcel->setActiveSheetIndex();
-        header('Content-Type: applicationnd.ms-excel');
-        header("Content-Disposition: attachment;filename=" . $title . $time . ".xls");
-        header('Cache-Control: max-age=0');
-        $objWriter->save('php://output');
+        // Use Laravel Excel export
+        return Excel::download(new AuthCodeExport($list, [
+            trans('adminUser.create_time'),
+            trans('adminUser.code_func'),
+            trans('adminUser.make_profit')
+        ]), $title . date('Y-m-d') . '.xlsx');
     }
 
     /**
@@ -2025,12 +2019,16 @@ class AdminUserController extends Controller
         }
         $params = $condition;
         unset($condition['date2']);
-        $this->getLowerByIds($id);
+        
+        // Use utility middleware to get lower IDs
+        $utility = $request->attributes->get('utility');
+        $lowers = $utility->getLowerByIds($id);
+        
         // 获取当前用户的信息
         $info = AdminUserRepository::find($id);
         //  根据用户级别对用户进行分组
-        $group = AdminUserRepository::getGroup($this->lowers);
-        $data = AdminUserRepository::getList($perPage, $this->lowers, $condition);
+        $group = AdminUserRepository::getGroup($lowers);
+        $data = AdminUserRepository::getList($perPage, $lowers, $condition);
         foreach ($data as $key => $value) {
 //            if ($id == 1) {
 //                $where = ['user_id' => $id, 'user_account' => $value['account']];
@@ -2050,7 +2048,7 @@ class AdminUserController extends Controller
             'group' => $group_list,
             'lists' => $data,  //列表数据
             'condition' => $params,
-            'total_person' => count($this->lowers)
+            'total_person' => count($lowers)
         ]);
     }
 

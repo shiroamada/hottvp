@@ -36,11 +36,11 @@ class AdminUser extends Authenticatable
 
     public function comments()
     {
-        return $this->hasMany('App\Model\Admin\Comment', 'user_id');
+        return $this->hasMany('App\Models\Admin\Comment', 'user_id');
     }
 
     public function levels()
     {
-        return $this->belongsTo('App\Model\Admin\Level', 'level_id', 'id');
+        return $this->belongsTo('App\Models\Admin\Level', 'level_id', 'id');
     }
 }

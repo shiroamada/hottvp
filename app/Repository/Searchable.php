@@ -1,10 +1,4 @@
 <?php
-/**
- * Date: 2019/2/27 Time: 10:48
- *
- * @author  Eddy <cumtsjh@163.com>
- * @version v1.0.0
- */
 
 namespace App\Repository;
 

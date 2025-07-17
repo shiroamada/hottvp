@@ -12,7 +12,7 @@
   <meta content="@hottvplus" name="twitter:site"/>
   <meta content="@hottvplus" name="twitter:creator"/>
   <meta content="summary_large_image" name="twitter:card"/>
-  <meta content="Hot TV Plus" name="twitter:title"/>
+  <meta content="WoW TV" name="twitter:title"/>
   <meta content="" name="twitter:description"/>
   <meta content="assets/media/app/og-image.png" name="twitter:image"/>
   <meta content="https://store.hottvplus.com" property="og:url"/>

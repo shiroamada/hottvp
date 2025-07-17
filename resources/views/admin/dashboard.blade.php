@@ -20,7 +20,7 @@
     <!-- End of Container -->
    </header>
    <!-- End of Header -->
-   @include('admin/layouts/partials/_sidebar')
+   @include('layouts/partials/_sidebar')
    <!-- Wrapper -->
    <div class="flex flex-col lg:flex-row grow pt-(--header-height) lg:pt-0">
     <!-- Main -->
@@ -1527,7 +1527,7 @@
      </div>
      <div class="flex flex-col gap-5 p-5">
       <div class="text-sm text-mono font-semibold">
-       Let us know why you’re reporing this person
+       Let us know why you're reporing this person
       </div>
       <div class="flex flex-col gap-3.5">
        <label class="kt-form-label flex items-center gap-2.5">

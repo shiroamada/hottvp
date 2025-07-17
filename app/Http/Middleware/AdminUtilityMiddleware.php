@@ -9,6 +9,11 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Repository\Admin\AdminUserRepository;
 use App\Repository\Admin\RetailRepository;
 use App\Repository\Admin\CostRepository;
+use App\Models\Admin\AdminUser;
+use App\Models\Admin\Level;
+use App\Models\Admin\Cost;
+use App\Models\Admin\Equipment;
+use Illuminate\Support\Facades\DB;
 
 class AdminUtilityMiddleware
 {
@@ -88,26 +93,47 @@ class AdminUtilityMiddleware
      * @param int $level_id Level ID
      * @return array Lower IDs
      */
-    public function getLowerIdsByAll($uid, $level_id)
+    public function getLowerIdsByAll($uid, $level_id = 0)
     {
-        $where = ['pid' => $uid];
-        $infos = AdminUserRepository::getListByWhere($where);
-        if ($infos) {
-            foreach ($infos as $info) {
-                if ($level_id > 0 && $info->level_id == $level_id) {
-                    $this->ids_list_all[] = $info->id;
-                } else {
-                    $this->ids_list_all_tt[] = $info->id;
-                }
-
-                $this->getLowerIdsByAll($info->id, $level_id);
-            }
-        }
+        $ids = [];
         
         if ($level_id > 0) {
-            return $this->ids_list_all;
+            $users = AdminUserRepository::getListByWhere(['pid' => $uid, 'level_id' => $level_id]);
+                
+            foreach ($users as $user) {
+                $ids[] = $user->id;
+                // Recurse for this user's children
+                $this->getAllChildrenIdsFiltered($user->id, $ids, $level_id);
+            }
         } else {
-            return $this->ids_list_all_tt;
+            $this->getAllChildrenIds($uid, $ids);
+        }
+        
+        return $ids;
+    }
+
+    /**
+     * Helper function to get child IDs filtered by level
+     */
+    private function getAllChildrenIdsFiltered($id, array &$ids, $level_id): void
+    {
+        $children = AdminUserRepository::getListByWhere(['pid' => $id, 'level_id' => $level_id]);
+            
+        foreach ($children as $child) {
+            $ids[] = $child->id;
+            $this->getAllChildrenIdsFiltered($child->id, $ids, $level_id);
+        }
+    }
+
+    /**
+     * Helper function to get child IDs recursively 
+     */
+    private function getAllChildrenIds($id, array &$ids): void
+    {
+        $children = AdminUserRepository::getListByWhere(['pid' => $id]);
+        foreach ($children as $child) {
+            $ids[] = $child->id;
+            $this->getAllChildrenIds($child->id, $ids);
         }
     }
 
@@ -160,10 +186,10 @@ class AdminUtilityMiddleware
      * @param Request $request
      * @return void
      */
-    public function isAjax(Request $request)
+    public function isAjax(Request $request): void
     {
         if (!$request->ajax()) {
-            abort(403, 'Forbidden');
+            abort(403, 'Only AJAX requests are allowed.');
         }
     }
     
