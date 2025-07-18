@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\ActivationCode;
+use App\Models\ActivationCodePreset;
+use App\Http\Requests\LicenseCodeRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class LicenseCodeController extends Controller
 {
@@ -22,5 +27,53 @@ class LicenseCodeController extends Controller
             (object)['id' => 29719, 'code' => 'HQHKJUJAWTMP', 'type' => '365-day license code', 'status' => 'Used', 'remarks' => '道洪', 'expired_date' => '2022-08-08', 'created_time' => '2021-08-08 14:52:39'],
         ];
         return view('license.list', compact('licenseCodes'));
+    }
+
+    /**
+     * Show the license code generation form.
+     */
+    public function create(): View
+    {
+        $presets = ActivationCodePreset::where('is_active', true)->get();
+        return view('license.generate', compact('presets'));
+    }
+
+    /**
+     * Handle license code generation.
+     */
+    public function store(LicenseCodeRequest $request)
+    {
+        $user = Auth::user();
+        $preset = ActivationCodePreset::findOrFail($request->activation_code_preset_id);
+        $quantity = $request->input('quantity');
+        $remarks = $request->input('remarks');
+        $totalCost = $preset->hotcoin_cost * $quantity;
+
+        // Check if user has enough HotCoin
+        if ($user->hotcoin_balance < $totalCost) {
+            return back()->withErrors(['hotcoin_balance' => __('Insufficient HOTCOIN balance.')]);
+        }
+
+        DB::transaction(function () use ($user, $preset, $quantity, $remarks, $totalCost) {
+            // Deduct HotCoin
+            $user->decrement('hotcoin_balance', $totalCost);
+
+            // Generate codes
+            for ($i = 0; $i < $quantity; $i++) {
+                ActivationCode::create([
+                    'code' => strtoupper(uniqid(bin2hex(random_bytes(3)))),
+                    'activation_code_preset_id' => $preset->id,
+                    'generated_by_agent_id' => $user->id,
+                    'status' => 'available',
+                    'hotcoin_cost_at_generation' => $preset->hotcoin_cost,
+                    'duration_days_at_generation' => $preset->duration_days,
+                    'generated_at' => now(),
+                    'expires_at' => now()->addDays($preset->duration_days),
+                    // Optionally add remarks if you have a column for it
+                ]);
+            }
+        });
+
+        return redirect()->route('license.list')->with('success', __('License codes generated successfully.'));
     }
 }
