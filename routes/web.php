@@ -5,6 +5,9 @@ use App\Http\Controllers\TrialCodeController;
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\LicenseCodeController;
 use App\Http\Controllers\CostingController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\NewLicenseCodeController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
@@ -20,9 +23,7 @@ Route::get('/', function () {
     return view('index');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -38,8 +39,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [AgentController::class, 'create'])->name('create');
     });
 
+    
+
     // License Code Management
-    Route::get('/license/generate', function () { return view('license.generate'); })->name('license.generate');
+    Route::get('/license/generate', [NewLicenseCodeController::class, 'create'])->name('license.generate');
+    Route::post('/license/generate', [NewLicenseCodeController::class, 'store'])->name('license.store');
 
     // Trial Code Management
     Route::get('/trial/generate', function () { return view('trial.generate'); })->name('trial.generate');

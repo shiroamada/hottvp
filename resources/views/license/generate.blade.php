@@ -47,27 +47,25 @@
                     <div class="kt-card-header">
                         <h3 class="kt-card-title">{{ __('messages.license_generate.title') }}</h3>
                     </div>
-                    <form>
+                    <form method="POST" action="{{ route('license.store') }}">
+                        @csrf
                         <div class="kt-card-content grid gap-5">
                             <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
                                 <label class="kt-form-label max-w-56">{{ __('messages.license_generate.type') }}</label>
-                                <select class="kt-select grow" id="code_type">
+                                <select class="kt-select grow" id="code_type" name="assort_id">
                                     <option value="">{{ __('messages.license_generate.choose_code_type') }}</option>
-                                    <option value="30_day">{{ __('messages.license_generate.license_30_day') }}</option>
-                                    <option value="90_day">{{ __('messages.license_generate.license_90_day') }}</option>
-                                    <option value="180_day">{{ __('messages.license_generate.license_180_day') }}</option>
-                                    <option value="365_day">{{ __('messages.license_generate.license_365_day') }}</option>
-                                    <option value="1_day">{{ __('messages.license_generate.license_1_day') }}</option>
-                                    <option value="7_day">{{ __('messages.license_generate.license_7_day') }}</option>
+                                    @foreach($assort_levels as $assort_level)
+                                        <option value="{{ $assort_level->id }}" data-cost="{{ $assort_level->money }}">{{ $assort_level->assort_name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
                                 <label class="kt-form-label max-w-56">{{ __('messages.license_generate.quantity') }}</label>
-                                <input class="kt-input grow" id="code_number" type="number">
+                                <input class="kt-input grow" id="code_number" name="number" type="number" value="1">
                             </div>
                             <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
                                 <label class="kt-form-label max-w-56">{{ __('messages.license_generate.remarks') }}</label>
-                                <textarea class="kt-input grow" id="remarks" rows="3"></textarea>
+                                <textarea class="kt-input grow" id="remarks" name="remark" rows="3"></textarea>
                             </div>
                             <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
                                 <label class="kt-form-label max-w-56">{{ __('messages.license_generate.need_hotcoin') }}</label>
@@ -78,7 +76,7 @@
                             <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5 justify-end">
                                 <div class="text-right">
                                     <p>HOTCOIN</p>
-                                    <p class="font-bold text-primary">710.50</p>
+                                    <p class="font-bold text-primary">{{ number_format(Auth::user()->balance, 2) }}</p>
                                     <p>{{ __('messages.license_generate.hotcoin_balance') }}</p>
                                 </div>
                             </div>
@@ -110,30 +108,20 @@
         const codeTypeSelect = document.getElementById('code_type');
         const codeNumberInput = document.getElementById('code_number');
         const needHotcoinInput = document.getElementById('need_hotcoin');
-        
-        const prices = {
-            '30_day': 7.50,
-            '90_day': 15.00,
-            '180_day': 30.00,
-            '365_day': 60.00,
-            '1_day': 1.00,
-            '7_day': 3.00
-        };
-        
+
         function calculateHotcoin() {
-            const selectedType = codeTypeSelect.value;
+            const selectedOption = codeTypeSelect.options[codeTypeSelect.selectedIndex];
+            const cost = parseFloat(selectedOption.getAttribute('data-cost')) || 0;
             const number = parseInt(codeNumberInput.value) || 0;
-            
-            if (selectedType && prices[selectedType]) {
-                const totalPrice = prices[selectedType] * number;
-                needHotcoinInput.value = totalPrice.toFixed(2);
-            } else {
-                needHotcoinInput.value = '0';
-            }
+            const totalPrice = cost * number;
+            needHotcoinInput.value = totalPrice.toFixed(2);
         }
-        
+
         codeTypeSelect.addEventListener('change', calculateHotcoin);
         codeNumberInput.addEventListener('input', calculateHotcoin);
+
+        // Initial calculation
+        calculateHotcoin();
     });
 </script>
 @endsection

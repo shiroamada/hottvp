@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Models\Assort;
 
 class CostingController extends Controller
 {
@@ -11,74 +14,48 @@ class CostingController extends Controller
      */
     public function index()
     {
-        $costingData = [
-            [
-                'id' => 1,
-                'type' => '1-day license code',
-                'retail_price' => '1.00',
-                'your_cost' => '1.00',
-                'diamond_agent_cost' => '1.00',
-                'gold_agent_cost' => '1.00',
-                'silver_agent_cost' => '1.00',
-                'bronze_agent_cost' => '1.00',
-                'customized_minimum_cost' => '1.00'
-            ],
-            [
-                'id' => 2,
-                'type' => '7-day license code',
-                'retail_price' => '10.00',
-                'your_cost' => '3.00',
-                'diamond_agent_cost' => '4.00',
-                'gold_agent_cost' => '5.00',
-                'silver_agent_cost' => '6.00',
-                'bronze_agent_cost' => '7.00',
-                'customized_minimum_cost' => '8.00'
-            ],
-            [
-                'id' => 3,
-                'type' => '30-day license code',
-                'retail_price' => '25.00',
-                'your_cost' => '7.50',
-                'diamond_agent_cost' => '11.25',
-                'gold_agent_cost' => '12.50',
-                'silver_agent_cost' => '15.00',
-                'bronze_agent_cost' => '18.00',
-                'customized_minimum_cost' => '19.00'
-            ],
-            [
-                'id' => 4,
-                'type' => '90-day license code',
-                'retail_price' => '50.00',
-                'your_cost' => '15.00',
-                'diamond_agent_cost' => '22.50',
-                'gold_agent_cost' => '25.00',
-                'silver_agent_cost' => '30.00',
-                'bronze_agent_cost' => '36.00',
-                'customized_minimum_cost' => '37.00'
-            ],
-            [
-                'id' => 5,
-                'type' => '180-day license code',
-                'retail_price' => '95.00',
-                'your_cost' => '30.00',
-                'diamond_agent_cost' => '45.00',
-                'gold_agent_cost' => '50.00',
-                'silver_agent_cost' => '60.00',
-                'bronze_agent_cost' => '72.00',
-                'customized_minimum_cost' => '73.00'
-            ],
-            [
-                'id' => 6,
-                'type' => '365-day license code',
-                'retail_price' => '180.00',
-                'your_cost' => '60.00',
-                'diamond_agent_cost' => '81.00',
-                'gold_agent_cost' => '90.00',
-                'silver_agent_cost' => '108.00',
-                'bronze_agent_cost' => '130.00',
-                'customized_minimum_cost' => '131.00'
-            ]
-        ];
+        $user = Auth::guard('admin')->user();
+        $parent_id = $user->id; // Assuming current user is the parent for now, will refine later
+
+        $assorts = Assort::orderBy('duration', 'ASC')->get();
+
+        $assort_levels = DB::table('assort_levels')
+            ->where('user_id', $parent_id)
+            ->get();
+
+        $retail_prices = DB::table('defined_retail')
+            ->where('user_id', $parent_id)
+            ->get();
+
+        $defined_assort_levels = DB::table('defined_assort_levels')
+            ->where('user_id', $parent_id)
+            ->get();
+
+        $costingData = [];
+
+        foreach ($assorts as $assort) {
+            $your_cost = $assort_levels->where('assort_id', $assort->id)->where('level_id', $user->level_id)->first();
+            $retail_price = $retail_prices->where('assort_id', $assort->id)->first();
+            $customized_minimum_cost = $defined_assort_levels->where('assort_id', $assort->id)->first();
+
+            // Placeholder for other agent costs - these would typically come from assort_levels for different level_ids
+            $diamond_agent_cost = $assort_levels->where('assort_id', $assort->id)->where('level_id', 4)->first(); // Assuming level_id 4 is Diamond
+            $gold_agent_cost = $assort_levels->where('assort_id', $assort->id)->where('level_id', 5)->first(); // Assuming level_id 5 is Gold
+            $silver_agent_cost = $assort_levels->where('assort_id', $assort->id)->where('level_id', 6)->first(); // Assuming level_id 6 is Silver
+            $bronze_agent_cost = $assort_levels->where('assort_id', $assort->id)->where('level_id', 7)->first(); // Assuming level_id 7 is Bronze
+
+            $costingData[] = [
+                'id' => $assort->id,
+                'type' => $assort->assort_name,
+                'retail_price' => $retail_price ? $retail_price->money : 'N/A',
+                'your_cost' => $your_cost ? $your_cost->money : 'N/A',
+                'diamond_agent_cost' => $diamond_agent_cost ? $diamond_agent_cost->money : 'N/A',
+                'gold_agent_cost' => $gold_agent_cost ? $gold_agent_cost->money : 'N/A',
+                'silver_agent_cost' => $silver_agent_cost ? $silver_agent_cost->money : 'N/A',
+                'bronze_agent_cost' => $bronze_agent_cost ? $bronze_agent_cost->money : 'N/A',
+                'customized_minimum_cost' => $customized_minimum_cost ? $customized_minimum_cost->money : 'N/A'
+            ];
+        }
 
         return view('costing.index', ['costingData' => $costingData]);
     }
@@ -88,25 +65,66 @@ class CostingController extends Controller
      */
     public function update(Request $request)
     {
-        // Get the ID from the request body
-        $id = $request->input('id');
-        
-        // In a real application, you would validate the input and update the database
-        // For example:
-        // $validated = $request->validate([
-        //     'id' => 'required|integer',
-        //     'retail_price' => 'required|numeric',
-        //     'your_cost' => 'required|numeric',
-        //     'diamond_agent_cost' => 'required|numeric',
-        //     'gold_agent_cost' => 'required|numeric',
-        //     'silver_agent_cost' => 'required|numeric',
-        //     'bronze_agent_cost' => 'required|numeric',
-        //     'customized_minimum_cost' => 'required|numeric',
-        // ]);
-        // 
-        // $costing = Costing::find($id);
-        // $costing->update($validated);
-        
-        return response()->json(['success' => true]);
+        $user = Auth::guard('admin')->user();
+        $assort_id = $request->input('assort_id');
+        $retail_price = $request->input('retail_price');
+        $your_cost = $request->input('your_cost');
+        $diamond_agent_cost = $request->input('diamond_agent_cost');
+        $gold_agent_cost = $request->input('gold_agent_cost');
+        $silver_agent_cost = $request->input('silver_agent_cost');
+        $bronze_agent_cost = $request->input('bronze_agent_cost');
+        $customized_minimum_cost = $request->input('customized_minimum_cost');
+
+        DB::beginTransaction();
+        try {
+            // Update retail price
+            DB::table('defined_retail')
+                ->updateOrInsert(
+                    ['user_id' => $user->id, 'assort_id' => $assort_id],
+                    ['money' => $retail_price, 'updated_at' => now()]
+                );
+
+            // Update your cost (assort_levels for current user's level)
+            DB::table('assort_levels')
+                ->updateOrInsert(
+                    ['user_id' => $user->id, 'assort_id' => $assort_id, 'level_id' => $user->level_id],
+                    ['money' => $your_cost, 'updated_at' => now()]
+                );
+
+            // Update other agent costs (assuming level_id 4-7 for Diamond, Gold, Silver, Bronze)
+            DB::table('assort_levels')
+                ->updateOrInsert(
+                    ['user_id' => $user->id, 'assort_id' => $assort_id, 'level_id' => 4],
+                    ['money' => $diamond_agent_cost, 'updated_at' => now()]
+                );
+            DB::table('assort_levels')
+                ->updateOrInsert(
+                    ['user_id' => $user->id, 'assort_id' => $assort_id, 'level_id' => 5],
+                    ['money' => $gold_agent_cost, 'updated_at' => now()]
+                );
+            DB::table('assort_levels')
+                ->updateOrInsert(
+                    ['user_id' => $user->id, 'assort_id' => $assort_id, 'level_id' => 6],
+                    ['money' => $silver_agent_cost, 'updated_at' => now()]
+                );
+            DB::table('assort_levels')
+                ->updateOrInsert(
+                    ['user_id' => $user->id, 'assort_id' => $assort_id, 'level_id' => 7],
+                    ['money' => $bronze_agent_cost, 'updated_at' => now()]
+                );
+
+            // Update customized minimum cost
+            DB::table('defined_assort_levels')
+                ->updateOrInsert(
+                    ['user_id' => $user->id, 'assort_id' => $assort_id],
+                    ['money' => $customized_minimum_cost, 'updated_at' => now()]
+                );
+
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Costing updated successfully!']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Error updating costing: ' . $e->getMessage()]);
+        }
     }
 }

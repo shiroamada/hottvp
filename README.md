@@ -6,13 +6,14 @@ This project is a Laravel-based application designed for managing code redemptio
 
 *   **Framework:** Laravel 12
 *   **Frontend Theme:** Keenthemes Metronic (Tailwind CSS 4.0 - Demo 6), Alpine.JS v3 for js event, e.g ajax
-*   **Database:** SQLite (for local development, consider PostgreSQL/MySQL for production)
+*   **Database:** SQLite (for local development, consider PostgreSQL/MySQL for production) NOTE CHANGE TO MYSQL
     **Support i18n 3 languages:** English (en), Chinese(zh_CN), Bahasa Melayu(ms). In laravel 12 the path is root\lang not inside resources
 *   **Core Features:**
     *   Agent Dashboard: Displays key metrics like HOTCOIN balance, code generation statistics, and downline agent performance.
-    *   Activation Code Generation: Allows agents to generate different types of activation codes based on predefined presets, deducting costs from their HOTCOIN balance.
+    *   Activation Code Generation: Allows agents to generate different types of activation codes based on predefined presets, deducting costs from their HOTCOIN balance. **(Implemented using `assorts` and `auth_codes` tables, with profit distribution to upline agents.)**
     *   Agent Hierarchy: Supports upline and downline agent relationships.
     *   User Authentication: Laravel Breeze (Blade + Alpine.js stack) for secure login for agents.
+    *   **Costing Management: Implemented to allow agents to view and update pricing for different license code types and agent levels. Uses `assort_levels`, `defined_retail`, and `huobis` tables.**
     *   (Planned) License Code Management, Trial Code Management, Agent Listing, etc.
 
 ## Key Technologies & Structure
@@ -28,11 +29,11 @@ This project is a Laravel-based application designed for managing code redemptio
     *   Blade views located in `resources/views/`.
         *   Main Layout: `resources/views/layouts/master.blade.php`
         *   Sidebar Partial: `resources/views/layouts/partials/_sidebar.blade.php`
-        *   Dashboard View: [resources/views/dashboard/index.blade.php](cci:7://file:///c:/Users/Administrator/Documents/GitHub/hottvp/resources/views/dashboard/index.blade.php:0:0-0:0)
+        *   Dashboard View: `resources/views/dashboard/index.blade.php`
 *   **Assets:**
     *   Keenthemes core CSS and JS are imported into `resources/css/app.css` and `resources/js/app.js` respectively. These are then processed and bundled by Vite.
     *   Static assets from Keenthemes (e.g., images, fonts, icons) are typically placed in `public/assets/media/` or structured within `resources/metronic/` and referenced appropriately.
-    *   The original Keenthemes demo files are located in the [demo/](cci:7://file:///C:/Users/Administrator/Documents/GitHub/hottvp/demo:0:0-0:0) directory in the project root for reference.
+    *   The original Keenthemes demo files are located in the `demo/` directory in the project root for reference.
 
 ## Setup & Installation (General Steps)
 
@@ -48,20 +49,25 @@ This project is a Laravel-based application designed for managing code redemptio
 ## Important Directories
 
 *   `app/Http/Controllers/`: Contains application controllers.
-    *   [DashboardController.php](cci:7://file:///c:/Users/Administrator/Documents/GitHub/hottvp/app/Http/Controllers/DashboardController.php:0:0-0:0): Handles logic for the agent dashboard.
+    *   `DashboardController.php`: Handles logic for the agent dashboard.
+    *   `NewLicenseCodeController.php`: Handles activation code generation.
+    *   `CostingController.php`: Manages costing configurations.
 *   `app/Models/`: Contains Eloquent models.
     *   `User.php` (extended for agent features)
-    *   `ActivationCodePreset.php`
-    *   `ActivationCode.php`
+    *   `Admin/AdminUser.php`: The primary user model for the admin panel.
+    *   `Assort.php`: Model for managing code types/packages.
+    *   `ActivationCodePreset.php` (Note: This was part of initial setup, but `assorts` table is now used for code types)
+    *   `ActivationCode.php` (Note: This was part of initial setup, but `auth_codes` table is now used for generated codes)
     *   `HotcoinTransaction.php`
     *   `AgentMonthlyProfit.php`
 *   `database/migrations/`: Contains database migration files.
 *   `resources/views/`: Contains Blade template files.
-*   [routes/web.php](cci:7://file:///c:/Users/Administrator/Documents/GitHub/hottvp/routes/web.php:0:0-0:0): Defines web routes.
+*   `routes/web.php`: Defines web routes.
 *   `public/`: Publicly accessible files (CSS, JS, images).
     *   `public/assets/`: May contain static media (images, fonts). Core Keenthemes styles/scripts are bundled by Vite from `resources`.
     *   `resources/metronic/`: Contains Keenthemes source assets (CSS, JS, vendors) for import into `app.css` and `app.js`.
-*   [demo/](cci:7://file:///C:/Users/Administrator/Documents/GitHub/hottvp/demo:0:0-0:0): Original Keenthemes demo files.
+*   `demo/`: Original Keenthemes demo files.
+*   `old_project_reference/`: Contains the Laravel 6.18.12 project files for reference during migration.
 
 ## Development Notes
 

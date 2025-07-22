@@ -152,7 +152,7 @@
                       <i class="ki-filled ki-user text-3xl text-purple-400"></i> <!-- Adjusted icon and color -->
                     </div>
                     <div class="grow">
-                      <div class="text-2xl font-semibold text-purple-400">673.50</div>
+                      <div class="text-2xl font-semibold text-purple-400">{{ number_format($balance, 2) }}</div>
                       <div class="text-sm text-secondary-foreground">HOTCOIN Balance</div>
                     </div>
                   </div>
@@ -166,7 +166,7 @@
                       <i class="ki-filled ki-chart-line-up text-3xl text-primary"></i>
                     </div>
                     <div class="grow">
-                      <div class="text-2xl font-semibold">0.00</div>
+                      <div class="text-2xl font-semibold">{{ number_format($monthlyGeneratedCurrentMonth, 2) }}</div>
                       <div class="text-sm text-secondary-foreground">Monthly Generated Quantity</div>
                       <div class="text-xs text-muted-foreground">No. Activation Code (This Month)</div>
                     </div>
@@ -181,7 +181,7 @@
                       <i class="ki-filled ki-send text-3xl text-primary"></i>
                     </div>
                     <div class="grow">
-                      <div class="text-2xl font-semibold">1.00</div>
+                      <div class="text-2xl font-semibold">{{ number_format($generatedLastMonth, 2) }}</div>
                       <div class="text-sm text-secondary-foreground">Generated Quantity</div>
                       <div class="text-xs text-muted-foreground">Last Month Activation Code</div>
                     </div>
@@ -196,7 +196,7 @@
                       <i class="ki-filled ki-archive text-3xl text-primary"></i>
                     </div>
                     <div class="grow">
-                      <div class="text-2xl font-semibold">14.00</div>
+                      <div class="text-2xl font-semibold">{{ number_format($totalGeneratedQuantity, 2) }}</div>
                       <div class="text-sm text-secondary-foreground">Generated Activation Code Total Quantity</div>
                     </div>
                   </div>
@@ -212,7 +212,7 @@
                     <i class="ki-filled ki-wallet text-3xl text-primary"></i> <!-- Changed icon -->
                   </div>
                   <div class="grow">
-                    <div class="text-2xl font-semibold">15.00</div>
+                    <div class="text-2xl font-semibold">{{ number_format($usageHotcoinLastMonth, 2) }}</div>
                     <div class="text-sm text-secondary-foreground">Usage of HOTCOIN</div>
                     <div class="text-xs text-muted-foreground">Last Month</div>
                   </div>
@@ -231,7 +231,7 @@
                       <i class="ki-filled ki-dollar text-3xl text-primary"></i> <!-- Changed icon -->
                     </div>
                     <div class="grow">
-                      <div class="text-2xl font-semibold">39.75</div>
+                      <div class="text-2xl font-semibold">{{ number_format($thisMonthProfit, 2) }}</div>
                       <div class="text-sm text-secondary-foreground">This Month Profit</div>
                     </div>
                   </div>
@@ -245,7 +245,7 @@
                       <i class="ki-filled ki-arrow-up-down text-3xl text-primary"></i> <!-- Changed icon -->
                     </div>
                     <div class="grow">
-                      <div class="text-2xl font-semibold">245.50</div>
+                      <div class="text-2xl font-semibold">{{ number_format($lastMonthProfit, 2) }}</div>
                       <div class="text-sm text-secondary-foreground">Last Month Profit</div>
                     </div>
                   </div>
@@ -259,7 +259,7 @@
                       <i class="ki-filled ki-crown text-3xl text-primary"></i> <!-- Changed icon -->
                     </div>
                     <div class="grow">
-                      <div class="text-2xl font-semibold">226,009.50</div>
+                      <div class="text-2xl font-semibold">{{ number_format($totalProfit, 2) }}</div>
                       <div class="text-sm text-secondary-foreground">Total Profit</div>
                     </div>
                   </div>
@@ -273,7 +273,7 @@
                       <i class="ki-filled ki-people text-3xl text-primary"></i>
                     </div>
                     <div class="grow">
-                      <div class="text-2xl font-semibold">478.00</div>
+                      <div class="text-2xl font-semibold">{{ number_format($totalMembers, 2) }}</div>
                       <div class="text-sm text-secondary-foreground">Total Members</div>
                     </div>
                   </div>

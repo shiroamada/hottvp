@@ -66,7 +66,7 @@ class UserSeeder extends Seeder
             'level_id' => 0,
             'channel_id' => 0,
             'name' => 'Hot TV Admin',
-            'account' => 'storeadmin',
+            'account' => 'storeadmin123',
             'email' => 'superadmin@wowtvs.com',
             'password' => $defaultPassword,
             'phone' => '',

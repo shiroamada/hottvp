@@ -75,7 +75,8 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => env('AUTH_MODEL', App\Models\Admin\AdminUser::class),
+             //DEFAULT MODEL TO BE AUTHENTICATED for yoursite/login, i changed to admin because i wasnt able to authenticated the real user table which is admin user, but actually can authenticate but just access localhost/admin/login
         ],
 
         // 'users' => [

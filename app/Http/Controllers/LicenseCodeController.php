@@ -2,7 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivationCode;
+use App\Models\ActivationCodePreset;
+use App\Models\AgentMonthlyProfit;
+use App\Models\HotcoinTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class LicenseCodeController extends Controller
@@ -12,15 +19,108 @@ class LicenseCodeController extends Controller
      */
     public function index(Request $request): View
     {
-        $licenseCodes = [
-            (object)['id' => 100091, 'code' => 'THSUWUPUCKGR', 'type' => '90-day license code', 'status' => 'Used', 'remarks' => '', 'expired_date' => '2025-08-21', 'created_time' => '2025-05-21 23:39:11'],
-            (object)['id' => 98276, 'code' => 'LSXZIEKOCWZJ', 'type' => '365-day license code', 'status' => 'Used', 'remarks' => '', 'expired_date' => '2025-07-31', 'created_time' => '2024-07-31 16:11:52'],
-            (object)['id' => 96977, 'code' => 'RSXURFQCORPA', 'type' => '7-day license code', 'status' => 'Used', 'remarks' => '', 'expired_date' => '2024-04-03', 'created_time' => '2024-03-27 14:39:49'],
-            (object)['id' => 96781, 'code' => 'EDZOKOLLYDQC', 'type' => '7-day license code', 'status' => 'Used', 'remarks' => '', 'expired_date' => '2024-03-16', 'created_time' => '2024-03-09 20:06:02'],
-            (object)['id' => 96197, 'code' => 'WIKVPRZWSLWT', 'type' => '365-day license code', 'status' => 'Used', 'remarks' => '', 'expired_date' => '2025-02-07', 'created_time' => '2024-02-08 18:48:39'],
-            (object)['id' => 70881, 'code' => 'HEBSXIBEKVZM', 'type' => '365-day license code', 'status' => 'Used', 'remarks' => '道洪', 'expired_date' => '2023-08-15', 'created_time' => '2022-08-15 15:22:06'],
-            (object)['id' => 29719, 'code' => 'HQHKJUJAWTMP', 'type' => '365-day license code', 'status' => 'Used', 'remarks' => '道洪', 'expired_date' => '2022-08-08', 'created_time' => '2021-08-08 14:52:39'],
-        ];
+        $licenseCodes = ActivationCode::where('generated_by_agent_id', Auth::id())->latest()->paginate(10);
         return view('license.list', compact('licenseCodes'));
+    }
+
+    /**
+     * Show the form for generating a new license code.
+     */
+    public function create(): View
+    {
+        $presets = ActivationCodePreset::where('is_active', true)->get();
+        return view('license.generate', compact('presets'));
+    }
+
+    /**
+     * Store a newly created license code in storage.
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'preset_id' => 'required|exists:activation_code_presets,id',
+            'quantity' => 'required|integer|min:1|max:100',
+            'remarks' => 'nullable|string|max:255',
+        ]);
+
+        $preset = ActivationCodePreset::find($request->preset_id);
+        $quantity = $request->quantity;
+        $totalCost = $preset->hotcoin_cost * $quantity;
+        $agent = Auth::user();
+
+        if ($agent->hotcoin_balance < $totalCost) {
+            return back()->withErrors(['hotcoin' => 'Insufficient HOTCOIN balance.'])->withInput();
+        }
+
+        DB::beginTransaction();
+        try {
+            $generatedCodes = [];
+            for ($i = 0; $i < $quantity; $i++) {
+                $generatedCodes[] = [
+                    'code' => strtoupper(Str::random(12)),
+                    'activation_code_preset_id' => $preset->id,
+                    'generated_by_agent_id' => $agent->id,
+                    'status' => 'active',
+                    'hotcoin_cost_at_generation' => $preset->hotcoin_cost,
+                    'duration_days_at_generation' => $preset->duration_days,
+                    'generated_at' => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            ActivationCode::insert($generatedCodes);
+
+            $agent->hotcoin_balance -= $totalCost;
+            $agent->save();
+
+            HotcoinTransaction::create([
+                'user_id' => $agent->id,
+                'type' => 'debit',
+                'amount' => $totalCost,
+                'description' => "Generated {$quantity} x {$preset->name} codes",
+                'related_activation_code_id' => null, // This can be improved to link to all generated codes
+            ]);
+
+            // Profit sharing
+            $upline = $agent->uplineAgent;
+            $cost_for_upline = $totalCost;
+
+            while ($upline) {
+                $upline_preset_cost = $upline->getCostForPreset($preset);
+                $profit = $cost_for_upline - ($upline_preset_cost * $quantity);
+
+                if ($profit > 0) {
+                    $upline->hotcoin_balance += $profit;
+                    $upline->total_profit_earned += $profit;
+                    $upline->save();
+
+                    HotcoinTransaction::create([
+                        'user_id' => $upline->id,
+                        'type' => 'credit',
+                        'amount' => $profit,
+                        'description' => "Profit from downline agent {$agent->name} generating {$quantity} x {$preset->name} codes",
+                        'related_activation_code_id' => null,
+                    ]);
+
+                    $monthlyProfit = AgentMonthlyProfit::firstOrCreate([
+                        'agent_id' => $upline->id,
+                        'month_year' => now()->format('Y-m'),
+                    ]);
+                    $monthlyProfit->profit_amount += $profit;
+                    $monthlyProfit->save();
+                }
+
+                $cost_for_upline = $upline_preset_cost * $quantity;
+                $upline = $upline->uplineAgent;
+            }
+
+            DB::commit();
+
+            return redirect()->route('license.list')->with('success', 'Successfully generated ' . $quantity . ' license codes.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'An error occurred while generating the codes. Please try again.'])->withInput();
+        }
     }
 }

@@ -93,12 +93,12 @@
                                     @foreach($licenseCodes as $code)
                                         <tr>
                                             <td>{{ $code->id }}</td>
-                                            <td>{{ $code->code }}</td>
-                                            <td>{{ $code->type }}</td>
-                                            <td><span class="kt-badge kt-badge-sm kt-badge-warning">{{ $code->status }}</span></td>
-                                            <td>{{ $code->remarks }}</td>
-                                            <td>{{ $code->expired_date }}</td>
-                                            <td>{{ $code->created_time }}</td>
+                                            <td>{{ $code->auth_code }}</td>
+                                            <td>{{ $code->assort->assort_name }}</td>
+                                            <td><span class="kt-badge kt-badge-sm kt-badge-warning">{{ $code->status == 0 ? 'Not Used' : 'Used' }}</span></td>
+                                            <td>{{ $code->remark }}</td>
+                                            <td>{{ $code->expire_at ? date('Y-m-d', strtotime($code->expire_at)) : 'N/A' }}</td>
+                                            <td>{{ $code->created_at }}</td>
                                             <td class="text-end">
                                                 <button class="kt-btn kt-btn-sm kt-btn-primary">Action</button>
                                             </td>

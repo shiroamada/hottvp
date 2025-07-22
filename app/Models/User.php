@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+//ignore this user model, use AdminUser model instead in every scenario
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -105,5 +105,13 @@ class User extends Authenticatable
     public function monthlyProfits()
     {
         return $this->hasMany(AgentMonthlyProfit::class, 'agent_id');
+    }
+
+    public function getCostForPreset(ActivationCodePreset $preset)
+    {
+        // This is a placeholder. In a real application, you would have a table
+        // that defines the cost of each preset for each agent level.
+        // For now, we'll just return the default cost from the preset.
+        return $preset->hotcoin_cost;
     }
 }
