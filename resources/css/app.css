@@ -33,7 +33,12 @@
 
 /* General overrides for common Bootstrap element styling */
 table, th, td {
-    border-color: initial !important; /* Reset border colors */
+    border: none !important; /* Explicitly remove all borders */
+}
+
+/* Ensure table cells don't have borders from collapsed borders */
+table {
+    border-collapse: collapse !important;
 }
 
 .btn {
@@ -54,24 +59,9 @@ table, th, td {
     border: none !important; /* Remove borders from nav items */
 }
 
-/* Force Metronic modal content visibility */
-.kt-modal.show .kt-modal-dialog,
-.kt-modal.open .kt-modal-dialog {
-    display: flex !important; /* Use flex to center content */
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-.kt-modal.show .kt-modal-content,
-.kt-modal.open .kt-modal-content {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-/* Ensure the main modal container is visible and on top */
-.kt-modal.show,
-.kt-modal.open {
+/* Scoped rules to force visibility of the specific update remark modal */
+#kt_modal_update_remark.show,
+#kt_modal_update_remark.open {
     display: block !important;
     opacity: 1 !important;
     z-index: 9999999 !important; /* Ensure it's above everything else */
@@ -83,8 +73,18 @@ table, th, td {
     overflow: auto !important;
 }
 
-.kt-modal-backdrop {
-    z-index: 9999998 !important; /* One less than modal */
+#kt_modal_update_remark.show .kt-modal-dialog,
+#kt_modal_update_remark.open .kt-modal-dialog {
+    display: flex !important; /* Use flex to center content */
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+#kt_modal_update_remark.show .kt-modal-content,
+#kt_modal_update_remark.open .kt-modal-content {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 /* Toastr custom styling */
