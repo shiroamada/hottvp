@@ -15,11 +15,11 @@ class Level extends Model
         parent::__construct($attributes);
 
         $customer_lang_name = session('customer_lang_name');
-        if (!empty($customer_lang_name) && array_key_exists($customer_lang_name, config('app.locales'))) {
+        if (! empty($customer_lang_name) && array_key_exists($customer_lang_name, config('app.locales'))) {
             if ($customer_lang_name != 'zh') {
-                $this->table = $customer_lang_name . "_levels";
+                $this->table = $customer_lang_name.'_levels';
             } else {
-                $this->table = "levels";
+                $this->table = 'levels';
             }
         }
     }

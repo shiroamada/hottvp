@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\ActivationCode;
-use App\Models\ActivationCodePreset;
-use App\Models\AgentMonthlyProfit; // We might use this or calculate on the fly
-use App\Models\HotcoinTransaction;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 use App\Http\Controllers\Controller;
-use App\Models\Admin\AdminUser; // Added for type hinting and updates
+use App\Models\ActivationCode;
+// We might use this or calculate on the fly
+use App\Models\ActivationCodePreset;
+use App\Models\Admin\AdminUser;
+use App\Models\HotcoinTransaction;
+use App\Models\Admin\Huobi;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Added for type hinting and updates
 use Illuminate\Support\Facades\DB; // Added for database transactions
 use Illuminate\Support\Str; // Added for generating unique codes
-use Illuminate\Validation\Rule; // Added for validation
+
+// Added for validation
 
 class DashboardController extends Controller
 {
@@ -25,7 +27,7 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::guard('admin')->user();
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('admin.login'); // or your admin login route
         }
 
@@ -46,10 +48,10 @@ class DashboardController extends Controller
 
         $totalGeneratedQuantity = ActivationCode::where('generated_by_agent_id', $user->id)->count();
 
-        $usageHotcoinLastMonth = HotcoinTransaction::where('agent_id', $user->id)
-            ->where('type', 'code_generation_cost')
-            ->whereBetween('transaction_date', [$startOfLastMonth, $endOfLastMonth])
-            ->sum('amount');
+        $usageHotcoinLastMonth = Huobi::where('create_id', $user->id)
+            ->where('event', 'code_generation_cost')
+            ->whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])
+            ->sum('money');
         $usageHotcoinLastMonth = abs($usageHotcoinLastMonth);
 
         $thisMonthProfit = $profit; // Use profit as total profit for now
@@ -75,7 +77,6 @@ class DashboardController extends Controller
     /**
      * Handle generation of activation codes.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function generateCode(Request $request)
@@ -88,7 +89,7 @@ class DashboardController extends Controller
 
         $preset = ActivationCodePreset::find($validated['activation_code_preset_id']);
 
-        if (!$preset || !$preset->is_active) {
+        if (! $preset || ! $preset->is_active) {
             return redirect()->route('dashboard')->with('error', 'Selected activation code type is invalid or not active.');
         }
 
@@ -118,18 +119,19 @@ class DashboardController extends Controller
             HotcoinTransaction::create([
                 'agent_id' => $user->id,
                 'type' => 'code_generation_cost',
-                'amount' => -$preset->hotcoin_cost, // Store cost as a negative value for debits
-                'description' => 'Cost for generating code: ' . $newCode->code . ' (Preset: ' . $preset->name . ')',
+                'money' => -$preset->hotcoin_cost, // Store cost as a negative value for debits
+                'description' => 'Cost for generating code: '.$newCode->code.' (Preset: '.$preset->name.')',
                 'related_activation_code_id' => $newCode->id,
                 'transaction_date' => now(),
             ]);
 
             DB::commit();
 
-            return redirect()->route('dashboard')->with('success', 'Activation code ' . $newCode->code . ' generated successfully!');
+            return redirect()->route('dashboard')->with('success', 'Activation code '.$newCode->code.' generated successfully!');
 
         } catch (\Exception $e) {
             DB::rollBack();
+
             // Log the exception $e->getMessage()
             return redirect()->route('dashboard')->with('error', 'An error occurred while generating the code. Please try again.');
         }
@@ -145,11 +147,12 @@ class DashboardController extends Controller
         do {
             // Example: A1B2-C3D4-E5F6 (adjust length and format as needed)
             $code = strtoupper(
-                Str::random(4) . '-' .
-                Str::random(4) . '-' .
+                Str::random(4).'-'.
+                Str::random(4).'-'.
                 Str::random(4)
             );
         } while (ActivationCode::where('code', $code)->exists());
+
         return $code;
     }
 }

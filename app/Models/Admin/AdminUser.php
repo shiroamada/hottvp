@@ -2,7 +2,6 @@
 
 namespace App\Models\Admin;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -11,6 +10,7 @@ class AdminUser extends Authenticatable
     use HasRoles;
 
     const STATUS_ENABLE = 1;
+
     const STATUS_DISABLE = 0;
 
     protected $guarded = [];
@@ -30,8 +30,8 @@ class AdminUser extends Authenticatable
         ],
         'created_at' => [
             'showType' => 'datetime',
-            'title' => 'Created At'
-        ]
+            'title' => 'Created At',
+        ],
     ];
 
     public function comments()

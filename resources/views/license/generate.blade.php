@@ -54,14 +54,14 @@
                                 <label class="kt-form-label max-w-56">{{ __('messages.license_generate.type') }}</label>
                                 <select class="kt-select grow" id="code_type" name="assort_id">
                                     <option value="">{{ __('messages.license_generate.choose_code_type') }}</option>
-                                    @foreach($assort_levels as $assort_level)
-                                        <option value="{{ $assort_level->id }}" data-cost="{{ $assort_level->money }}">{{ $assort_level->assort_name }}</option>
+                                    @foreach($assorts as $assort)
+                                        <option value="{{ $assort->id }}" data-cost="{{ $assort->money }}">{{ $assort->assort_name }} {{ $assort->money }} HOTCOIN</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
                                 <label class="kt-form-label max-w-56">{{ __('messages.license_generate.quantity') }}</label>
-                                <input class="kt-input grow" id="code_number" name="number" type="number" value="1">
+                                <input class="kt-input grow" id="code_number" name="number" type="number" value="1" min="1">
                             </div>
                             <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
                                 <label class="kt-form-label max-w-56">{{ __('messages.license_generate.remarks') }}</label>
@@ -102,26 +102,6 @@
 <!-- End of Page -->
 @endsection
 
-@section('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const codeTypeSelect = document.getElementById('code_type');
-        const codeNumberInput = document.getElementById('code_number');
-        const needHotcoinInput = document.getElementById('need_hotcoin');
-
-        function calculateHotcoin() {
-            const selectedOption = codeTypeSelect.options[codeTypeSelect.selectedIndex];
-            const cost = parseFloat(selectedOption.getAttribute('data-cost')) || 0;
-            const number = parseInt(codeNumberInput.value) || 0;
-            const totalPrice = cost * number;
-            needHotcoinInput.value = totalPrice.toFixed(2);
-        }
-
-        codeTypeSelect.addEventListener('change', calculateHotcoin);
-        codeNumberInput.addEventListener('input', calculateHotcoin);
-
-        // Initial calculation
-        calculateHotcoin();
-    });
-</script>
-@endsection
+@push('scripts')
+@vite('resources/js/license-generator.js')
+@endpush

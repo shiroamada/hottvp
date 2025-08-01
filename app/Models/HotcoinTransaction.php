@@ -9,6 +9,8 @@ class HotcoinTransaction extends Model
 {
     use HasFactory;
 
+    protected $table = 'huobis'; // Explicitly set table name to match existing usage
+
     protected $fillable = [
         'agent_id',
         'type',

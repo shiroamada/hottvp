@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Repository\Admin;
 
 use App\Model\Admin\TryCode;
@@ -13,13 +12,14 @@ class TryCodeRepository
 
     public static function list($perPage, $condition = [])
     {
-//        DB::connection()->enableQueryLog();#开启执行日志
+        //        DB::connection()->enableQueryLog();#开启执行日志
         $data = TryCode::query()->where(function ($query) use ($condition) {
             Searchable::buildQuery($query, $condition);
         })
             ->orderBy('id', 'desc')
             ->paginate($perPage);
-//        print_r(DB::getQueryLog());   //获取查询语句、参数和执行时间
+
+        //        print_r(DB::getQueryLog());   //获取查询语句、参数和执行时间
         return $data;
     }
 

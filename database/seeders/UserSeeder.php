@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Admin\AdminUser;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
@@ -60,7 +59,7 @@ class UserSeeder extends Seeder
         ]);
         $customerAgent->assignRole('custom agent');
 
-        //hot tv admin user
+        // hot tv admin user
         $hotTvAdmin = AdminUser::create([
             'pid' => 0,
             'level_id' => 0,
@@ -87,6 +86,6 @@ class UserSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        
+
     }
 }

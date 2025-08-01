@@ -20,6 +20,7 @@ class LicenseCodeController extends Controller
     public function index(Request $request): View
     {
         $licenseCodes = ActivationCode::where('generated_by_agent_id', Auth::id())->latest()->paginate(10);
+
         return view('license.list', compact('licenseCodes'));
     }
 
@@ -29,6 +30,7 @@ class LicenseCodeController extends Controller
     public function create(): View
     {
         $presets = ActivationCodePreset::where('is_active', true)->get();
+
         return view('license.generate', compact('presets'));
     }
 
@@ -117,9 +119,10 @@ class LicenseCodeController extends Controller
 
             DB::commit();
 
-            return redirect()->route('license.list')->with('success', 'Successfully generated ' . $quantity . ' license codes.');
+            return redirect()->route('license.list')->with('success', 'Successfully generated '.$quantity.' license codes.');
         } catch (\Exception $e) {
             DB::rollBack();
+
             return back()->withErrors(['error' => 'An error occurred while generating the codes. Please try again.'])->withInput();
         }
     }

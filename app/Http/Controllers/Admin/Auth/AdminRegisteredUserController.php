@@ -19,8 +19,8 @@ class AdminRegisteredUserController extends Controller
      */
     public function create(): View
     {
-        //no registration view for admin users
-        //return view('admin.auth.register');
+        // no registration view for admin users
+        // return view('admin.auth.register');
     }
 
     /**

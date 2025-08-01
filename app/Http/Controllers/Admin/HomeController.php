@@ -1,22 +1,19 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
-use App\Model\Admin\Equipment;
-use App\Model\Admin\Defined;
 use App\Http\Controllers\Controller;
-use App\Repository\Admin\DefinedRepository;
-use App\Repository\Admin\EquipmentRepository;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
-use App\Http\Requests\Admin\NewPasswordRequest;
+use App\Model\Admin\Defined;
+use App\Model\Admin\Equipment;
 use App\Repository\Admin\AdminUserRepository;
-use App\Repository\Admin\HuobiRepository;
 use App\Repository\Admin\AuthCodeRepository;
-use Illuminate\Support\Facades\Cache;
+use App\Repository\Admin\EquipmentRepository;
+use App\Repository\Admin\HuobiRepository;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-/**
+    /**
      * 内容管理-内容管理
      */
     public function showAggregation(Request $request)
@@ -27,7 +24,7 @@ class HomeController extends Controller
 
         $parent_id = $request->getParentId(auth()->guard('admin')->user()->id);
 
-        //$parent_id = $this->getParentId(\Auth::guard('admin')->user()->id);
+        // $parent_id = $this->getParentId(\Auth::guard('admin')->user()->id);
         // 如果级别为自定义，则从自定义里面获取数据
         if ($level_id == 8) {
             $where = ['user_id' => \Auth::guard('admin')->user()->id];
@@ -47,10 +44,10 @@ class HomeController extends Controller
             }
         }
         $month = date('m');
-        $date = date("Y-m", time());
-        $last_month = "0" . (date("m") - 1);
-        $last = strtotime("-1 month", time());
-        $last_date = date("Y-m", $last);
+        $date = date('Y-m', time());
+        $last_month = '0'.(date('m') - 1);
+        $last = strtotime('-1 month', time());
+        $last_date = date('Y-m', $last);
 
         if (\Auth::guard('admin')->user()->id == 1) {
             $where = ['is_try' => 1];
@@ -66,8 +63,8 @@ class HomeController extends Controller
         // 现获取所有的下级id
         $all_users = AdminUserRepository::getDataByWhere([]);
         $ids = $this->get_downline($all_users, \Auth::guard('admin')->user()->id, \Auth::guard('admin')->user()->level_id);
-//        $user_where = ['pid' => \Auth::guard('admin')->user()->id];
-//        $ids = AdminUserRepository::getIdsByWhere($user_where);
+        //        $user_where = ['pid' => \Auth::guard('admin')->user()->id];
+        //        $ids = AdminUserRepository::getIdsByWhere($user_where);
         $profit_where = ['status' => 0, 'type' => 1, 'user_id' => \Auth::guard('admin')->user()->id];
         // 总计下级产生利润
         $sum_profit = HuobiRepository::lowerByAddProfit($profit_where);
@@ -85,23 +82,24 @@ class HomeController extends Controller
         // 上月下级生成授权码个数
         $lower_last_month_code = HuobiRepository::lowerByCode(dates($last_date), $ids);
         $locale = session('customer_lang_name');
+
         // 当前登录用户是否存在下级
-//        $type = 0;
-//        if (\Auth::guard('admin')->user()->level_id > 7) {
-//            // 验证该用户是不是最下级
-//            $own_money = Defined::query()->where(['user_id' => \Auth::guard('admin')->user()->id])->pluck('money');
-//            $i = 0;
-//            foreach ($own_money as $k => $v) {
-//                if (($this->list[$k] - $v) < 2) {
-//                    $i++;
-//                }
-//            }
-//            if ($i == 4) {
-//                $type = 1;
-//            }
-//        }
-//        $data = $equipment->toArray();
-//        $arrDemo = arraySequence($data,'money', 'SORT_ASC');
+        //        $type = 0;
+        //        if (\Auth::guard('admin')->user()->level_id > 7) {
+        //            // 验证该用户是不是最下级
+        //            $own_money = Defined::query()->where(['user_id' => \Auth::guard('admin')->user()->id])->pluck('money');
+        //            $i = 0;
+        //            foreach ($own_money as $k => $v) {
+        //                if (($this->list[$k] - $v) < 2) {
+        //                    $i++;
+        //                }
+        //            }
+        //            if ($i == 4) {
+        //                $type = 1;
+        //            }
+        //        }
+        //        $data = $equipment->toArray();
+        //        $arrDemo = arraySequence($data,'money', 'SORT_ASC');
         return view('admin.home.content', [
             'equipment' => $equipment,
             'month_code' => $month_code,
@@ -114,8 +112,8 @@ class HomeController extends Controller
             'user_count' => $this->count,
             'lower_month_code' => $lower_month_code,
             'lower_last_month_code' => $lower_last_month_code,
-            'locale' => $locale ? $locale : "en",
-//            'type' => $type,
+            'locale' => $locale ? $locale : 'en',
+            //            'type' => $type,
         ]);
     }
 
@@ -125,7 +123,7 @@ class HomeController extends Controller
         $count_where = ['pid' => $id];
         $ids = AdminUserRepository::getIdsByWhere($count_where);
         foreach ($ids as $info) {
-            if (!empty($info)) {
+            if (! empty($info)) {
                 $this->count++;
                 $this->getLevel($info);
             }
