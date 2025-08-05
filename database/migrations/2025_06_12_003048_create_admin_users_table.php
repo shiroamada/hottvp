@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('pid')->comment('父id');
             $table->integer('level_id')->comment('级别id');
             $table->integer('channel_id')->comment('所属渠道id');
-            $table->string('name', 20)->default('')->comment('代理用户名');
+            $table->string('name', 255)->default('')->comment('代理用户名');
             $table->string('account', 50)->default('')->unique('admin_users_name_unique')->comment('账号');
             $table->string('email', 64)->default('')->comment('邮箱');
             $table->string('phone', 24)->default('')->comment('联系方式');

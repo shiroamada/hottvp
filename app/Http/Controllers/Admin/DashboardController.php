@@ -3,11 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ActivationCode;
+// use App\Models\ActivationCode;
 // We might use this or calculate on the fly
-use App\Models\ActivationCodePreset;
+// use App\Models\ActivationCodePreset;
+use App\Http\Middleware\AdminUtilityMiddleware;
 use App\Models\Admin\AdminUser;
-use App\Models\HotcoinTransaction;
+use App\Models\AuthCode;
+use App\Repository\Admin\HuobiRepository;
+use App\Repository\Admin\AuthCodeRepository;
+use App\Repository\Admin\AdminUserRepository;
+use App\Models\Assort;
 use App\Models\Admin\Huobi;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,6 +24,8 @@ use Illuminate\Support\Str; // Added for generating unique codes
 
 class DashboardController extends Controller
 {
+    public $count = 0;
+
     /**
      * Display the agent dashboard.
      *
@@ -32,34 +39,79 @@ class DashboardController extends Controller
         }
 
         $balance = $user->balance;
-        $profit = $user->profit;
+        $profit = ['status' => 0, 'type' => 1, 'user_id' => \Auth::guard('admin')->user()->id];        
         $startOfCurrentMonth = Carbon::now()->startOfMonth();
         $endOfCurrentMonth = Carbon::now()->endOfMonth();
         $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth();
         $endOfLastMonth = Carbon::now()->subMonth()->endOfMonth();
+        $month = date('m');
+        $date = date("Y-m", time());
+        $last_month = "0" . (date("m") - 1);
+        $last = strtotime("-1 month", time());
+        $last_date = date("Y-m", $last);
 
-        $monthlyGeneratedCurrentMonth = ActivationCode::where('generated_by_agent_id', $user->id)
-            ->whereBetween('generated_at', [$startOfCurrentMonth, $endOfCurrentMonth])
-            ->count();
+        if (\Auth::guard('admin')->user()->id == 1) {
+            $where = ['is_try' => 1];
+        } else {
+            $where = ['is_try' => 1, 'user_id' => \Auth::guard('admin')->user()->id];
+        }// only user id=1 (superadmin) can view all records of all users , else only see own records
+        
+        $monthlyGeneratedCurrentMonth = AuthCodeRepository::lowerByCode($where, dates($date));
+        // $monthlyGeneratedCurrentMonth = AuthCodeRepository::lowerByCode($where, [
+        //     'start_time' => $startOfCurrentMonth,
+        //     'end_time' => $endOfCurrentMonth,
+        // ]);
+        
+        $generatedLastMonth = AuthCodeRepository::lowerByCode($where, dates($last_date));
+        // $generatedLastMonth = AuthCodeRepository::lowerByCode($where, [
+        //     'start_time' => $startOfLastMonth,
+        //     'end_time' => $endOfLastMonth,
+        // ]);
 
-        $generatedLastMonth = ActivationCode::where('generated_by_agent_id', $user->id)
-            ->whereBetween('generated_at', [$startOfLastMonth, $endOfLastMonth])
-            ->count();
+        $totalGeneratedQuantity = AuthCodeRepository::countByCode($where);
 
-        $totalGeneratedQuantity = ActivationCode::where('generated_by_agent_id', $user->id)->count();
+        // // HOTCOIN Usage (Last Month) - using user_id and event 'code_generation_cost'
+        // $usageHotcoinLastMonth = Huobi::where('user_id', $user->id)
+        //     ->where('type', '2')
+        //     // ->whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])
+        //     ->whereBetween('created_at', [$startOfCurrentMonth, $endOfCurrentMonth])
+        //     ->sum('money');
+        // $usageHotcoinLastMonth = abs($usageHotcoinLastMonth);
+        $expend_where = ['type' => 2, 'user_id' => \Auth::guard('admin')->user()->id];//上月消耗 hotcoin usage
+        $usageHotcoinLastMonth = HuobiRepository::expendByHuobi($expend_where, dates($last_date));
+        $this->getLevel(\Auth::guard('admin')->user()->id);
 
-        $usageHotcoinLastMonth = Huobi::where('create_id', $user->id)
-            ->where('event', 'code_generation_cost')
-            ->whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])
-            ->sum('money');
-        $usageHotcoinLastMonth = abs($usageHotcoinLastMonth);
 
-        $thisMonthProfit = $profit; // Use profit as total profit for now
-        $lastMonthProfit = $profit; // Use profit as total profit for now
-        $totalProfit = $profit;
-        $totalMembers = AdminUser::where('pid', $user->id)->count();
-        $activationCodePresets = ActivationCodePreset::where('is_active', true)->orderBy('name')->get();
+        $all_users = AdminUserRepository::getDataByWhere([]);
+        $utility = new AdminUtilityMiddleware();
 
+        $ids = $utility->get_downline(
+            $all_users,
+            \Auth::guard('admin')->user()->id,
+            \Auth::guard('admin')->user()->level_id
+        );
+        // Total Profit - assuming 'profit_distribution' event and positive money
+        $totalProfit = HuobiRepository::lowerByAddProfit($profit);
+
+        // This Month Profit
+        $thisMonthProfit = HuobiRepository::lowerByProfit(dates($date), $profit);
+        // $thisMonthProfit = Huobi::where('user_id', $user->id)
+        //     ->where('type', '1') // Assuming 'profit_distribution' is the event for profit
+        //     ->where('money', '>', 0)
+        //     ->whereBetween('created_at', [$startOfCurrentMonth, $endOfCurrentMonth])
+        //     ->sum('money');
+
+        // Last Month Profit
+        $lastMonthProfit = HuobiRepository::lowerByProfit(dates($last_date), $profit);
+
+        // $lastMonthProfit = Huobi::where('user_id', $user->id)
+        //     ->where('type', '1') // Assuming 'profit_distribution' is the event for profit
+        //     ->where('money', '>', 0)
+        //     ->whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])
+        //     ->sum('money');
+        $totalMembers = AdminUser::count();
+        $activationCodePresets = Assort::where('try_num', '>', 0)->orderBy('assort_name')->get();
+        
         return view('admin.dashboard', compact(
             'balance',
             'monthlyGeneratedCurrentMonth',
@@ -73,7 +125,18 @@ class DashboardController extends Controller
             'activationCodePresets'
         ));
     }
-
+// 获取下级的个数
+public function getLevel($id)
+{
+    $count_where = ['pid' => $id];
+    $ids = AdminUserRepository::getIdsByWhere($count_where);
+    foreach ($ids as $info) {
+        if (!empty($info)) {
+            $this->count++;
+            $this->getLevel($info);
+        }
+    }
+}
     /**
      * Handle generation of activation codes.
      *
@@ -84,10 +147,10 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         $validated = $request->validate([
-            'activation_code_preset_id' => ['required', 'exists:activation_code_presets,id'],
+            'activation_code_preset_id' => ['required', 'exists:assorts,id'],
         ]);
 
-        $preset = ActivationCodePreset::find($validated['activation_code_preset_id']);
+        $preset = Assort::find($validated['activation_code_preset_id']);
 
         if (! $preset || ! $preset->is_active) {
             return redirect()->route('dashboard')->with('error', 'Selected activation code type is invalid or not active.');
@@ -105,10 +168,10 @@ class DashboardController extends Controller
             $user->save();
 
             // 2. Create the Activation Code
-            $newCode = ActivationCode::create([
+            $newCode = AuthCode::create([
                 'code' => $this->generateUniqueCode(), // Helper method to generate a unique code string
-                'activation_code_preset_id' => $preset->id,
-                'generated_by_agent_id' => $user->id,
+                'assort_id' => $preset->id,
+                'user_id' => $user->id,
                 'status' => 'available',
                 'hotcoin_cost_at_generation' => $preset->hotcoin_cost,
                 'duration_days_at_generation' => $preset->duration_days,
@@ -116,18 +179,18 @@ class DashboardController extends Controller
             ]);
 
             // 3. Create Hotcoin Transaction Log
-            HotcoinTransaction::create([
-                'agent_id' => $user->id,
-                'type' => 'code_generation_cost',
+            Huobi::create([
+                'user_id' => $user->id,
+                'event' => 'code_generation_cost',
                 'money' => -$preset->hotcoin_cost, // Store cost as a negative value for debits
                 'description' => 'Cost for generating code: '.$newCode->code.' (Preset: '.$preset->name.')',
-                'related_activation_code_id' => $newCode->id,
-                'transaction_date' => now(),
+                'related_auth_code_id' => $newCode->id,
+                'created_at' => now(),
             ]);
 
             DB::commit();
 
-            return redirect()->route('dashboard')->with('success', 'Activation code '.$newCode->code.' generated successfully!');
+            return redirect()->route('dashboard')->with('success', 'Auth code '.$newCode->code.' generated successfully!');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -151,8 +214,9 @@ class DashboardController extends Controller
                 Str::random(4).'-'.
                 Str::random(4)
             );
-        } while (ActivationCode::where('code', $code)->exists());
+        } while (AuthCode::where('code', $code)->exists());
 
         return $code;
     }
+    
 }

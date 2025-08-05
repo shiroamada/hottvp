@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Models\Admin\AdminUser;
 
 test('login screen can be rendered', function () {
     $response = $this->get('/login');
@@ -9,32 +9,32 @@ test('login screen can be rendered', function () {
 });
 
 test('users can authenticate using the login screen', function () {
-    $user = User::factory()->create();
+    $user = AdminUser::factory()->create();
 
     $response = $this->post('/login', [
         'email' => $user->email,
         'password' => 'password',
-    ]);
+    ])->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
 
     $this->assertAuthenticated();
     $response->assertRedirect(route('dashboard', absolute: false));
 });
 
 test('users can not authenticate with invalid password', function () {
-    $user = User::factory()->create();
+    $user = AdminUser::factory()->create();
 
     $this->post('/login', [
         'email' => $user->email,
         'password' => 'wrong-password',
-    ]);
+    ])->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
 
     $this->assertGuest();
 });
 
 test('users can logout', function () {
-    $user = User::factory()->create();
+    $user = AdminUser::factory()->create();
 
-    $response = $this->actingAs($user)->post('/logout');
+    $response = $this->actingAs($user)->postJson('/logout');
 
     $this->assertGuest();
     $response->assertRedirect('/');

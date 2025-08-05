@@ -95,9 +95,9 @@ class User extends Authenticatable
     /**
      * Get the hotcoin transactions for this user.
      */
-    public function hotcoinTransactions()
+    public function huobis()
     {
-        return $this->hasMany(HotcoinTransaction::class, 'agent_id');
+        return $this->hasMany(\App\Models\Admin\Huobi::class, 'user_id');
     }
 
     /**
@@ -108,7 +108,7 @@ class User extends Authenticatable
         return $this->hasMany(AgentMonthlyProfit::class, 'agent_id');
     }
 
-    public function getCostForPreset(ActivationCodePreset $preset)
+    public function getCostForPreset(\App\Models\Assort $preset)
     {
         // This is a placeholder. In a real application, you would have a table
         // that defines the cost of each preset for each agent level.

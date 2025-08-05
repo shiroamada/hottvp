@@ -61,25 +61,24 @@ class LicenseCodeController extends Controller
                 $generatedCodes[] = [
                     'code' => strtoupper(Str::random(12)),
                     'activation_code_preset_id' => $preset->id,
-                    'generated_by_agent_id' => $agent->id,
+                    'user_id' => $agent->id,
                     'status' => 'active',
                     'hotcoin_cost_at_generation' => $preset->hotcoin_cost,
                     'duration_days_at_generation' => $preset->duration_days,
-                    'generated_at' => now(),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
             }
 
-            ActivationCode::insert($generatedCodes);
+            AuthCode::insert($generatedCodes);
 
             $agent->hotcoin_balance -= $totalCost;
             $agent->save();
 
-            HotcoinTransaction::create([
+            Huobi::create([
                 'user_id' => $agent->id,
-                'type' => 'debit',
-                'amount' => $totalCost,
+                'event' => 'debit',
+                'money' => $totalCost,
                 'description' => "Generated {$quantity} x {$preset->name} codes",
                 'related_activation_code_id' => null, // This can be improved to link to all generated codes
             ]);
@@ -97,10 +96,10 @@ class LicenseCodeController extends Controller
                     $upline->total_profit_earned += $profit;
                     $upline->save();
 
-                    HotcoinTransaction::create([
+                    Huobi::create([
                         'user_id' => $upline->id,
-                        'type' => 'credit',
-                        'amount' => $profit,
+                        'event' => 'credit',
+                        'money' => $profit,
                         'description' => "Profit from downline agent {$agent->name} generating {$quantity} x {$preset->name} codes",
                         'related_activation_code_id' => null,
                     ]);
