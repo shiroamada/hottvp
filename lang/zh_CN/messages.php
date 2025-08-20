@@ -204,4 +204,38 @@ return [
             'action' => '操作',
         ],
     ],
+
+    // General translations
+    'general' => [
+        'select_code' => '选择代码',
+        'authorization_code' => '授权码',
+        'message' => '消息',
+        'membership_authorization_code' => '会员授权码',
+        'confirm' => '确认',
+        'select' => '选择',
+        'createSuccess' => '创建成功',
+        'createFailed' => '创建失败',
+        'updateSuccess' => '更新成功',
+        'updateFailed' => '更新失败',
+        'generate' => '生成',
+        'return' => '返回',
+        'error' => '错误',
+    ],
+
+    // Home translations
+    'home' => [
+        'copy' => '复制',
+    ],
+
+    // AuthCode translations
+    'authCode' => [
+        'remark' => '备注',
+        'auth_code_fail' => '授权码生成失败',
+        'exceed' => '超出限制',
+    ],
+
+    // Huobi translations
+    'huobi' => [
+        'money' => '美元',
+    ],
 ];

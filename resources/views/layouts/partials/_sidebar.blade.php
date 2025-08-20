@@ -1,5 +1,5 @@
 <!-- Sidebar -->
-   <div class="fixed top-0 bottom-0 z-20 hidden lg:flex flex-col shrink-0 w-(--sidebar-width) bg-muted [--kt-drawer-enable:true] lg:[--kt-drawer-enable:false]" data-kt-drawer="true" data-kt-drawer-class="kt-drawer kt-drawer-start flex top-0 bottom-0" id="sidebar">
+<div class="fixed top-0 bottom-0 z-20 hidden lg:flex flex-col shrink-0 w-(--sidebar-width) bg-muted [--kt-drawer-enable:true] lg:[--kt-drawer-enable:false]" data-kt-drawer="true" data-kt-drawer-class="kt-drawer kt-drawer-start flex top-0 bottom-0" id="sidebar">
     <!-- Sidebar Header -->
     <div id="sidebar_header">
      <div class="flex items-center gap-2.5 px-3.5 h-[70px]">
@@ -42,7 +42,7 @@
           </i>
          </span>
          <span class="kt-menu-title font-medium text-sm text-foreground kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-          {{ __('messages.sidebar.license_code_management.title') }}
+          {{ __('messages.sidebar.license_code_management.title') }} 
          </span>
          <span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
           <span class="inline-flex kt-menu-item-show:hidden">
@@ -72,7 +72,7 @@
          </div>
         </div>
        </div>
-       <div class="kt-menu-item {{ request()->routeIs('trial.*') ? 'here show' : '' }}" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
+       <div class="kt-menu-item {{ request()->routeIs('admin.try.*') ? 'here show' : '' }}" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
         <div class="kt-menu-link gap-2.5 py-2 px-2.5 rounded-md border border-transparent">
          <span class="kt-menu-icon items-start text-secondary-foreground text-lg kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
           <i class="ki-filled ki-setting-2">
@@ -93,25 +93,23 @@
          </span>
         </div>
         <div class="kt-menu-accordion gap-px ps-7">
-         <div class="kt-menu-item {{ request()->routeIs('trial.generate') ? 'active' : '' }}">
-          <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('trial.generate') }}">
+         <div class="kt-menu-item {{ request()->routeIs('admin.try.add') ? 'active' : '' }}">
+          <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('admin.try.add') }}">
            <span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
             {{ __('messages.sidebar.trial_code_management.generate') }}
            </span>
           </a>
          </div>
-         <div class="kt-menu-item {{ request()->routeIs('trial.list') ? 'active' : '' }}">
-          <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('trial.list') }}">
+         <div class="kt-menu-item {{ request()->routeIs('admin.try.list') ? 'active' : '' }}">
+          <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('admin.try.list') }}">
            <span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
             {{ __('messages.sidebar.trial_code_management.list') }}
            </span>
           </a>
          </div>
-         
-         
         </div>
        </div>
-       <div class="kt-menu-item {{ request()->routeIs('agent.*') ? 'here show' : '' }}" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
+       <div class="kt-menu-item {{ request()->routeIs('admin.users.index') || request()->routeIs('admin.users.create') ? 'here show' : '' }}" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
         <div class="kt-menu-link gap-2.5 py-2 px-2.5 rounded-md border border-transparent">
          <span class="kt-menu-icon items-start text-secondary-foreground text-lg kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
           <i class="ki-filled ki-users">
@@ -132,21 +130,20 @@
          </span>
         </div>
         <div class="kt-menu-accordion gap-px ps-7">
-         <div class="kt-menu-item {{ request()->routeIs('agent.list') ? 'active' : '' }}">
-          <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('agent.list') }}">
+         <div class="kt-menu-item {{ request()->routeIs('admin.users.index') ? 'active' : '' }}">
+          <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('admin.users.index') }}">
            <span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
             {{ __('messages.sidebar.agent_management.list') }}
            </span>
           </a>
          </div>
-         <div class="kt-menu-item {{ request()->routeIs('agent.create') ? 'active' : '' }}">
-          <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('agent.create') }}">
+         <div class="kt-menu-item {{ request()->routeIs('admin.users.create') ? 'active' : '' }}">
+          <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('admin.users.create') }}">
            <span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
             {{ __('messages.sidebar.agent_management.add_new') }}
            </span>
           </a>
          </div>
-         
         </div>
        </div>
         <div class="kt-menu-item {{ request()->routeIs('hotcoin.transaction') ? 'active' : '' }}">
@@ -160,8 +157,8 @@
          </span>
         </a>
        </div>
-       <div class="kt-menu-item {{ request()->routeIs('all-agents.list') ? 'active' : '' }}">
-        <a class="kt-menu-link gap-2.5 py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('all-agents.list') }}">
+       <div class="kt-menu-item {{ request()->is('agents') ? 'active' : '' }}">
+        <a class="kt-menu-link gap-2.5 py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ url('/agents') }}">
          <span class="kt-menu-icon items-start text-lg text-secondary-foreground kt-menu-item-active:text-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
           <i class="ki-filled ki-home-3">
           </i>
@@ -220,7 +217,7 @@
           </a>
          </div>
          <div class="kt-menu-item {{ request()->routeIs('license.list') ? 'active' : '' }}">
-          <a class="kt-menu-link py-1 px-2 my-0.5 rounded-md kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('license.list') }}">
+          <a class="kt-menu-link py-1 px-2 my-0.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('license.list') }}">
            <span class="kt-menu-icon text-secondary-foreground kt-menu-link-hover:text-mono rounded-md flex place-content-center size-7 me-2.5 bg-border border border-input kt-menu-item-active:border-none kt-menu-link-hover:border-light kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-none kt-menu-icon-xs">
             <i class="ki-filled ki-abstract-39">
             </i>
@@ -297,7 +294,7 @@
          <input class="kt-switch" data-kt-theme-switch-state="dark" data-kt-theme-switch-toggle="true" name="check" type="checkbox" value="1"/>
         </div>
         {{--form logout --}}
-        <form id="logout-form" action="{{ route('logout') }}" method="POST">
+        <form id="logout-form" action="{{ route('admin.logout') }}" method="POST">
             @csrf
             <button class="kt-btn kt-btn-outline justify-center w-full" type="submit">
                {{ __('messages.sidebar.log_out') }}
@@ -311,7 +308,7 @@
      <div class="flex items-center gap-1.5">
       <!-- Notifications -->
       
-      <form id="logout-form2" action="{{ route('logout') }}" method="POST">
+      <form id="logout-form2" action="{{ route('admin.logout') }}" method="POST">
             @csrf
       <button class="kt-btn kt-btn-ghost kt-btn-icon size-8 hover:bg-background hover:[&_i]:text-primary" 
       data-kt-tooltip="#external_tooltip"

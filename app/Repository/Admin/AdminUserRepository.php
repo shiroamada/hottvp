@@ -3,6 +3,8 @@
 namespace App\Repository\Admin;
 
 use App\Models\Admin\AdminUser;
+use App\Models\Admin\Menu;
+
 use App\Repository\Searchable;
 use Illuminate\Support\Facades\DB;
 
@@ -159,6 +161,9 @@ class AdminUserRepository
 
     public static function addByPass($data)
     {
+        if (isset($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        }
         unset($data['agency']);
         unset($data['own']);
         unset($data['choice']);

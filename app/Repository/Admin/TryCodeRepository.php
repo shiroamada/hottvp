@@ -2,7 +2,7 @@
 
 namespace App\Repository\Admin;
 
-use App\Model\Admin\TryCode;
+use App\Models\TryCode;
 use App\Repository\Searchable;
 use Illuminate\Support\Facades\DB;
 

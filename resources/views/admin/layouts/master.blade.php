@@ -20,7 +20,7 @@
   <meta content="website" property="og:type"/>
   <meta content="@hottvplus" property="og:site_name"/>
   <meta content="Hot TV Plus" property="og:title"/>
-  <meta content="" property="og:description"/>
+  <meta content="" name="description"/>
   <meta content="assets/media/app/og-image.png" property="og:image"/>
   <link href="assets/media/app/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
   <link href="assets/media/app/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
@@ -69,6 +69,7 @@
   <!-- End of Theme Mode -->
   
    <!--end::Custom Javascript-->
+    <script src="{{ asset('public/admin/js/jquery.min.js') }}"></script>
     @stack('scripts')
     <!--end::Javascript-->
  </body>

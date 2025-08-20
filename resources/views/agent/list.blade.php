@@ -34,11 +34,11 @@
                 <div class="flex items-center flex-wrap gap-1 lg:gap-5">
                     <h1 class="font-medium text-lg text-mono">
                         <i class="ki-filled ki-abstract-28 me-2"></i>
-                        {{ __('messages.agent_list.title') }}
+                        {{trans('adminUser.managers')}}
                     </h1>
                 </div>
                 <div class="flex items-center flex-wrap gap-1.5 lg:gap-3.5">
-                    <a href="{{ route('agent.create') }}" class="kt-btn kt-btn-primary">{{ __('messages.agent_list.add_new_agent') }}</a>
+                    <a href="{{ route('admin.users.create') }}" class="kt-btn kt-btn-primary">{{trans('adminUser.newAdministrator')}}</a>
                 </div>
             </div>
             <!-- End of Container -->
@@ -50,12 +50,20 @@
                 <div class="kt-card kt-card-grid min-w-full">
                     <div class="kt-card-header flex-wrap gap-2">
                         <div class="flex flex-wrap gap-2 lg:gap-5">
-                            <div class="flex">
-                                <input class="kt-input w-40" placeholder="{{ __('messages.agent_list.agent_name_placeholder') }}" type="text" value=""/>
-                            </div>
-                            <div class="flex flex-wrap gap-2.5">
-                                <button class="kt-btn kt-btn-primary">{{ __('messages.agent_list.search') }}</button>
-                            </div>
+                            <form name="admin_list_sea" class="form-search flex flex-wrap gap-2.5" method="get"
+                                  action="{{ route('admin.users.index') }}">
+                                {{ csrf_field() }}
+                                <div class="flex">
+                                    <input class="kt-input w-40" type="text"
+                                           placeholder="{{trans('adminUser.name')}}" name="name"
+                                           value="{{ $condition['name'] ?? '' }}" autocomplete="off">
+                                </div>
+
+                                <div class="flex flex-wrap gap-2.5">
+                                    <button class="kt-btn kt-btn-success" type="submit" lay-submit lay-filter="formAdminUser"
+                                            id="submitBtn">{{trans('general.search')}}</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     <div class="kt-card-content">
@@ -75,34 +83,88 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {{-- @foreach($agents as $agent) --}}
-                                        <tr>
-                                            <td>25</td>
-                                            <td>Unstoppable</td>
-                                            <td>Diamond Pro</td>
-                                            <td>558.25</td>
-                                            <td>226,046.50</td>
-                                            <td></td>
-                                            <td>2020-07-26 23:52:28</td>
-                                            <td class="text-end">
-                                                <div class="kt-menu-item grow" data-kt-menu-item-offset="0px,0px" data-kt-menu-item-placement="bottom-end" data-kt-menu-item-toggle="dropdown" data-kt-menu-item-trigger="click|hover">
-                                                    <button class="kt-btn kt-btn-sm kt-btn-primary">{{ __('messages.agent_list.table.action') }}</button>
-                                                    <div class="kt-dropdown-menu">
-                                                        <div class="kt-menu-item">
-                                                            <a class="kt-menu-link" href="#">Action 1</a>
-                                                        </div>
-                                                        <div class="kt-menu-item">
-                                                            <a class="kt-menu-link" href="#">Action 2</a>
+                                    @isset($agents)
+                                        @foreach($agents as $agent)
+                                            <tr>
+                                                <td>{{ $agent->id }}</td>
+                                                @if($agent->is_cancel != 0)
+                                                    <td title="{{ $agent->name ?? ""}}">{{ $agent->name ?? "" }} {{trans('general.is_del')}}</td>
+                                                @else
+                                                    <td title="{{ $agent->name ?? "" }}">{{ $agent->name ?? "" }}</td>
+                                                @endif
+                                                <td>
+                                                    {{ $agent->levels->level_name ?? "" }}
+                                                    @if(Auth::guard('admin')->user()->level_id <= 3)
+                                                        @if($agent->type == 2)
+                                                            <i>Pro</i>
+                                                        @endif
+                                                    @endif
+                                                </td>
+                                                <td>{{ number_format($agent->balance, 2) }}</td>
+                                                <td>
+                                                    @php
+                                                        $profit = 0;
+                                                        if (isset($agent->monthlyProfits)) {
+                                                            $profit = $agent->monthlyProfits->sum('profit');
+                                                        }
+                                                    @endphp
+                                                    {{ number_format($profit, 2) }}
+                                                </td>
+                                                <td title="{{ $agent->remark }}">
+                                                    @if(mb_strlen($agent->remark) > 10)
+                                                        {{ mb_substr($agent->remark, 0, 10) }}...
+                                                    @else
+                                                        {{ $agent->remark }}
+                                                    @endif
+                                                </td>
+                                                <td>{{ $agent->created_at }}</td>
+                                                <td class="text-end">
+                                                    <div class="kt-menu-item grow" data-kt-menu-item-offset="0px,0px" data-kt-menu-item-placement="bottom-end" data-kt-menu-item-toggle="dropdown" data-kt-menu-item-trigger="click|hover">
+                                                        <button class="kt-btn kt-btn-sm kt-btn-primary">{{ __('messages.agent_list.table.action') }}</button>
+                                                        <div class="kt-dropdown-menu">
+                                                            @if(Auth::guard('admin')->user()->id != 1)
+                                                                <div class="kt-menu-item">
+                                                                    <a class="kt-menu-link" href="{{ route('admin.users.check', ['id' => $agent->id]) }}">{{trans('adminUser.check')}}</a>
+                                                                </div>
+                                                                @if($agent->is_cancel == 0)
+                                                                <div class="kt-menu-item">
+                                                                    <a class="kt-menu-link" href="{{ route('admin.users.recharge', ['id' => $agent->id]) }}">{{trans('adminUser.chongzhi')}}</a>
+                                                                </div>
+                                                                @endif
+                                                                @if($agent->is_cancel != 2)
+                                                                <div class="kt-menu-item">
+                                                                    <a class="kt-menu-link" href="{{ route('admin.users.lower', ['id' => $agent->id]) }}">{{trans('adminUser.lower_agent')}}</a>
+                                                                </div>
+                                                                @endif
+                                                            @else
+                                                                <div class="kt-menu-item">
+                                                                    <a class="kt-menu-link" href="{{ route('admin.users.look', ['id' => $agent->id]) }}">{{trans('adminUser.check_cost')}}</a>
+                                                                </div>
+                                                                <div class="kt-menu-item">
+                                                                    <a class="kt-menu-link" href="{{ route('admin.users.lower', ['id' => $agent->id]) }}">{{trans('adminUser.lower_agent')}}</a>
+                                                                </div>
+                                                                <div class="kt-menu-item">
+                                                                    <a class="kt-menu-link" href="{{ route('admin.users.check', ['id' => $agent->id]) }}">{{trans('adminUser.check')}}</a>
+                                                                </div>
+                                                                <div class="kt-menu-item">
+                                                                    <a class="kt-menu-link" href="{{ route('admin.users.recharge', ['id' => $agent->id]) }}">{{trans('adminUser.chongzhi')}}</a>
+                                                                </div>
+                                                            @endif
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    {{-- @endforeach --}}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endisset
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                    </div>
+                    <div class="kt-card-footer">
+                        @isset($agents)
+                        {!! $agents->appends(request()->except('page'))->render() !!}
+                        @endisset
                     </div>
                 </div>
             </div>

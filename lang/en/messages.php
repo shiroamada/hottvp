@@ -226,6 +226,7 @@ return [
         'delete_success' => 'Deleted successfully',
         'delete_confirm' => 'Are you sure you want to delete this item?',
         'is_del' => '(Deleted)',
+
     ],
 
     'agent_add' => [
@@ -396,4 +397,38 @@ return [
     'trial_generate.apply_for_trial_code' => 'Generate Trial Code',
     'trial_generate.reset' => 'Reset',
     'trial_generate.return' => 'Return',
+
+    // General translations
+    'general' => [
+        'select_code' => 'Select Code',
+        'authorization_code' => 'Authorization Code',
+        'message' => 'Message',
+        'membership_authorization_code' => 'Membership Authorization Code',
+        'confirm' => 'Confirm',
+        'select' => 'Select',
+        'createSuccess' => 'Created successfully',
+        'createFailed' => 'Creation failed',
+        'updateSuccess' => 'Updated successfully',
+        'updateFailed' => 'Update failed',
+        'generate' => 'generated',
+        'return' => 'Return',
+        'error' => 'Error',
+    ],
+
+    // Home translations
+    'home' => [
+        'copy' => 'Copy',
+    ],
+
+    // AuthCode translations
+    'authCode' => [
+        'remark' => 'Remark',
+        'auth_code_fail' => 'Authorization code generation failed',
+        'exceed' => 'Exceeded limit',
+    ],
+
+    // Huobi translations
+    'huobi' => [
+        'money' => 'USD',
+    ],
 ];

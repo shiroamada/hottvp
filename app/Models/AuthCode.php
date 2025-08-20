@@ -13,15 +13,8 @@ class AuthCode extends Model
 
     protected $table = 'auth_codes';
 
-    protected $fillable = [
-        'assort_id',
-        'user_id',
-        'auth_code',
-        'num',
-        'type',
-        'remark',
-        'is_try',
-    ];
+    protected $fillable = ['id', 'assort_id', 'user_id', 'auth_code', 'remark', 'status', 'expire_at'];
+
 
     /**
      * Get the assort that the code belongs to.

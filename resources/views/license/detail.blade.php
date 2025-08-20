@@ -66,7 +66,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse($codes as $code)
+                                            @forelse($code_list as $code)
                                             <tr>
                                                 <td>{{ $code->auth_code }}</td>
                                                 <td>{{ $code->assort->assort_name ?? 'N/A' }}</td>

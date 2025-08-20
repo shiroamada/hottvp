@@ -1,6 +1,6 @@
 # Hot TV - Code Redemption & Agent System
 
-This project is a Laravel-based application designed for managing code redemptions and an agent system. It utilizes the Keenthemes Metronic Tailwind CSS theme (Demo 6) for its frontend.
+This project is a Laravel-based application designed for managing code redemptions and an agent system. It utilizes the Keenthemes Metronic Tailwind CSS theme (Demo 6) for its frontend. 
 
 ## Project Overview
 
@@ -75,3 +75,6 @@ This project is a Laravel-based application designed for managing code redemptio
 *   The application uses custom Keenicon classes for icons (e.g., `ki-filled ki-wallet`). Refer to Keenthemes documentation for available icons.
 *   The application uses Laravel Breeze for authentication and authorization.
 *   All pages should extend the `resources/views/layouts/master.blade.php` layout for a consistent look and feel.
+
+## GEMINI READ HERE IMPORTANT
+* NOW THE WAYS TO PROCEED THIS MIGRATION PROJECT, FIRST COPY THE WHOLE CONTENT OF THE CONTROLLERS AND ONLY THEN TO CREATE NEEDED REPOSITORY OR MODELS FILE AND THEN MIGRATE THE SYNTAX FROM LARAVEL 6 TO LARAVEL 12 IF NEEDED. main goal is to migrate the business logic from the project completely, and if you want to do a different or create different thing always ask me first

@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full" data-kt-theme="true" data-kt-theme-mode="light" dir="ltr">
  <head>
-  <title>
-   {{ $html_title ?? config('app.name', 'HOT TV PLUS') }}
-  </title>
+  <title>{{ $html_title ?? config('app.name', 'HOT TV PLUS') }}</title>
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta charset="utf-8"/>
   <meta content="follow, index" name="robots"/>
@@ -29,47 +27,32 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   
   @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-	@vite(['resources/css/app.css', 'resources/js/app.js'])
-   <!-- @vite([
-    'resources/css/app.css',
-    'resources/js/app.js',
-    'resources/metronic/dist/assets/css/styles.css'
-]) -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
   @endif
   @stack('styles')
  </head>
  <body class="antialiased flex h-full text-base text-foreground bg-background [--header-height:60px] [--sidebar-width:270px] lg:overflow-hidden bg-muted">
-  <!-- Theme Mode -->
-   @yield('content')
+  @yield('content')
   <script>
-   const defaultThemeMode = 'light'; // light|dark|system
-			let themeMode;
-
-			if (document.documentElement) {
-				if (localStorage.getItem('kt-theme')) {
-					themeMode = localStorage.getItem('kt-theme');
-				} else if (
-					document.documentElement.hasAttribute('data-kt-theme-mode')
-				) {
-					themeMode =
-						document.documentElement.getAttribute('data-kt-theme-mode');
-				} else {
-					themeMode = defaultThemeMode;
-				}
-
-				if (themeMode === 'system') {
-					themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches
-						? 'dark'
-						: 'light';
-				}
-
-				document.documentElement.classList.add(themeMode);
-			}
+   const defaultThemeMode = 'light';
+   let themeMode;
+   if (document.documentElement) {
+    if (localStorage.getItem('kt-theme')) {
+     themeMode = localStorage.getItem('kt-theme');
+    } else if (document.documentElement.hasAttribute('data-kt-theme-mode')) {
+     themeMode = document.documentElement.getAttribute('data-kt-theme-mode');
+    } else {
+     themeMode = defaultThemeMode;
+    }
+    if (themeMode === 'system') {
+     themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.classList.add(themeMode);
+   }
   </script>
-  <!-- End of Theme Mode -->
-  
-   <!--end::Custom Javascript-->
-    @stack('scripts')
-    <!--end::Javascript-->
+  <!-- Dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+  @stack('scripts')
  </body>
 </html>

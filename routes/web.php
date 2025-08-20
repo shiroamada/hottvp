@@ -4,7 +4,7 @@ use App\Http\Controllers\AgentController;
 use App\Http\Controllers\CostingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LicenseCodeController;
-use App\Http\Controllers\NewLicenseCodeController;
+use App\Http\Controllers\Admin\NewLicenseCodeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TrialCodeController;
 use Illuminate\Support\Facades\Redirect;
@@ -57,12 +57,13 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/trial/export', [TrialCodeController::class, 'export'])->name('trial.export');
 
     // Agent Management
-    Route::get('/agent/list', function () {
-        return view('agent.list');
-    })->name('agent.list');
+    // Agent Management
+Route::get('/agent/list', function () {
+    return view('agent.list');
+})->name('agent.list.view');
     Route::get('/agent/create', function () {
         return view('agent.create');
-    })->name('agent.create');
+    })->name('agent.create.view');
 
     // Other menus
     Route::get('/hotcoin/transaction', function () {

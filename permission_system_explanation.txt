@@ -1,0 +1,35 @@
+Here is a summary of the Spatie permission system and how it's used in this project.
+
+### 1. What is `spatie/laravel-permission`?
+
+`spatie/laravel-permission` is a very popular third-party package for Laravel that makes it easy to manage user **roles** and **permissions**. Think of it like a security guard for your application.
+
+*   **Permissions** are specific actions a user can take, like "create agents", "edit settings", or "view reports".
+*   **Roles** are names for a group of permissions, like "Super Admin", "National Agent", or "Standard Agent".
+
+Instead of giving every user a specific list of permissions, you can create a role, assign all the necessary permissions to that role, and then just assign the role to a user. This makes managing user access much easier.
+
+### 2. How does it work in this project?
+
+This project uses the package in a clever way: **menu items are treated as permissions**.
+
+The `Menu` model is registered with the `spatie/laravel-permission` package as the main "permission" model. This means that the sidebar menu you see is dynamically built based on the permissions your role has. If your role doesn't have the "permission" for a specific menu item, you simply won't see that link in the sidebar, effectively controlling what pages you can access.
+
+### 3. Does it relate to the "Enhanced" and "Normal" types?
+
+The **"Normal / Enhanced" `type` is a separate, custom feature**. It is **not** part of the `spatie/laravel-permission` system.
+
+*   The **Spatie package** controls access based on roles and permissions (e.g., "Can this user see the 'Costing Management' menu?").
+*   The **`type` field** is used for special business logic within the application (e.g., "Can this Level 3 user see the radio buttons to create an 'Enhanced' sub-agent?").
+
+So, they are two parallel systems that work together. Your role determines what pages you can access, while your `type` might unlock special features on those pages.
+
+### 4. What do the tables mean?
+
+You are correct, those three tables are the heart of the system.
+
+*   `hot_roles`: This is your application's main `roles` table. It stores the names of the roles, like "Super Admin". The `hot_` prefix is just a custom name for this project.
+*   `role_has_permissions`: This table connects roles to permissions. It holds records that say, for example, "the 'National Agent' role has the 'create agents' permission".
+*   `model_has_permissions`: This table connects users directly to permissions. It's for special cases where you want to give a single user a permission without creating a whole new role for them. The "model" in the name just means the user.
+
+So, when a user tries to do something, the system can check: "Does this user have the permission directly (`model_has_permissions`)? Or, do they have a role (`hot_roles`) that has this permission (`role_has_permissions`)?" If the answer is yes, they are allowed to proceed.

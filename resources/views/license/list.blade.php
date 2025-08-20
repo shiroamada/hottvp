@@ -71,9 +71,19 @@
                                         <label for="assort_id" class="kt-form-label">Type</label>
                                         <select id="assort_id" name="assort_id" class="kt-select">
                                             <option value="">All</option>
-                                            @foreach($assorts as $assort)
-                                                <option value="{{ $assort->id }}" @if(request('assort_id') == $assort->id) selected @endif>{{ $assort->assort_name }}</option>
-                                            @endforeach
+                                            <tbody>
+@forelse ($lists as $list)
+    <tr>
+        <td>{{ $list->id }}</td>
+        <td>{{ $list->code }}</td>
+        <td>{{ $list->created_at }}</td>
+    </tr>
+@empty
+    <tr>
+        <td colspan="3">No data available</td>
+    </tr>
+@endforelse
+</tbody>
                                         </select>
                                     </div>
                                     <div>
@@ -107,44 +117,42 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse($codes as $code)
-                                            <tr>
-                                                <td>{{ $code->auth_code }}</td>
-                                                <td>{{ $code->assort->assort_name ?? 'N/A' }}</td>
-                                                <td>{{ $code->remark }}</td>
-                                                <td>
-                                                    @if($code->status == 0)
-                                                        <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">{{ __('messages.license_list.status_unused') }}</span>
-                                                    @elseif($code->status == 1)
-                                                        <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-warning">{{ __('messages.license_list.status_used') }}</span>
-                                                    @else
-                                                        <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-danger">{{ __('messages.license_list.status_expired') }}</span>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $code->created_at->format('Y-m-d H:i:s') }}</td>
-                                                <td>{{ $code->expire_at ? \Carbon\Carbon::parse($code->expire_at)->format('Y-m-d H:i:s') : 'N/A' }}</td>
-                                                <td>
-<!-- Button -->
-<!-- Button -->
-<button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-light-primary update-remark-button" data-kt-modal-toggle="#kt_modal_update_remark" data-id="{{ $code->id }}" data-remark="{{ $code->remark }}">
-    <i class="ki-filled ki-pencil"></i>
-</button>
+                                        @forelse($lists as $code)
+    <tr>
+        <td>{{ $code->auth_code }}</td>
+        <td>{{ $code->assort->assort_name ?? 'N/A' }}</td>
+        <td>{{ $code->remark }}</td>
+        <td>
+            @if($code->status == 0)
+                <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">{{ __('messages.license_list.status_unused') }}</span>
+            @elseif($code->status == 1)
+                <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-warning">{{ __('messages.license_list.status_used') }}</span>
+            @else
+                <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-danger">{{ __('messages.license_list.status_expired') }}</span>
+            @endif
+        </td>
+        <td>{{ $code->created_at->format('Y-m-d H:i:s') }}</td>
+        <td>{{ $code->expire_at ? \Carbon\Carbon::parse($code->expire_at)->format('Y-m-d H:i:s') : 'N/A' }}</td>
+        <td>
+            <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-light-primary update-remark-button"
+                data-kt-modal-toggle="#kt_modal_update_remark"
+                data-id="{{ $code->id }}"
+                data-remark="{{ $code->remark }}">
+                <i class="ki-filled ki-pencil"></i>
+            </button>
+        </td>
+    </tr>
+@empty
+    <tr>
+        <td colspan="7" class="text-center">No data found</td>
+    </tr>
+@endforelse
 
-
-
-
-                                                </td>
-                                            </tr>
-                                            @empty
-                                            <tr>
-                                                <td colspan="7" class="text-center">{{ __('messages.license_list.no_codes_found') }}</td>
-                                            </tr>
-                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>
                                 <div class="mt-5">
-                                    {{ $codes->links() }}
+                                    {{ $lists->links() }}
                                 </div>
                             </div>
                         </div>
@@ -159,9 +167,9 @@
 </div>
 <!-- End of Page -->
 
-@foreach($codes as $code)
+@foreach($lists as $list)
 <!-- Modal for updating remark -->
-<div class="kt-modal" id="modal-update-remark-{{ $code->id }}">
+<div class="kt-modal" id="modal-update-remark-{{ $list->id }}">
     <div class="kt-modal-dialog">
         <div class="kt-modal-content">
             <div class="kt-modal-header">
@@ -171,11 +179,11 @@
                 </button>
             </div>
             <div class="kt-modal-body">
-                <form id="update-remark-form-{{ $code->id }}" action="{{ route('license.update', $code->id) }}" method="POST">
+                <form id="update-remark-form-{{ $list->id }}" action="{{ route('license.update', $list->id) }}" method="POST">
                     @csrf
                     <div class="mb-5">
-                        <label for="remark-{{ $code->id }}" class="kt-form-label">{{ __('messages.license_list.remark') }}</label>
-                        <textarea id="remark-{{ $code->id }}" name="remark" class="kt-input" rows="4">{{ $code->remark }}</textarea>
+                        <label for="remark-{{ $list->id }}" class="kt-form-label">{{ __('messages.license_list.remark') }}</label>
+                        <textarea id="remark-{{ $list->id }}" name="remark" class="kt-input" rows="4">{{ $list->remark }}</textarea>
                     </div>
                     <div class="kt-modal-footer">
                         <button type="button" class="kt-btn kt-btn-light" data-kt-modal-dismiss="true">Cancel</button>
@@ -187,6 +195,7 @@
     </div>
 </div>
 @endforeach
+
 <!-- Metronic Update Remark Modal -->
 <div class="kt-modal fade" id="kt_modal_update_remark" tabindex="-1">
     <div class="kt-modal-dialog modal-dialog-centered">

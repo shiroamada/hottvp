@@ -33,6 +33,28 @@
         <!-- Container -->
         <div class="kt-container-fixed">
             <div class="grid gap-5 lg:gap-7.5">
+                @if(isset($new_agent_password) && $new_agent_password)
+                <!-- New Agent Credentials Card -->
+                <div class="kt-card kt-card-grid min-w-full bg-success-light">
+                    <div class="kt-card-header">
+                        <h3 class="kt-card-title text-success">{{ __('messages.agent_check.new_agent_credentials') }}</h3>
+                    </div>
+                    <div class="kt-card-content">
+                        <p class="mb-4">{{ __('messages.agent_check.credentials_notice') }}</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <div class="font-medium mb-1">{{ __('messages.agent_check.account') }}:</div>
+                                <div class="text-lg font-mono">{{ $new_agent_account }}</div>
+                            </div>
+                            <div>
+                                <div class="font-medium mb-1">{{ __('messages.agent_check.password') }}:</div>
+                                <div class="text-lg font-mono">{{ $new_agent_password }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
                 <!-- Agent Basic Info Card -->
                 <div class="kt-card kt-card-grid min-w-full">
                     <div class="kt-card-header">

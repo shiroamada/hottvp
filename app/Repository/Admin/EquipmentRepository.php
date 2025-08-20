@@ -8,7 +8,7 @@
 
 namespace App\Repository\Admin;
 
-use App\Model\Admin\AssortLevel;
+use App\Models\AssortLevel;
 use App\Repository\Searchable;
 
 class EquipmentRepository
@@ -109,7 +109,7 @@ class EquipmentRepository
      */
     public static function incrementContract($where, $value)
     {
-        return Equipment::query()->where($where)->increment($value);
+        return AssortLevel::query()->where($where)->increment($value);
     }
 
     /**
@@ -122,12 +122,12 @@ class EquipmentRepository
      */
     public static function decrementContract($where, $value)
     {
-        return Equipment::query()->where($where)->decrement($value);
+        return AssortLevel::query()->where($where)->decrement($value);
     }
 
     public static function listByWhere($where)
     {
-        $lists = Equipment::query()->where($where)->get();
+        $lists = AssortLevel::query()->where($where)->get();
         $data = [];
         foreach ($lists as $key => $list) {
             $data[$key]['user_id'] = \Auth::guard('admin')->user()->id;
@@ -143,7 +143,7 @@ class EquipmentRepository
 
     public static function listByGroup($where)
     {
-        $lists = Equipment::query()->where($where)->get();
+        $lists = AssortLevel::query()->where($where)->get();
         $data = [];
         foreach ($lists as $key => $list) {
             if ($list->level_id == 3) {
@@ -168,7 +168,7 @@ class EquipmentRepository
 
     public static function listForUserByWhere($where, $data)
     {
-        $lists = Equipment::query()->where($where)->orderBy('level_id', 'ASC')->get();
+        $lists = AssortLevel::query()->where($where)->orderBy('level_id', 'ASC')->get();
         $lists = $lists->toArray();
         if (\Auth::guard('admin')->user()->level_id == 3) {
             unset($lists[0]);

@@ -55,13 +55,29 @@ class AdminUtilityMiddleware
      */
     public function getParentId($uid)
     {
-        $where = ['id' => $uid];
-        $info = AdminUserRepository::findByWhere($where);
-        if ($info->pid > 1) {
-            return $this->getParentId($info->pid);
+        $user = AdminUserRepository::find($uid);
+        if (! $user) {
+            return 0; // Or throw an exception, depending on desired error handling
         }
 
-        return $info['id'];
+        // If the user has no parent (pid is 0 or 1, assuming 1 is the root admin)
+        // or if they are already the top-level agent (level_id 3, assuming 3 is the top level)
+        // then they are their own parent for costing purposes.
+        if ($user->pid <= 1 || $user->level_id == 3) {
+            return $user->id;
+        }
+
+        // Traverse up the hierarchy until the top-level parent is found
+        $current_user = $user;
+        while ($current_user->pid > 1 && $current_user->level_id != 3) {
+            $parent = AdminUserRepository::find($current_user->pid);
+            if (! $parent) {
+                break; // Parent not found, stop traversing
+            }
+            $current_user = $parent;
+        }
+
+        return $current_user->id;
     }
 
     /**

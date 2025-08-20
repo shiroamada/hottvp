@@ -204,4 +204,38 @@ return [
             'action' => 'TINDAKAN',
         ],
     ],
+
+    // General translations
+    'general' => [
+        'select_code' => 'Pilih Kod',
+        'authorization_code' => 'Kod Pengesahan',
+        'message' => 'Mesej',
+        'membership_authorization_code' => 'Kod Pengesahan Keahlian',
+        'confirm' => 'Sahkan',
+        'select' => 'Pilih',
+        'createSuccess' => 'Berjaya dicipta',
+        'createFailed' => 'Gagal dicipta',
+        'updateSuccess' => 'Berjaya dikemas kini',
+        'updateFailed' => 'Gagal dikemas kini',
+        'generate' => 'dijana',
+        'return' => 'Kembali',
+        'error' => 'Ralat',
+    ],
+
+    // Home translations
+    'home' => [
+        'copy' => 'Salin',
+    ],
+
+    // AuthCode translations
+    'authCode' => [
+        'remark' => 'Catatan',
+        'auth_code_fail' => 'Penjanaan kod pengesahan gagal',
+        'exceed' => 'Melebihi had',
+    ],
+
+    // Huobi translations
+    'huobi' => [
+        'money' => 'USD',
+    ],
 ];

@@ -28,14 +28,18 @@
                     <!-- Toolbar -->
                     <div class="pb-5">
                         <!-- Container -->
-                        <div class="kt-container-fixed flex items-center justify-between flex-wrap gap-3">
+                        <div class="kt-container-fixed flex items-center justify-between flex-wrap gap-3 mb-5">
                             <div class="flex items-center flex-wrap gap-1 lg:gap-5">
                                 <h1 class="font-medium text-lg text-mono">
                                     {{ __('messages.trial_list.title') }}
                                 </h1>
                             </div>
+                            <div class="kt-container-fixed">
                             <div class="flex items-center gap-3">
-                                <a href="{{ route('trial.generate') }}" class="kt-btn kt-btn-primary">
+                                <a href="{{ route('admin.try.records') }}" class="kt-btn kt-btn-info">
+                                    {{__('authCode.access_records')}}
+                                </a>
+                                <a href="{{ route('admin.try.add') }}" class="kt-btn kt-btn-primary">
                                     {{ __('messages.trial_list.generate_new') }}
                                 </a>
                             </div>
@@ -47,7 +51,7 @@
                     <div class="kt-container-fixed">
                         <div class="kt-card mb-5">
                             <div class="kt-card-content">
-                                <form action="{{ route('trial.list') }}" method="GET" class="grid sm:grid-cols-2 md:grid-cols-3 gap-5">
+                                <form action="{{ route('admin.try.list') }}" method="GET" class="grid sm:grid-cols-2 md:grid-cols-3 gap-5" id="filter-form">
                                     <div>
                                         <label for="auth_code" class="kt-form-label">Code</label>
                                         <input type="text" id="auth_code" name="auth_code" class="kt-input" placeholder="Enter code" value="{{ request('auth_code') }}">
@@ -63,11 +67,11 @@
                                     </div>
                                     <div>
                                         <label for="date_range" class="kt-form-label">Date Range</label>
-                                        <input type="text" id="date_range" name="date_range" class="kt-input" placeholder="Select date range" value="{{ request('date_range') }}">
+                                        <input type="text" id="date_range" name="created_at" class="kt-input" placeholder="Select date range" value="{{ request('created_at') }}">
                                     </div>
                                     <div class="md:col-span-3 flex justify-end gap-3">
                                         <button type="submit" class="kt-btn kt-btn-primary">Search</button>
-                                        <button type="submit" name="export" value="true" class="kt-btn kt-btn-outline kt-btn-primary">Export Excel</button>
+                                        <a href="{{ route('admin.try.export') }}" id="export-btn" class="kt-btn kt-btn-outline kt-btn-primary">Export Excel</a>
                                     </div>
                                 </form>
                             </div>
@@ -90,7 +94,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse($codes as $code)
+                                            @forelse($lists as $code)
                                             <tr>
                                                 <td>{{ $code->auth_code }}</td>
                                                 <td>{{ $code->remark }}</td>
@@ -115,7 +119,7 @@
                                     </table>
                                 </div>
                                 <div class="mt-5">
-                                    {{ $codes->links() }}
+                                    {{ $lists->links() }}
                                 </div>
                             </div>
                         </div>
@@ -130,3 +134,26 @@
 </div>
 <!-- End of Page -->
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const exportBtn = document.getElementById('export-btn');
+        if(exportBtn) {
+            exportBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const form = document.getElementById('filter-form');
+                const formData = new FormData(form);
+                const params = new URLSearchParams(formData);
+                // remove empty params
+                for (let p of params) {
+                    if (!p[1]) {
+                        params.delete(p[0]);
+                    }
+                }
+                window.location.href = this.href + '?' + params.toString();
+            });
+        }
+    });
+</script>
+@endpush

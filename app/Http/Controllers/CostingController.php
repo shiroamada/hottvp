@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admin\AdminUser;
 use App\Models\Assort;
 use App\Models\Defined;
-use App\Models\Retail;
+use App\Models\Admin\Retail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

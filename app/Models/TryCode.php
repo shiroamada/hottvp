@@ -1,4 +1,4 @@
-rt6<?php
+<?php
 
 namespace App\Models;
 

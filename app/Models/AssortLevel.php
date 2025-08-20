@@ -15,11 +15,11 @@ class AssortLevel extends Model
     
     public function levels()
     {
-        return $this->belongsTo('App\Model\Admin\Level', 'level_id', 'id');
+        return $this->belongsTo('App\Models\Admin\Level', 'level_id', 'id');
     }
 
     public function assorts()
     {
-        return $this->belongsTo('App\Model\Admin\Assort', 'assort_id', 'id');
+        return $this->belongsTo('App\Models\Assort', 'assort_id', 'id');
     }
 }

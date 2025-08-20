@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <!-- Page -->
 <div class="flex grow">
     <!-- Header -->
@@ -43,32 +44,42 @@
                         <div class="grid gap-5 lg:gap-7.5 xl:w-[38.75rem] mx-auto">
                             <div class="kt-card pb-2.5">
                                 <div class="kt-card-header">
-                                    <h3 class="kt-card-title">{{ __('messages.trial_generate.title') }}</h3>
+                                    <h3 class="kt-card-title">
+                                        {{trans('authCode.apply_code')}}
+                                    </h3>
                                 </div>
-                                <form method="POST" action="{{ route('trial.store') }}">
-                                    @csrf
-                                    <div class="kt-card-content grid gap-5">
+
+                                <div class="kt-card-content grid gap-5">
+                                    <form action="{{ route('admin.try.hold')}}" method="post" id="form" onsubmit="return false;">
+                                        {{ csrf_field() }}
                                         <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                                            <label class="kt-form-label max-w-56">{{ __('messages.trial_generate.available_quantity') }}</label>
+                                            <label class="kt-form-label max-w-56">{{trans('authCode.av_number')}}</label>
                                             <div class="grow">
-                                                <input class="kt-input" type="text" value="{{ $availableTrialCodes }}" readonly>
+                                                <span class="kt-input" style="border-style:none" id="need">{{ \Auth::guard('admin')->user()->try_num }}</span>
                                             </div>
                                         </div>
                                         <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                                            <label class="kt-form-label max-w-56">{{ __('messages.trial_generate.generation_quantity') }}</label>
-                                            <input class="kt-input grow" name="number" type="number" value="1" min="1">
+                                            <label class="kt-form-label max-w-56">{{trans('authCode.generate_code')}}</label>
+                                            <input class="kt-input grow" type="text" name="number"
+                                                   value="" id="number" maxlength="3" onkeyup="onlyNumber(this)"
+                                                   onblur="onlyNumber(this)" onmouseover="onlyNumber(this)">
                                         </div>
-                                        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                                            <label class="kt-form-label max-w-56">{{ __('messages.trial_generate.remarks') }}</label>
-                                            <textarea class="kt-input grow" name="remark" rows="3"></textarea>
+                                        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5 mt-4">
+                                            <label class="kt-form-label max-w-56">{{trans('authCode.remark')}}</label>
+                                            <textarea class="kt-input grow" id="standardRemark" rows="3"
+                                                      name="remark" maxlength="128"> </textarea>
                                         </div>
                                         <div class="flex justify-center gap-3 mt-3">
-                                            <button class="kt-btn kt-btn-primary" type="submit">{{ __('messages.trial_generate.apply_for_trial_code') }}</button>
-                                            <button class="kt-btn kt-btn-danger" type="reset">{{ __('messages.trial_generate.reset') }}</button>
-                                            <a href="{{ route('trial.list') }}" class="kt-btn kt-btn-warning">{{ __('messages.trial_generate.return') }}</a>
+                                            <button class="kt-btn kt-btn-primary" type="submit"
+                                                    id="submitBtn">{{trans('authCode.apply_code')}}</button>
+                                            <div class="flex justify-end gap-3">
+                                                <button type="reset" class="kt-btn kt-btn-secondary">{{trans('general.reset')}}</button>
+                                                <button type="button" class="kt-btn kt-btn-warning"
+                                                        onclick="history.go(-1);">{{trans('general.return')}}</button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -81,4 +92,78 @@
     <!-- End of Wrapper -->
 </div>
 <!-- End of Page -->
+<script>
+    function onlyNumber(obj) {
+        // Remove any character that is not a digit
+        obj.value = obj.value.replace(/[^\d]/g, '');
+        // Remove leading zeros unless the number is just '0'
+        obj.value = obj.value.replace(/^0+(?=\d)/, '');
+        // Ensure no leading decimal point (though not relevant for integers)
+        obj.value = obj.value.replace(/^\./g, '');
+    }
+
+    jQuery(document).ready(function($) {
+        //监听提交
+        $('#form').submit(function () {
+            window.form_submit = $('#form').find('[type=submit]');
+            form_submit.prop('disabled', true);
+            var method = $("#form").attr("method");
+            var action = $('#form').attr("action");
+            console.log(method);
+            console.log(action);
+            $.ajax({
+                type: method,
+                url: action,
+                data: $('#form').serializeArray(),
+                success: function (result) {
+                    if (result.code !== 0) {
+                        form_submit.prop('disabled', false);
+                        // Using alert as layer.msg is not guaranteed to be available
+                        alert(result.msg);
+                        return false;
+                    }
+                    if (result.redirect) {
+                        location.href = '{{ route('admin.try.list') }}';
+                    }
+                },
+                error: function (resp, stat, text) {
+                    if (window.form_submit) {
+                        form_submit.prop('disabled', false);
+                    }
+                    // Using alert as layer.msg is not guaranteed to be available
+                    if (resp.status === 422) {
+                        var parse = $.parseJSON(resp.responseText);
+                        if (parse) {
+                            alert(parse.msg);
+                        }
+                        return false;
+                    } else if (resp.status === 404) {
+                        alert("{{trans('general.resources_not')}}");
+                        return false;
+                    } else if (resp.status === 401) {
+                        alert("{{trans('general.login_first')}}");
+                        return false;
+                    } else if (resp.status === 429) {
+                        alert("{{trans('general.Overvisiting')}}");
+                        return false;
+                    } else if (resp.status === 419) {
+                        alert("{{trans('general.illegal_request')}}");
+                        return false;
+                    } else if (resp.status === 500) {
+                        alert("{{trans('general.internal_error')}}");
+                        return false;
+                    } else {
+                        var parse = $.parseJSON(resp.responseText);
+                        if (parse) {
+                            alert(parse.msg);
+                        }
+                        return false;
+                    }
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
 @endsection

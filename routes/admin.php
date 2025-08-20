@@ -26,6 +26,7 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
 
         // Ajax calls for users management
         Route::get('/users/info', [AdminUserController::class, 'info'])->name('users.info');
+        Route::get('/users/detail', [AdminUserController::class, 'detail'])->name('users.detail');
 
         // User details and balance management
         Route::get('/users/check/{id}', [AdminUserController::class, 'check'])->name('users.check');
@@ -39,6 +40,16 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
         Route::post('/users/level_update', [AdminUserController::class, 'levelUpdate'])->name('users.level_update');
         Route::get('/users/cost/{id}', [AdminUserController::class, 'cost'])->name('users.cost');
         Route::post('/users/cost_update', [AdminUserController::class, 'costUpdate'])->name('users.cost_update');
+        foreach (new DirectoryIterator(base_path('routes/auto')) as $f) {
+            if ($f->isDot()) {
+                continue;
+            }
+            $name = $f->getPathname();
+            if ($f->isFile() && Str::endsWith($name, '.php')) {
+                require $name;
+            }
+        }
     });
 
+    
 include __DIR__.'/admin-auth.php'; // Include the admin authentication routes

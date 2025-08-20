@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
 use App\Http\Controllers\Controller;
 // use App\Models\ActivationCode;
 // We might use this or calculate on the fly
@@ -12,7 +11,9 @@ use App\Models\AuthCode;
 use App\Repository\Admin\HuobiRepository;
 use App\Repository\Admin\AuthCodeRepository;
 use App\Repository\Admin\AdminUserRepository;
+use App\Repository\Admin\EquipmentRepository;
 use App\Models\Assort;
+use App\Models\AssortLevel;
 use App\Models\Admin\Huobi;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ use Illuminate\Support\Str; // Added for generating unique codes
 
 class DashboardController extends Controller
 {
+    
     public $count = 0;
 
     /**
@@ -33,6 +35,8 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        $utility = new AdminUtilityMiddleware();
+
         $user = Auth::guard('admin')->user();
         if (! $user) {
             return redirect()->route('admin.login'); // or your admin login route
@@ -83,7 +87,6 @@ class DashboardController extends Controller
 
 
         $all_users = AdminUserRepository::getDataByWhere([]);
-        $utility = new AdminUtilityMiddleware();
 
         $ids = $utility->get_downline(
             $all_users,
@@ -109,8 +112,40 @@ class DashboardController extends Controller
         //     ->where('money', '>', 0)
         //     ->whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])
         //     ->sum('money');
-        $totalMembers = AdminUser::count();
-        $activationCodePresets = Assort::where('try_num', '>', 0)->orderBy('assort_name')->get();
+
+        $lower_month_code = HuobiRepository::lowerByCode(dates($date), $ids);//本月下级生成授权码个数
+        $lower_last_month_code = HuobiRepository::lowerByCode(dates($last_date), $ids);//        // 上月下级生成授权码个数
+// 这两个没show
+$locale = session('customer_lang_name');
+
+        // $totalMembers = AdminUser::count(); //要 show 全部 user 就用这个
+        $totalMembers = $this->count; //这个 fetch all downlines show 下线
+        // $activationCodePresets = Assort::where('try_num', '>', 0)->orderBy('assort_name')->get();
+        $level_id = \Auth::guard('admin')->user()->level_id;
+
+        $parent_id = $utility->getParentId(\Auth::guard('admin')->user()->id);
+
+        if ($level_id == 8) {
+            $where = ['user_id' => \Auth::guard('admin')->user()->id];
+            $activationCodePresets = Defined::query()->where($where)->orderBy('assort_id')->get();
+        } else {
+            // 先验证该国代有没有自定义级别配置管理,如果没有则获取默认级别配置
+            $guodai_where = ['user_id' => $parent_id];
+            $res = EquipmentRepository::findByWhere($guodai_where);
+            if ($res) {
+                // 否则从自己的最上级（国级）获取数据
+                $where = ['level_id' => $level_id, 'user_id' => $parent_id];
+                $activationCodePresets = AssortLevel::query()->where($where)->get();
+            } else {
+                // 否则从自己的最上级（国级）获取数据
+                $where = ['level_id' => $level_id, 'user_id' => 1];
+                $activationCodePresets = AssortLevel::query()->where($where)->get();
+            }
+        }
+        // $activationCodePresets = AssortLevel::with('assorts')
+        // ->where('level_id', $level_id)
+        // ->orderBy('assort_id')
+        // ->get();
         
         return view('admin.dashboard', compact(
             'balance',

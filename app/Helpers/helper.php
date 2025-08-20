@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Cache;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
+use App\Repository\APIHelper;
+
+
 /**
  * 生成随机code
  *
@@ -27,18 +30,117 @@ function createCode($length = 12)
 }
 
 /**
- * 生成批量code
- *
- * @param  array  $data  包含number和day
- * @return array
- */
-function getApiByBatch($data)
+     * @Title: getApiByBatch
+     * @Description: 批量获取授权码（code码）
+     * @param $data
+     * @return string
+     * @Author: 李军伟
+     */
+    function getApiByBatch($data)
 {
-    $codes = [];
-    for ($i = 0; $i < $data['number']; $i++) {
-        $codes[] = createCode();
+    $type = 1;
+    if (\Auth::guard('admin')->user()->type == 1) {
+        $type = 2;
     }
-    return $codes;
+    try {
+        // Log input parameters and their types
+        \Log::info('getApiByBatch input parameters: ', [
+            'number' => $data['number'] ?? null,
+            'number_type' => gettype($data['number']),
+            'day' => $data['day'] ?? null,
+            'day_type' => gettype($data['day']),
+            'channel_id' => \Auth::guard('admin')->user()->channel_id,
+            'user_type' => \Auth::guard('admin')->user()->type,
+            'enable_switch' => $type
+        ]);
+
+        // Validate inputs
+        if (!isset($data['number']) || !is_numeric($data['number']) || $data['number'] <= 0) {
+            throw new \Exception('Invalid number of codes: ' . ($data['number'] ?? 'null'));
+        }
+        if (!isset($data['day']) || !is_numeric($data['day']) || $data['day'] <= 0) {
+            throw new \Exception('Invalid valid_day: ' . ($data['day'] ?? 'null'));
+        }
+
+        $apiStr = 'createCode';
+        $api = new APIHelper();
+        $body = [
+            'num' => (int) $data['number'],
+            'valid_day' => (int) $data['day'],
+            'channel_id' => \Auth::guard('admin')->user()->channel_id,
+            'enable_switch' => $type,
+        ];
+        \Log::info('getApiByBatch request body: ', $body);
+
+        // Log API endpoint details (assuming APIHelper has a method to get the base URL)
+        $apiUrl = method_exists($api, 'getBaseUrl') ? $api->getBaseUrl() . '/' . $apiStr : $apiStr;
+        \Log::info('getApiByBatch API endpoint: ', ['url' => $apiUrl]);
+
+        // Make API call with detailed response capture
+        $response = $api->post($body, $apiStr);
+        \Log::info('getApiByBatch raw response: ', [
+            'response' => $response,
+            'response_type' => gettype($response)
+        ]);
+
+        // Check HTTP status code (assuming APIHelper returns a response object with status)
+        if (method_exists($response, 'getStatusCode')) {
+            \Log::info('getApiByBatch HTTP status: ', ['status_code' => $response->getStatusCode()]);
+            \Log::info('getApiByBatch response headers: ', ['headers' => $response->getHeaders()]);
+        }
+
+        // Decode JSON response
+        $decoded = json_decode($response, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            \Log::error('getApiByBatch JSON decode failed: ', [
+                'error' => json_last_error_msg(),
+                'raw_response' => $response
+            ]);
+            throw new \Exception('Failed to decode API response: ' . json_last_error_msg());
+        }
+
+        // Log decoded response
+        \Log::info('getApiByBatch decoded response: ', ['decoded' => $decoded]);
+
+        // Validate response structure
+        if (!isset($decoded['data']) || !is_array($decoded['data'])) {
+            \Log::error('Invalid API response format', ['decoded' => $decoded]);
+            throw new \Exception('API response does not contain valid data array');
+        }
+
+        // Validate code lengths
+        foreach ($decoded['data'] as $index => $code) {
+            if (!is_string($code) || strlen($code) != 12) {
+                \Log::error('Invalid code length', [
+                    'code' => $code,
+                    'length' => is_string($code) ? strlen($code) : 'not a string',
+                    'index' => $index
+                ]);
+                throw new \Exception('API returned invalid code length: ' . (is_string($code) ? strlen($code) : 'not a string'));
+            }
+        }
+
+        \Log::info('getApiByBatch successful, returning codes: ', ['codes' => $decoded['data']]);
+        return $decoded['data'];
+    } catch (\Exception $e) {
+        \Log::error('getApiByBatch failed: ', [
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        // Fallback to local code generation
+        $codes = [];
+        for ($i = 0; $i < $data['number']; $i++) {
+            $code = \Illuminate\Support\Str::upper(\Illuminate\Support\Str::random(12));
+            while (\App\Models\AuthCode::where('auth_code', $code)->exists()) {
+                $code = \Illuminate\Support\Str::upper(\Illuminate\Support\Str::random(12));
+            }
+            $codes[] = $code;
+        }
+        \Log::info('Generated fallback codes: ', ['codes' => $codes]);
+        return $codes;
+    }
 }
 
 /**

@@ -7,13 +7,13 @@ namespace App\Http\Controllers\Admin;
     use App\Http\Requests\Admin\AdminUserRequest;
     use App\Http\Requests\Admin\LogoffUserRequest;
     use App\Http\Requests\Admin\PasswordRequest;
-    use App\Model\Admin\Assort;
-    use App\Model\Admin\Cost;
-    use App\Model\Admin\Defined;
-    use App\Model\Admin\Equipment;
-    use App\Model\Admin\Level;
-    use App\Model\Admin\Retail;
-    use App\Model\Admin\TryCode;
+    use App\Models\Assort;
+    use App\Models\Admin\Cost;
+    use App\Models\Defined;
+    use App\Models\AssortLevel;
+    use App\Models\Admin\Level;
+    use App\Models\Admin\Retail;
+    use App\Models\TryCode;
     use App\Models\Admin\AdminUser;
     use App\Models\Admin\Huobi;
     use App\Repository\Admin\AdminUserRepository;
@@ -206,20 +206,24 @@ namespace App\Http\Controllers\Admin;
             $level_list = [];
             if (auth()->guard('admin')->user()->id != 1) {
                 foreach ($level->toArray() as $k => $v) {
-                    $level_list[$k]['id'] = $v['id'];
-                    $level_list[$k]['level_name'] = $v['level_name'];
+                    $level_item = [
+                        'id' => $v['id'],
+                        'level_name' => $v['level_name'],
+                        'mini_amount' => $v['mini_amount'] // Set default value first
+                    ];
+
                     if (! empty($level_cost)) {
                         foreach ($level_cost as $kk => $vv) {
                             if ($v['id'] == $vv['level_id']) {
-                                $level_list[$k]['mini_amount'] = $vv['mini_amount'];
+                                $level_item['mini_amount'] = $vv['mini_amount'];
+                                break; // Found a match, no need to continue inner loop
                             }
                         }
-                    } else {
-                        $level_list[$k]['mini_amount'] = $v['mini_amount'];
                     }
+                    $level_list[] = $level_item;
                 }
             } else {
-                $level_list = $level;
+                $level_list = $level->toArray();
             }
             // 展示渠道列表
             $apiStr = 'channels';
@@ -282,6 +286,11 @@ namespace App\Http\Controllers\Admin;
                     $cost_where = ['user_id' => $parent_id, 'level_id' => $parameter['level_id']];
                     $mini = CostRepository::findByWhere($cost_where);
                 }
+
+                if (!$mini) {
+                    $mini = LevelRepository::find($parameter['level_id']);
+                }
+
                 if ($balance < $mini->mini_amount) {
                     // 如果提交金额低于该等级最低金额，则提示
                     throw new \Exception(trans('adminUser.recharge_tips1'));
@@ -298,7 +307,10 @@ namespace App\Http\Controllers\Admin;
                 $i = 0;
                 // 如果当前登录用户是自定义用户，则验证数据的正确性
                 if ($parameter['level_id'] == 8) {
-                    $cost = $this->getRetail($parent_id);
+                    if (!isset($parameter['agency'])) {
+                        $parameter['agency'] = [];
+                    }
+                    $cost = $utility->getRetail($parent_id);
                     // 先验证数据的完整性
                     if ($parameter['agency'] == '') {
                         throw new \Exception(trans('adminUser.define_empty'));
@@ -370,7 +382,9 @@ namespace App\Http\Controllers\Admin;
                     throw new \Exception(trans('adminUser.recharge_tips'));
                 }
                 $parameter['account'] = getRandChar(6);
-                $parameter['password'] = getRandChar(8);
+                $plainPassword = getRandChar(8);
+                $parameter['password'] = $plainPassword;
+
                 // 获取创建级别的试用码数量
                 $try_info = LevelRepository::find($parameter['level_id']);
                 $parameter['try_num'] = $try_info->try_num;
@@ -454,6 +468,9 @@ namespace App\Http\Controllers\Admin;
                 ];
                 TryCode::query()->insert($try_list);
                 DB::commit();  // 提交
+
+                session()->flash('new_agent_password', $plainPassword);
+                session()->flash('new_agent_account', $parameter['account']);
 
                 return [
                     'code' => 0,
@@ -829,6 +846,10 @@ namespace App\Http\Controllers\Admin;
                     $level = CostRepository::findByWhere($cost_where);
                 }
 
+                if (!$level) {
+                    $level = LevelRepository::find($data['level_id']);
+                }// fallback to the default levels table if a custom cost is not found. 
+
                 // 如果所填金额小于该级别的最低金额则报错
                 if ($data['balance'] < $level['mini_amount']) {
                     throw new \Exception(trans('adminUser.recharge_tips1'));
@@ -964,9 +985,10 @@ namespace App\Http\Controllers\Admin;
          */
         public function info(Request $request)
         {
+            $utility = $request->attributes->get('utility');
             $level_id = (int) $request->get('level_id');
             if ($level_id > 3) {
-                $result = $this->agencyInfo($level_id);
+                $result = $this->agencyInfo($level_id, $utility);
 
                 return view('admin.adminUser.ajax_info', [
                     'lists' => $result['lists'],
@@ -1021,29 +1043,29 @@ namespace App\Http\Controllers\Admin;
          *
          * @Author: 李军伟
          */
-        public function agencyInfo($level_id)
+        public function agencyInfo($level_id, $utility)
         {
-            $parent_id = $this->getParentId(auth()->guard('admin')->user()->id);
+            $parent_id = $utility->getParentId(auth()->guard('admin')->user()->id);
             // 先验证该国代有没有自定义级别配置管理,如果没有则获取默认级别配置
             $guodai_where = ['user_id' => $parent_id];
             $res = EquipmentRepository::findByWhere($guodai_where);
             if ($res) {
                 // 获取选择的级别对应配置的金额
-                $choice_money = Equipment::query()->where(['level_id' => $level_id, 'user_id' => $parent_id])->orderBy('money', 'ASC')->pluck('money');
+                $choice_money = AssortLevel::query()->where(['level_id' => $level_id, 'user_id' => $parent_id])->orderBy('money', 'ASC')->pluck('money');
                 // 获取自己的级别对应配置的金额
                 if (auth()->guard('admin')->user()->level_id == 8) {
                     $own_money = Defined::query()->where(['user_id' => auth()->guard('admin')->user()->id])->orderBy('money', 'ASC')->pluck('money');
                 } else {
-                    $own_money = Equipment::query()->where(['level_id' => auth()->guard('admin')->user()->level_id, 'user_id' => $parent_id])->orderBy('money', 'ASC')->pluck('money');
+                    $own_money = AssortLevel::query()->where(['level_id' => auth()->guard('admin')->user()->level_id, 'user_id' => $parent_id])->orderBy('money', 'ASC')->pluck('money');
                 }
             } else {
                 // 获取选择的级别对应配置的金额
-                $choice_money = Equipment::query()->where(['level_id' => $level_id, 'user_id' => 1])->orderBy('money', 'ASC')->pluck('money');
+                $choice_money = AssortLevel::query()->where(['level_id' => $level_id, 'user_id' => 1])->orderBy('money', 'ASC')->pluck('money');
                 // 获取自己的级别对应配置的金额
                 if (auth()->guard('admin')->user()->level_id == 8) {
                     $own_money = Defined::query()->where(['user_id' => auth()->guard('admin')->user()->id])->orderBy('money', 'ASC')->pluck('money');
                 } else {
-                    $own_money = Equipment::query()->where(['level_id' => auth()->guard('admin')->user()->level_id, 'user_id' => 1])->orderBy('money', 'ASC')->pluck('money');
+                    $own_money = AssortLevel::query()->where(['level_id' => auth()->guard('admin')->user()->level_id, 'user_id' => 1])->orderBy('money', 'ASC')->pluck('money');
                 }
             }
             // 获取配置列表
@@ -1065,7 +1087,7 @@ namespace App\Http\Controllers\Admin;
                 }
             }
             // 获取当前国代的零售成本
-            $retailList = $this->getRetail($parent_id);
+            $retailList = $utility->getRetail($parent_id);
 
             return $list = [
                 'lists' => $data,
@@ -1144,6 +1166,8 @@ namespace App\Http\Controllers\Admin;
                 'user_profit' => $user_profit,
                 'user_recharge' => $user_recharge,
                 'tags' => isset($params['profit']) ? $params['profit'] : 0,
+                'new_agent_password' => session('new_agent_password'),
+                'new_agent_account' => session('new_agent_account'),
             ]);
         }
 
@@ -1741,6 +1765,8 @@ namespace App\Http\Controllers\Admin;
 
             return view('admin.adminUser.detail', [
                 'info' => $info,
+                'new_agent_password' => session('new_agent_password'),
+                'new_agent_account' => session('new_agent_account'),
             ]);
         }
 
