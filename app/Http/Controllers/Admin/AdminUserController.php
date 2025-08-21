@@ -27,6 +27,7 @@ namespace App\Http\Controllers\Admin;
     use App\Repository\Admin\RetailRepository;
     use App\Repository\Admin\RoleRepository;
     use App\Repository\APIHelper;
+    use App\Services\AdminUtilityService;
     use Carbon\Carbon;
     use Illuminate\Database\QueryException;
     use Illuminate\Http\Request;
@@ -69,33 +70,40 @@ namespace App\Http\Controllers\Admin;
          *
          * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
          */
-        public function index(Request $request)
+        public function index(Request $request, AdminUtilityService $utility)
         {
-            $perPage = (int) $request->get('limit', env('APP_PAGE'));
+            $perPage = (int) $request->get('limit', (int) env('APP_PAGE', 15));
+    
+            // collect filterable form fields
             $this->formNames[] = 'created_at';
             $keyword = $request->only($this->formNames);
+    
             // 只显示没有注销的用户
             $param = [];
-            //        $param['is_cancel'] = ['=', 0];
-            //        if (auth()->guard('admin')->user()->name != 'admin') {
-            $param['pid'] = ['=', auth()->guard('admin')->user()->id];
-            //        }
-            // $this->getLowerIdss(auth()->guard('admin')->user()->id);
-            // Use utility middleware to get lower IDs
-            $utility = $request->attributes->get('utility');
-            $idss = $utility->getLowerIdss(auth()->guard('admin')->user()->id);
-
+            // if (auth()->guard('admin')->user()->name != 'admin') {
+            $currentId = auth()->guard('admin')->id();
+            $param['pid'] = ['=', $currentId];
+            // }
+    
+            // same call pattern as L6 (now via utility service)
+            $idss = $utility->getLowerIdss($currentId); // make sure your service excludes root if that's desired
+    
+            // same repository call signature
             $data = AdminUserRepository::list($perPage, $idss, $param, $keyword);
-
+    
+            // passthrough extras
             $data->name = $request->name;
-            $parent_id = $utility->getParentId(auth()->guard('admin')->user()->id);
-
+    
+            // parent id via utility (migrated from controller)
+            $parent_id = $utility->getParentId($currentId);
+    
             return view('admin.adminUser.index', [
-                'lists' => $data,  // 列表数据
+                'lists'     => $data,      // 列表数据
                 'condition' => $keyword,
                 'parent_id' => $parent_id,
             ]);
         }
+
 
         /**
          * @Title: all

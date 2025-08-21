@@ -22,7 +22,10 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
         Route::post('/users/save', [AdminUserController::class, 'save'])->name('users.save');
         Route::get('/users/edit/{id}', [AdminUserController::class, 'edit'])->name('users.edit');
         Route::put('/users/update/{id}', [AdminUserController::class, 'update'])->name('users.update');
-        Route::delete('/users/delete/{id}', [AdminUserController::class, 'delete'])->name('users.delete');
+        Route::get('/users/delete/{id}', [AdminUserController::class, 'delete'])->name('users.delete');
+
+        // Add new route for all users
+        Route::get('/users/all', [AdminUserController::class, 'all'])->name('users.all');
 
         // Ajax calls for users management
         Route::get('/users/info', [AdminUserController::class, 'info'])->name('users.info');

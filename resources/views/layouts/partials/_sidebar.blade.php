@@ -157,8 +157,8 @@
          </span>
         </a>
        </div>
-       <div class="kt-menu-item {{ request()->is('agents') ? 'active' : '' }}">
-        <a class="kt-menu-link gap-2.5 py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ url('/agents') }}">
+       <div class="kt-menu-item {{ request()->routeIs('admin.users.all') ? 'active' : '' }}">
+        <a class="kt-menu-link gap-2.5 py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('admin.users.all') }}">
          <span class="kt-menu-icon items-start text-lg text-secondary-foreground kt-menu-item-active:text-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
           <i class="ki-filled ki-home-3">
           </i>

@@ -51,7 +51,7 @@
                     <div class="kt-card-header flex-wrap gap-2">
                         <div class="flex flex-wrap gap-2 lg:gap-5">
                             <form name="admin_list_sea" class="form-search flex flex-wrap gap-2.5" method="get"
-                                  action="{{ route('admin.users.index') }}">
+                                  action="{{ route('admin.users.all') }}">
                                 {{ csrf_field() }}
                                 <div class="flex">
                                     <input class="kt-input w-40" type="text"
@@ -83,71 +83,71 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @isset($agents)
-                                        @foreach($agents as $agent)
+                                    @isset($lists)
+                                        @foreach($lists as $list)
                                             <tr>
-                                                <td>{{ $agent->id }}</td>
-                                                @if($agent->is_cancel != 0)
-                                                    <td title="{{ $agent->name ?? ""}}">{{ $agent->name ?? "" }} {{trans('general.is_del')}}</td>
+                                                <td>{{ $list->id }}</td>
+                                                @if($list->is_cancel != 0)
+                                                    <td title="{{ $list->name ?? ""}}">{{ $list->name ?? "" }} {{trans('general.is_del')}}</td>
                                                 @else
-                                                    <td title="{{ $agent->name ?? "" }}">{{ $agent->name ?? "" }}</td>
+                                                    <td title="{{ $list->name ?? "" }}">{{ $list->name ?? "" }}</td>
                                                 @endif
                                                 <td>
-                                                    {{ $agent->levels->level_name ?? "" }}
+                                                    {{ $list->levels->level_name ?? "" }}
                                                     @if(Auth::guard('admin')->user()->level_id <= 3)
-                                                        @if($agent->type == 2)
+                                                        @if($list->type == 2)
                                                             <i>Pro</i>
                                                         @endif
                                                     @endif
                                                 </td>
-                                                <td>{{ number_format($agent->balance, 2) }}</td>
+                                                <td>{{ number_format($list->balance, 2) }}</td>
                                                 <td>
                                                     @php
                                                         $profit = 0;
-                                                        if (isset($agent->monthlyProfits)) {
-                                                            $profit = $agent->monthlyProfits->sum('profit');
+                                                        if (isset($list->monthlyProfits)) {
+                                                            $profit = $list->monthlyProfits->sum('profit');
                                                         }
                                                     @endphp
                                                     {{ number_format($profit, 2) }}
                                                 </td>
-                                                <td title="{{ $agent->remark }}">
-                                                    @if(mb_strlen($agent->remark) > 10)
-                                                        {{ mb_substr($agent->remark, 0, 10) }}...
+                                                <td title="{{ $list->remark }}">
+                                                    @if(mb_strlen($list->remark) > 10)
+                                                        {{ mb_substr($list->remark, 0, 10) }}...
                                                     @else
-                                                        {{ $agent->remark }}
+                                                        {{ $list->remark }}
                                                     @endif
                                                 </td>
-                                                <td>{{ $agent->created_at }}</td>
+                                                <td>{{ $list->created_at }}</td>
                                                 <td class="text-end">
                                                     <div class="kt-menu-item grow" data-kt-menu-item-offset="0px,0px" data-kt-menu-item-placement="bottom-end" data-kt-menu-item-toggle="dropdown" data-kt-menu-item-trigger="click|hover">
                                                         <button class="kt-btn kt-btn-sm kt-btn-primary">{{ __('messages.agent_list.table.action') }}</button>
                                                         <div class="kt-dropdown-menu">
                                                             @if(Auth::guard('admin')->user()->id != 1)
                                                                 <div class="kt-menu-item">
-                                                                    <a class="kt-menu-link" href="{{ route('admin.users.check', ['id' => $agent->id]) }}">{{trans('adminUser.check')}}</a>
+                                                                    <a class="kt-menu-link" href="{{ route('admin.users.check', ['id' => $list->id]) }}">{{trans('adminUser.check')}}</a>
                                                                 </div>
-                                                                @if($agent->is_cancel == 0)
+                                                                @if($list->is_cancel == 0)
                                                                 <div class="kt-menu-item">
-                                                                    <a class="kt-menu-link" href="{{ route('admin.users.recharge', ['id' => $agent->id]) }}">{{trans('adminUser.chongzhi')}}</a>
+                                                                    <a class="kt-menu-link" href="{{ route('admin.users.recharge', ['id' => $list->id]) }}">{{trans('adminUser.chongzhi')}}</a>
                                                                 </div>
                                                                 @endif
-                                                                @if($agent->is_cancel != 2)
+                                                                @if($list->is_cancel != 2)
                                                                 <div class="kt-menu-item">
-                                                                    <a class="kt-menu-link" href="{{ route('admin.users.lower', ['id' => $agent->id]) }}">{{trans('adminUser.lower_agent')}}</a>
+                                                                    <a class="kt-menu-link" href="{{ route('admin.users.lower', ['id' => $list->id]) }}">{{trans('adminUser.lower_agent')}}</a>
                                                                 </div>
                                                                 @endif
                                                             @else
                                                                 <div class="kt-menu-item">
-                                                                    <a class="kt-menu-link" href="{{ route('admin.users.look', ['id' => $agent->id]) }}">{{trans('adminUser.check_cost')}}</a>
+                                                                    <a class="kt-menu-link" href="{{ route('admin.users.look', ['id' => $list->id]) }}">{{trans('adminUser.check_cost')}}</a>
                                                                 </div>
                                                                 <div class="kt-menu-item">
-                                                                    <a class="kt-menu-link" href="{{ route('admin.users.lower', ['id' => $agent->id]) }}">{{trans('adminUser.lower_agent')}}</a>
+                                                                    <a class="kt-menu-link" href="{{ route('admin.users.lower', ['id' => $list->id]) }}">{{trans('adminUser.lower_agent')}}</a>
                                                                 </div>
                                                                 <div class="kt-menu-item">
-                                                                    <a class="kt-menu-link" href="{{ route('admin.users.check', ['id' => $agent->id]) }}">{{trans('adminUser.check')}}</a>
+                                                                    <a class="kt-menu-link" href="{{ route('admin.users.check', ['id' => $list->id]) }}">{{trans('adminUser.check')}}</a>
                                                                 </div>
                                                                 <div class="kt-menu-item">
-                                                                    <a class="kt-menu-link" href="{{ route('admin.users.recharge', ['id' => $agent->id]) }}">{{trans('adminUser.chongzhi')}}</a>
+                                                                    <a class="kt-menu-link" href="{{ route('admin.users.recharge', ['id' => $list->id]) }}">{{trans('adminUser.chongzhi')}}</a>
                                                                 </div>
                                                             @endif
                                                         </div>
@@ -162,8 +162,8 @@
                         </div>
                     </div>
                     <div class="kt-card-footer">
-                        @isset($agents)
-                        {!! $agents->appends(request()->except('page'))->render() !!}
+                        @isset($lists)
+                        {!! $lists->appends(request()->except('page'))->render() !!}
                         @endisset
                     </div>
                 </div>

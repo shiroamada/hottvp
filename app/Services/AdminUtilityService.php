@@ -39,22 +39,21 @@ class AdminUtilityService
     }
 
     public function getLowerIdss($uid)
-    {
-        $this->idss[] = $uid;
-        $where = ['pid' => $uid];
-        $infos = AdminUserRepository::getListByWhere($where);
+{
+    $where = ['pid' => $uid];
+    $infos = AdminUserRepository::getListByWhere($where);
 
-        if ($infos) {
-            foreach ($infos as $info) {
-                if ($info->is_cancel == 2) {
-                    $this->idss[] = $info->id;
-                }
-                $this->getLowerIdss($info->id);
+    if ($infos) {
+        foreach ($infos as $info) {
+            if ($info->is_cancel == 2) {
+                $this->idss[] = $info->id;   // ✅ only descendants, no root
             }
+            $this->getLowerIdss($info->id);   // 🔁 recurse deeper
         }
-
-        return $this->idss;
     }
+
+    return $this->idss;   // ✅ return array at the end
+}
 
     public function getLowerIdsByAll($uid, $level_id = 0)
     {

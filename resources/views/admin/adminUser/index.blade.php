@@ -146,6 +146,16 @@
                                                                     </a>
                                                                 @endif
                                                                 @if($v['is_cancel'] != 2)
+                                                                    <a class="block px-4 py-2 text-sm dropdown-item" href="{{ route('admin.users.edit', ['id' => $v['id']]) }}">
+                                                                        {{ __('messages.agent_list.edit') }}
+                                                                    </a>
+                                                                    <form action="{{ route('admin.users.delete', $v->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');" style="display: inline;">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm dropdown-item">
+                                                                            {{ __('messages.agent_list.delete') }}
+                                                                        </button>
+                                                                    </form>
                                                                     <a class="block px-4 py-2 text-sm dropdown-item" href="{{ route('admin.users.lower', ['id' => $v['id']]) }}">
                                                                         {{ __('messages.agent_list.lower_agent') }}
                                                                     </a>
