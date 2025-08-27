@@ -1,8 +1,8 @@
 <?php
 
 use App\Foundation\Tire;
-use App\Model\Admin\Config as SiteConfig;
-use App\Model\Admin\SensitiveWord;
+use App\Models\Admin\Config as SiteConfig;
+use App\Models\Admin\SensitiveWord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use PHPMailer\PHPMailer\Exception;

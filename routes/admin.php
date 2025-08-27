@@ -15,6 +15,9 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+        Route::get('/huobi', [HuobiController::class, 'index'])->name('huobi.index');
+
+
         // Essential Admin User Management Routes (Core CRUD)
         // Using original route names without 'admin.' prefix to maintain exact business logic
         Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
@@ -23,6 +26,8 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
         Route::get('/users/edit/{id}', [AdminUserController::class, 'edit'])->name('users.edit');
         Route::put('/users/update/{id}', [AdminUserController::class, 'update'])->name('users.update');
         Route::get('/users/delete/{id}', [AdminUserController::class, 'delete'])->name('users.delete');
+        Route::get('/users/lower/{id}', [AdminUserController::class, 'lower'])->name('users.lower');
+        Route::put('/users/remark/{id}', [AdminUserController::class, 'remark'])->name('users.remark');
 
         // Add new route for all users
         Route::get('/users/all', [AdminUserController::class, 'all'])->name('users.all');
@@ -43,6 +48,18 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
         Route::post('/users/level_update', [AdminUserController::class, 'levelUpdate'])->name('users.level_update');
         Route::get('/users/cost/{id}', [AdminUserController::class, 'cost'])->name('users.cost');
         Route::post('/users/cost_update', [AdminUserController::class, 'costUpdate'])->name('users.cost_update');
+
+        Route::get('/configs', 'ConfigController@index')->name('config.index');
+        Route::get('/configs/list', 'ConfigController@list')->name('config.list');
+        Route::get('/configs/create', 'ConfigController@create')->name('config.create');
+        Route::post('/configs', 'ConfigController@save')->name('config.save');
+        Route::get('/configs/{id}/edit', 'ConfigController@edit')->name('config.edit');
+        Route::put('/configs/{id}', 'ConfigController@update')->name('config.update');
+        Route::delete('/configs/{id}', 'ConfigController@delete')->name('config.delete');
+
+
+
+
         foreach (new DirectoryIterator(base_path('routes/auto')) as $f) {
             if ($f->isDot()) {
                 continue;
