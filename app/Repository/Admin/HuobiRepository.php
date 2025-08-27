@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
+
 class HuobiRepository
 {
     use Searchable;
@@ -25,6 +26,7 @@ class HuobiRepository
      */
     public static function list($perPage, $condition = [])
     {
+        DB::enableQueryLog();
         //        DB::connection()->enableQueryLog();#开启执行日志
         if (isset($condition['startTime']) && ! empty($condition['startTime'])) {
             $start_time = $condition['startTime'].' 00:00:00';
@@ -35,8 +37,8 @@ class HuobiRepository
                 ->where(function ($query) use ($condition) {
                     Searchable::buildQuery($query, $condition);
                 })
-                ->whereRaw('created_at >= '."'".$start_time."'")
-                ->whereRaw('created_at <= '."'".$end_time."'")
+                ->whereRaw('created_at >= ?', [$start_time])
+                ->whereRaw('created_at <= ?', [$end_time])
                 ->orderBy('id', 'desc')
                 ->paginate($perPage);
         } else {
@@ -63,8 +65,8 @@ class HuobiRepository
             unset($condition['endTime']);
             $data = Huobi::query()
                 ->where($condition)
-                ->whereRaw('created_at >= '."'".$start_time."'")
-                ->whereRaw('created_at <= '."'".$end_time."'")
+                ->whereRaw('created_at >= ?', [$start_time])
+                ->whereRaw('created_at <= ?', [$end_time])
                 ->sum('money');
         } else {
             $data = Huobi::query()
@@ -95,8 +97,8 @@ class HuobiRepository
                     })
                     ->where($where)
                     // ->whereIn("user_id", $ids)
-                    ->whereRaw('created_at >= '."'".$start_time."'")
-                    ->whereRaw('created_at <= '."'".$end_time."'")
+                    ->whereRaw('created_at >= ?', [$start_time])
+                    ->whereRaw('created_at <= ?', [$end_time])
                     ->orderBy('id', 'desc')
                     ->paginate($perPage);
             } else {
@@ -121,8 +123,8 @@ class HuobiRepository
                         Searchable::buildQuery($query, $condition);
                     })
                     ->where($where)
-                    ->whereRaw('created_at >= '."'".$start_time."'")
-                    ->whereRaw('created_at <= '."'".$end_time."'")
+                    ->whereRaw('created_at >= ?', [$start_time])
+                    ->whereRaw('created_at <= ?', [$end_time])
                     ->orderBy('id', 'desc')
                     ->paginate($perPage);
             } else {
@@ -171,8 +173,8 @@ class HuobiRepository
                     ->where($where)
                     ->where('money', '>', 0)
                     // ->whereIn("user_id", $ids)
-                    ->whereRaw('created_at >= '."'".$start_time."'")
-                    ->whereRaw('created_at <= '."'".$end_time."'")
+                    ->whereRaw('created_at >= ?', [$start_time])
+                    ->whereRaw('created_at <= ?', [$end_time])
                     ->orderBy('id', 'desc')
                     ->get();
             } else {
@@ -198,8 +200,8 @@ class HuobiRepository
                         Searchable::buildQuery($query, $condition);
                     })
                     ->where($where)
-                    ->whereRaw('created_at >= '."'".$start_time."'")
-                    ->whereRaw('created_at <= '."'".$end_time."'")
+                    ->whereRaw('created_at >= ?', [$start_time])
+                    ->whereRaw('created_at <= ?', [$end_time])
                     ->orderBy('id', 'desc')
                     ->get();
             } else {
@@ -239,8 +241,8 @@ class HuobiRepository
             $data = Huobi::query()
                 ->where('money', '>', 0)
                 ->where('user_id', '=', $condition['user_id'][1])
-                ->whereRaw('created_at >= '."'".$start_time."'")
-                ->whereRaw('created_at <= '."'".$end_time."'")
+                ->whereRaw('created_at >= ?', [$start_time])
+                ->whereRaw('created_at <= ?', [$end_time])
                 ->orderBy('id', 'desc')
                 ->get();
         } else {
@@ -458,8 +460,8 @@ class HuobiRepository
             unset($condition['endTime']);
             $data = Huobi::query()
                 ->where($where)
-                ->whereRaw('created_at >= '."'".$start_time."'")
-                ->whereRaw('created_at <= '."'".$end_time."'")
+                ->whereRaw('created_at >= ?', [$start_time])
+                ->whereRaw('created_at <= ?', [$end_time])
                 ->orderBy('id', 'desc')
                 ->sum('money');
         } else {

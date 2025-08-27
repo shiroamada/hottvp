@@ -19,6 +19,7 @@ use App\Repository\Admin\AuthCodeRepository;
 use Illuminate\Database\QueryException;
 use App\Repository\Admin\EquipmentRepository;
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -40,9 +41,9 @@ class HuobiController extends Controller
         $this->formNames[] = 'date2';
         $condition = $request->only($this->formNames);
         if (isset($condition['date2']) && !empty($condition['date2'])) {
-            $times = explode(" - ", $condition['date2']);
+            $times = array_map('trim', explode(" to ", $condition['date2']));
             $condition['startTime'] = $times[0];
-            $condition['endTime'] = $times[1];
+            $condition['endTime'] = isset($times[1]) ? $times[1] : $times[0];
         }
         $params = $condition;
         unset($condition['date2']);
@@ -292,9 +293,9 @@ class HuobiController extends Controller
         $baseRow = 2; //数据从N-1行开始往下输出 这里是避免头信息被覆盖
         // 根据条件获取授权码列表
         if (isset($condition['date2']) && !empty($condition['date2'])) {
-            $times = explode(" - ", $condition['date2']);
+            $times = array_map('trim', explode(" to ", $condition['date2']));
             $condition['startTime'] = $times[0];
-            $condition['endTime'] = $times[1];
+            $condition['endTime'] = isset($times[1]) ? $times[1] : $times[0];
         }
         unset($condition['date2']);
         if (isset($condition['status']) && $condition['status'] == 1) {  // 充入火币

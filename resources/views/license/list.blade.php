@@ -88,7 +88,7 @@
                                     </div>
                                     <div>
                                         <label for="date_range" class="kt-form-label">Date Range</label>
-                                        <input type="text" id="date_range" name="date_range" class="kt-input" placeholder="Select date range" value="{{ request('date_range') }}">
+                                        <input type="text" id="date_range" name="date2" class="kt-input" placeholder="Select date range" value="{{ request('date2') }}">
                                     </div>
                                     <div class="md:col-span-4 flex justify-end gap-3">
                                         <button type="submit" class="kt-btn kt-btn-primary">Search</button>
@@ -224,3 +224,31 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        flatpickr("#date_range", {
+            mode: "range",
+            dateFormat: "Y-m-d",
+        });
+
+        const exportBtn = document.getElementById('export-btn');
+        if(exportBtn) {
+            exportBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const form = document.querySelector('form[action="{{ route('license.list') }}"]');
+                const formData = new FormData(form);
+                const params = new URLSearchParams(formData);
+                // remove empty params
+                for (let p of params) {
+                    if (!p[1]) {
+                        params.delete(p[0]);
+                    }
+                }
+                window.location.href = this.href + '?' + params.toString();
+            });
+        }
+    });
+</script>
+@endpush

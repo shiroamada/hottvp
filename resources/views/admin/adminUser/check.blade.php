@@ -49,7 +49,7 @@
             <div class="kt-container-fixed grid gap-5 lg:gap-7.5">
               <!-- Profile / Summary Card -->
               <div class="kt-card kt-card-grid">
-                <div class="kt-card-content">
+                <div class="kt-card-content m-3">
                   <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
                     <div class="shrink-0">
                       <img class="rounded-xl object-cover" width="165" height="165"
@@ -167,7 +167,7 @@
 <div class="kt-card kt-card-grid">
   <div class="kt-card-content">
     {{-- Tab Buttons --}}
-    <div class="flex flex-wrap gap-2 mb-6 border-b border-input">
+    <div class="flex flex-wrap gap-2 m-3 pb-2 border-b border-input">
       <button
         type="button"
         class="kt-btn {{ $activeTab === 'profit' ? 'kt-btn-primary' : 'kt-btn-light' }}"

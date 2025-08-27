@@ -35,7 +35,7 @@
 
               <!-- Profile/Summary (adds avatar/email/phone/password as in legacy) -->
               <div class="kt-card kt-card-grid min-w-full">
-                <div class="kt-card-content">
+                <div class="kt-card-conten m-4">
                   <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
                     <!-- <div class="shrink-0">
                       <img
@@ -92,7 +92,7 @@
                   <h3 class="kt-card-title">{{ __('messages.agent_recharge.form_title') }}</h3>
                 </div>
 
-                <div class="kt-card-content">
+                <div class="kt-card-content m-4">
                   <form method="post" action="{{ route('admin.users.pay') }}" id="form" class="space-y-6">
                     @csrf
                     <input type="hidden" name="id" value="{{ $info['id'] }}">
@@ -109,7 +109,7 @@
                     <div>
                       <label for="balance" class="kt-form-label">{{ __('adminUser.recharge') }}</label>
                       <div class="relative">
-                        <span class="absolute start-3 top-2.5 text-muted-foreground">RM</span>
+                        <span class="absolute start-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">RM</span>
                         <input
                           class="kt-input ps-10"
                           type="text"

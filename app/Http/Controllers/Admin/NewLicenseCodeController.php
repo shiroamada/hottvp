@@ -53,9 +53,9 @@ class NewLicenseCodeController extends Controller
         $condition = $request->only($this->formNames);
         $params = $condition;
         if (isset($condition['date2']) && !empty($condition['date2'])) {
-            $times = explode(" - ", $condition['date2']);
+            $times = array_map('trim', explode(" to ", $condition['date2']));
             $condition['startTime'] = $times[0];
-            $condition['endTime'] = $times[1];
+            $condition['endTime'] = isset($times[1]) ? $times[1] : $times[0];
         }
         unset($condition['date2']);
         $condition['is_try'] = ['=', 1];
@@ -102,6 +102,12 @@ class NewLicenseCodeController extends Controller
         $perPage = (int)$request->get('limit', env('APP_PAGE'));
         $this->formNames[] = 'created_at';
         $condition = $request->only($this->formNames);
+        if (isset($condition['created_at']) && !empty($condition['created_at'])) {
+            $times = array_map('trim', explode(" to ", $condition['created_at']));
+            $condition['startTime'] = $times[0];
+            $condition['endTime'] = isset($times[1]) ? $times[1] : $times[0];
+        }
+        unset($condition['created_at']);
         $condition['is_try'] = ['=', 2];
         if (\Auth::guard('admin')->user()->id != 1) {
             $condition['user_id'] = ['=', \Auth::guard('admin')->user()->id];

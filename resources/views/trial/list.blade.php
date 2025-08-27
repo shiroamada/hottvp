@@ -138,6 +138,11 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        flatpickr("#date_range", {
+            mode: "range",
+            dateFormat: "Y-m-d",
+        });
+
         const exportBtn = document.getElementById('export-btn');
         if(exportBtn) {
             exportBtn.addEventListener('click', function (e) {
