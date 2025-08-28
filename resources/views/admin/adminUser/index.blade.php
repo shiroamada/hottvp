@@ -178,19 +178,16 @@
                                                         @endif
 
                                                         @if($v['is_cancel'] != 2)
-                                                          <a class="block px-4 py-2 text-sm" role="menuitem"
-                                                             href="{{ route('admin.users.edit', ['id' => $v['id']]) }}">
-                                                            {{ __('messages.agent_list.edit') }}
-                                                          </a>
+                                                          
 
-                                                          <form action="{{ route('admin.users.delete', $v->id) }}" method="POST"
+                                                          <!-- <form action="{{ route('admin.users.delete', $v->id) }}" method="POST"
                                                                 onsubmit="return confirm('{{ __('messages.general.delete_confirm') }}');">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="block w-full text-left px-4 py-2 text-sm" role="menuitem">
                                                               {{ __('messages.agent_list.delete') }}
                                                             </button>
-                                                          </form>
+                                                          </form> -->
 
                                                           <a class="block px-4 py-2 text-sm" role="menuitem"
                                                              href="{{ route('admin.users.lower', ['id' => $v['id']]) }}">

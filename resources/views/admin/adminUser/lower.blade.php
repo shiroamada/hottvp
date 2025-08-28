@@ -200,27 +200,30 @@
 @endpush
 
 @push('scripts')
+<script src="{{ asset('public/admin/js/laydate/laydate.js') }}"></script>
 <script>
-  // If you keep laydate, parse range into hidden fields before submit.
-  if (window.laydate) {
-    laydate.render({
-      elem: '#date2',
-      range: true,
-      trigger: 'click'
-    });
-  }
+  document.addEventListener('DOMContentLoaded', function () {
+    // If you keep laydate, parse range into hidden fields before submit.
+    if (window.laydate) {
+      laydate.render({
+        elem: '#date2',
+        range: true,
+        trigger: 'click'
+      });
+    }
 
-  // Split "YYYY-MM-DD - YYYY-MM-DD" into hidden start/end
-  (function () {
-    const form = document.querySelector('form[name="admin_list_sea"]');
-    if (!form) return;
+    // Split "YYYY-MM-DD - YYYY-MM-DD" into hidden start/end
+    (function () {
+      const form = document.querySelector('form[name="admin_list_sea"]');
+      if (!form) return;
 
-    form.addEventListener('submit', function () {
-      const range = document.getElementById('date2')?.value || '';
-      const [start, end] = range.split(/\s*-\s*/);
-      if (start) document.getElementById('startTime').value = start.trim();
-      if (end) document.getElementById('endTime').value = end.trim();
-    });
-  })();
+      form.addEventListener('submit', function () {
+        const range = document.getElementById('date2')?.value || '';
+        const [start, end] = range.split(/\s*-\s*/);
+        if (start) document.getElementById('startTime').value = start.trim();
+        if (end) document.getElementById('endTime').value = end.trim();
+      });
+    })();
+  });
 </script>
 @endpush

@@ -1412,7 +1412,7 @@ namespace App\Http\Controllers\Admin;
             $id = auth()->guard('admin')->user()->id;
             $info = AdminUserRepository::find($id);
 
-            return view('admin.adminUser.userInfo', [
+            return view('profile.userInfo', [
                 'info' => $info,
             ]);
         }
@@ -1445,18 +1445,40 @@ namespace App\Http\Controllers\Admin;
          */
         public function userUpdate(Request $request)
         {
+            DB::beginTransaction(); // 开启事务
             try {
-                $data = $request->only($this->formNames);
-                unset($data['level_id']);
+                // Use utility middleware
+                $utility = $request->attributes->get('utility');
 
-                AdminUserRepository::update(auth()->guard('admin')->user()->id, $data);
+                // 如果不是ajax方式，则非法请求
+                $utility->isAjax($request);
+
+                $user = auth()->guard('admin')->user();
+                $data = $request->only(['name', 'email', 'phone', 'remark']); // Only allow these fields to be updated
+
+                // Handle photo upload
+                if ($request->hasFile('photo_file')) {
+                    $file = $request->file('photo_file');
+                    $fileName = $this->upload($file); // Use the existing upload method
+                    if ($fileName) {
+                        $data['photo'] = $fileName; // Update photo path
+                    } else {
+                        throw new \Exception(trans('general.upload_fail'));
+                    }
+                }
+
+                AdminUserRepository::update($user->id, $data);
+
+                DB::commit();  // 提交
 
                 return [
                     'code' => 0,
                     'msg' => trans('general.updateSuccess'),
-                    'redirect' => true,
+                    'redirect' => route('profile.userInfo'), // Redirect to the user info page
                 ];
             } catch (\Exception $e) {
+                DB::rollback();  // 回滚
+
                 return [
                     'code' => 1,
                     'msg' => $e->getMessage(),
@@ -2195,7 +2217,8 @@ namespace App\Http\Controllers\Admin;
             // 本月下级产生利润
             // 现获取所有的下级id
             $all_users = AdminUserRepository::getDataByWhere([]);
-            $ids = $this->get_downline($all_users, $id, $userInfo->level_id);
+            $utility = app(\App\Services\AdminUtilityService::class);
+            $ids = $utility->get_downline($all_users, $id, $userInfo->level_id);
             $profit_where = ['status' => 0, 'type' => 1, 'user_id' => $id];
             $month_profit = HuobiRepository::lowerByProfit(dates($date), $profit_where);
             // 上月下级产生利润
@@ -2242,10 +2265,11 @@ namespace App\Http\Controllers\Admin;
             // 只显示没有注销的用户
             $param = [];
             $param['pid'] = ['=', $id];
-            $this->getLowerIdss($id);
+            $utility = $request->attributes->get('utility');
+            $this->idss = $utility->getLowerIdss($id);
             $data = AdminUserRepository::listByView($perPage, $id, $this->idss, $param, $keyword);
             $data->name = $request->name;
-            $parent_id = $this->getParentId($id);
+            $parent_id = $utility->getParentId($id);
 
             return view('admin.adminUser.step_one', [
                 'lists' => $data,  // 列表数据

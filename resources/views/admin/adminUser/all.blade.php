@@ -158,7 +158,7 @@
                                           @if(Auth::guard('admin')->user()->id != 1)
                                             <li>
                                               <a class="kt-dropdown-menu-link kt-link-stripe"
-                                                 href="{{ route('admin.users.check', ['id' => $list->id]) }}">
+                                                 href="{{ route('admin.users.visual', ['id' => $list->id]) }}">
                                                 {{ trans('adminUser.check') }}
                                               </a>
                                             </li>
@@ -179,18 +179,7 @@
                                                   {{ trans('adminUser.lower_agent') }}
                                                 </a>
                                               </li>
-                                              <li>
-                                                <form action="{{ route('admin.users.delete', $list->id) }}"
-                                                      method="POST"
-                                                      onsubmit="return confirm('{{ __('messages.general.delete_confirm') }}');">
-                                                  @csrf
-                                                  @method('DELETE')
-                                                  <button type="submit"
-                                                          class="kt-dropdown-menu-link kt-link-stripe w-full text-left">
-                                                    {{ __('messages.agent_list.delete') }}
-                                                  </button>
-                                                </form>
-                                              </li>
+                                              
                                             @endif
                                           @else
                                             <li>
