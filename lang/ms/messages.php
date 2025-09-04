@@ -9,7 +9,7 @@ return [
     'app.name_extended' => 'HOT TV+',
 
     // Sidebar Main
-    'sidebar.dashboard' => 'Papan Pemuka',
+    'sidebar.dashboard' => 'Halaman Utama',
     'sidebar.license_code_management.title' => 'Pengurusan Kod Lesen',
     'sidebar.license_code_management.generate' => 'Jana Kod Lesen',
     'sidebar.license_code_management.list' => 'Senarai Kod',

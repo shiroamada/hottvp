@@ -12,7 +12,7 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-
+'dashboard' => 'Halaman Utama',
     'account_set' => 'Tetapan Akaun',
     'pass_set' => 'Sila Tetapkan Kata Laluan Baru',
     'tips' => 'Selamat Datang, Sila Masukkan E-mel Anda Untuk Log Masuk Pertama, E-mel Boleh Digunakan Untuk Perkhidmatan Masuk Akaun Dan Pengambilan Kata Laluan',
@@ -36,8 +36,8 @@ return [
 
 
     'HotCoin_balance' => 'Imbangan HotCoin',
-    'count_code' => '生成授权码总数量',
-    'sum_profit' => '总利润',
+    'count_code' => 'Jumlah Kod Kebenaran Dijana',
+    'sum_profit' => 'Jumlah Keuntungan',
     'month_code' => 'Bilangan Kod Kebenaran',
     'month_code1' => 'Yang Dihasilkan Bulan Ini',
     'month_lower_profit' => 'Keuntungan Untuk Bulan Ini',

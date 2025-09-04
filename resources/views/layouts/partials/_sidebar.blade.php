@@ -153,7 +153,7 @@
           </i>
          </span>
          <span class="kt-menu-title text-sm text-foreground font-medium kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-          {{ __('messages.sidebar.hotcoin_transaction') }}
+          {{ __('messages.sidebar.hotcoin_transaction.title') }}
          </span>
         </a>
        </div>
@@ -175,7 +175,7 @@
       </div>
       <!-- Secondary Menu -->
       <div class="kt-menu flex flex-col w-full gap-1.5 px-3.5" data-kt-menu="true" data-kt-menu-accordion-expand-all="true" id="sidebar_secondary_menu">
-       <div class="kt-menu-item {{ request()->routeIs(['profile.edit', 'password.change', 'costing.index']) ? 'here show' : '' }}" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
+       <div class="kt-menu-item {{ request()->routeIs(['admin.users.userInfo', 'password.change', 'costing.index']) ? 'here show' : '' }}" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
         <div class="kt-menu-label flex items-center justify-between">
          <div class="kt-menu-toggle cursor-pointer pb-2 pt-3 ps-[14.5px] rounded-md border border-transparent">
           <span class="kt-menu-arrow me-2.5">
@@ -194,8 +194,8 @@
          </div>
         </div>
         <div class="kt-menu-accordion">
-         <div class="kt-menu-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
-          <a class="kt-menu-link py-1 px-2 my-0.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('profile.edit') }}">
+         <div class="kt-menu-item {{ request()->routeIs('admin.users.userInfo') ? 'active' : '' }}">
+          <a class="kt-menu-link py-1 px-2 my-0.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('admin.users.userInfo') }}">
            <span class="kt-menu-icon text-secondary-foreground kt-menu-link-hover:text-mono rounded-md flex place-content-center size-7 me-2.5 bg-border border border-input kt-menu-item-active:border-none kt-menu-link-hover:border-light kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-none kt-menu-icon-xs">
             <i class="ki-filled ki-abstract-41">
             </i>
@@ -205,6 +205,7 @@
            </span>
           </a>
          </div>
+         @if(Auth::guard('admin')->check() && Auth::guard('admin')->user()->level_id == 3)
          <div class="kt-menu-item {{ request()->routeIs('costing.index') ? 'active' : '' }}">
           <a class="kt-menu-link py-1 px-2 my-0.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('costing.index') }}">
            <span class="kt-menu-icon text-secondary-foreground kt-menu-link-hover:text-mono rounded-md flex place-content-center size-7 me-2.5 bg-border border border-input kt-menu-item-active:border-none kt-menu-link-hover:border-light kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-none kt-menu-icon-xs">
@@ -216,6 +217,7 @@
            </span>
           </a>
          </div>
+         @endif
          <div class="kt-menu-item {{ request()->routeIs('license.list') ? 'active' : '' }}">
           <a class="kt-menu-link py-1 px-2 my-0.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('license.list') }}">
            <span class="kt-menu-icon text-secondary-foreground kt-menu-link-hover:text-mono rounded-md flex place-content-center size-7 me-2.5 bg-border border border-input kt-menu-item-active:border-none kt-menu-link-hover:border-light kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-none kt-menu-icon-xs">
@@ -251,10 +253,10 @@
          <img alt="" class="size-9 shrink-0 rounded-full border-2 border-green-500" src="/assets/media/avatars/300-2.png"/>
          <div class="flex flex-col gap-1.5">
           <span class="text-sm text-foreground font-semibold leading-none">
-           Anwar Ibrahim
+           {{ Auth::guard('admin')->user()->name }}
           </span>
-          <a class="text-xs text-secondary-foreground hover:text-primary font-medium leading-none" href="html/demo6/account/home/get-started.html">
-           anwar.ibrahim@gmail.com
+          <a class="text-xs text-secondary-foreground hover:text-primary font-medium leading-none" href="mailto:{{ Auth::guard('admin')->user()->email }}">
+           {{ Auth::guard('admin')->user()->email }}
           </a>
          </div>
         </div>
@@ -268,7 +270,7 @@
          </div>
         </li>
         <li>
-         <a class="kt-dropdown-menu-link" href="html/demo6/account/home/user-profile.html">
+         <a class="kt-dropdown-menu-link" href="{{ route('admin.users.userInfo') }}">
           <i class="ki-filled ki-profile-circle">
           </i>
           {{ __('messages.sidebar.my_profile') }}

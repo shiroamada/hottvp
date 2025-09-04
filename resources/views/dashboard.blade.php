@@ -27,7 +27,7 @@
                     <div class="pb-5">
                         <div class="kt-container-fixed flex items-center justify-between flex-wrap gap-3">
                             <div class="flex items-center flex-wrap gap-1 lg:gap-5">
-                                <h1 class="font-medium text-lg text-mono">Dashboard</h1>
+                                <h1 class="font-medium text-lg text-mono">{{ __('home.dashboard') }}</h1>
                             </div>
                             <div class="flex items-center flex-wrap gap-1.5 lg:gap-3.5">
                                 @php
@@ -77,7 +77,7 @@
             <!-- Dropdown for Activation Code Type -->
             <div class="grow w-full sm:w-auto">
                 <select class="kt-btn kt-btn-outline w-full" name="assort_id" id="standardSelect" style="appearance: none; padding: 5px; font-weight: 500;">
-                    <option value="">Select Code</option>
+                    <option value="">{{ __('general.select_code') }}</option>
                     @foreach($activationCodePresets ?? [] as $v)
                         <option value="{{ $v->assort_id }}"
                                 data-money="{{ $v->money ?? 0 }}"
@@ -90,7 +90,7 @@
             </div>
             <!-- Button that triggers the modal -->
             <button class="kt-btn kt-btn-primary w-full sm:w-auto whitespace-nowrap" type="button" data-kt-modal-toggle="#activationModal" id="submitBtn">
-                Authorization Code
+                {{ __('general.authorization_code') }}
             </button>
         </div>
     </div>
@@ -100,7 +100,7 @@
 <div class="kt-modal" id="activationModal" data-kt-modal="true">
     <div class="kt-modal-content max-w-md">
         <div class="kt-modal-header">
-            <h3 class="kt-modal-title">Message</h3>
+            <h3 class="kt-modal-title">{{ __('home.message') }}</h3>
             <button
                 type="button"
                 class="kt-modal-close"
@@ -129,21 +129,21 @@
             <form id="form">
                 @csrf
                 <input class="form-control" type="hidden" name="mini_money" value="" id="mini_money">
-                <p class="text-center text-sm text-secondary-foreground" id="users">Membership Authorization Code</p>
+                <p class="text-center text-sm text-secondary-foreground" id="users">{{ __('home.membership_authorization_code') }}</p>
                 <div class="flex justify-center items-center gap-3 mt-4 mb-4">
                     <h3 class="text-lg font-semibold" id="auth_code"></h3>
                     <button class="kt-btn kt-btn-primary" data-clipboard-text="" id="copy">
-                        Copy
+                        {{ __('home.copy') }}
                     </button>
                 </div>
                 <div class="flex flex-col gap-3">
-                    <label class="text-sm text-secondary-foreground" for="standardRemark">Remark</label>
+                    <label class="text-sm text-secondary-foreground" for="standardRemark">{{ __('home.remark') }}</label>
                     <textarea class="kt-btn kt-btn-outline w-full" id="standardRemark" rows="3" name="remark" maxlength="128"></textarea>
                 </div>
             </form>
         </div>
         <div class="kt-modal-footer">
-            <button class="kt-btn kt-btn-primary" data-kt-modal-dismiss="#activationModal" id="confirmBtn">Confirm</button>
+            <button class="kt-btn kt-btn-primary" data-kt-modal-dismiss="#activationModal" id="confirmBtn">{{ __('home.confirm') }}</button>
         </div>
     </div>
 </div>
@@ -158,7 +158,7 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold text-purple-400">{{ number_format($balance, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">HOTCOIN Balance</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.huobi_balance') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -172,8 +172,8 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold">{{ number_format($monthlyGeneratedCurrentMonth, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">Monthly Generated Quantity</div>
-                                                        <div class="text-xs text-muted-foreground">No. Activation Code (This Month)</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.month_code') }}</div>
+                                                        <div class="text-xs text-muted-foreground">{{ __('home.month_code1') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -187,8 +187,8 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold">{{ number_format($generatedLastMonth, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">Generated Quantity</div>
-                                                        <div class="text-xs text-muted-foreground">Last Month Activation Code</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.last_month_code') }}</div>
+                                                        <div class="text-xs text-muted-foreground">{{ __('home.last_month_code1') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -202,7 +202,7 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold">{{ number_format($totalGeneratedQuantity, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">Generated Activation Code Total Quantity</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.count_code') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -218,15 +218,15 @@
                                                 </div>
                                                 <div class="grow">
                                                     <div class="text-2xl font-semibold">{{ number_format($usageHotcoinLastMonth, 2) }}</div>
-                                                    <div class="text-sm text-secondary-foreground">Usage of HOTCOIN</div>
-                                                    <div class="text-xs text-muted-foreground">Last Month</div>
+                                                    <div class="text-sm text-secondary-foreground">{{ __('home.last_month_huobi') }}</div>
+                                                    <div class="text-xs text-muted-foreground">{{ __('home.last_month_huobi1') }}</div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <!-- Downline Agent Section -->
-                                    <h3 class="text-lg font-semibold text-mono mt-2.5">Downline Agent</h3>
+                                    <h3 class="text-lg font-semibold text-mono mt-2.5">{{ __('home.lower_agency') }}</h3>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-7.5">
                                         <!-- This Month Profit -->
                                         <div class="kt-card">
@@ -237,7 +237,7 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold">{{ number_format($thisMonthProfit, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">This Month Profit</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.month_lower_profit') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -251,7 +251,7 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold">{{ number_format($lastMonthProfit, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">Last Month Profit</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.last_month_profit') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -265,7 +265,7 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold">{{ number_format($totalProfit, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">Total Profit</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.sum_profit') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -279,7 +279,7 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold">{{ number_format($totalMembers, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">Total Members</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.count_agency') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -352,16 +352,207 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Authorization Code Script: Authorization Code button clicked');
                 
                 var mini_money = $("#standardSelect").find("option:selected").attr("data-money");
-                var iteValue = $("#standardSelect").find("option:selected").attr("data-name");
+                var iteValue = $("#standardSelect
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+").find("option:selected").attr("data-name");
                 var duration = $("#standardSelect").find("option:selected").attr("data-duration");
                 var assort_id = $("#standardSelect").find("option:selected").val();
                 
                 console.log('Authorization Code Script: Selected values:', {mini_money, iteValue, duration, assort_id});
                 
-                $("#users").html(iteValue ? iteValue + " Authorization Code" : "Membership Authorization Code");
+                $("#users").html(iteValue ? iteValue + " {{ __('home.authorization_code') }}" : "{{ __('home.membership_authorization_code') }}");
                 
                 if (typeof(iteValue) === "undefined" || !assort_id) {
-                    alert("Please select a code type");
+                    alert("{{ __('home.select_code_type') }}");
                     return false;
                 }
 
@@ -380,7 +571,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     success: function (result) {
                         console.log('Authorization Code Script: AJAX Success:', result);
                         if (result.code !== 0) {
-                            alert(result.msg || 'Failed to generate code');
+                            alert(result.msg || "{{ __('home.failed_to_generate_code') }}");
                             // KTUI will hide the modal via data-kt-modal-dismiss
                             // hideModal(); // Removed custom hideModal call
                             return false;
@@ -391,7 +582,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     error: function (resp, stat, text) {
                         console.error('Authorization Code Script: AJAX Error:', resp.status, text, resp.responseText);
-                        alert('An error occurred while generating the code. Please try again.');
+                        alert("{{ __('home.error_generating_code') }}");
                         // KTUI will hide the modal via data-kt-modal-dismiss
                         // hideModal(); // Removed custom hideModal call
                     }
@@ -421,7 +612,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 success: function (result) {
                     console.log('Authorization Code Script: Remark AJAX Success:', result);
                     if (result.code !== 0) {
-                        alert(result.msg || 'Failed to save remark');
+                        alert(result.msg || "{{ __('home.failed_to_save_remark') }}");
                         return false;
                     }
                     if (result.redirect) {
@@ -434,13 +625,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.error('Authorization Code Script: Remark AJAX Error:', resp.status, text, resp.responseText);
                     // Simplified error messages
                     if (resp.status === 404) {
-                        alert('Save feature not found. (404)');
+                        alert("{{ __('home.save_feature_not_found') }}");
                     } else if (resp.status === 422) {
-                         alert('Invalid data provided. Please check your input.');
+                         alert("{{ __('home.invalid_data_provided') }}");
                     } else if (resp.status === 500) {
-                        alert('Server error. Please contact administrator.');
+                        alert("{{ __('home.server_error') }}");
                     } else {
-                        alert('An unknown error occurred. Please try again.');
+                        alert("{{ __('home.unknown_error') }}");
                     }
                 }
             });
@@ -458,12 +649,12 @@ document.addEventListener('DOMContentLoaded', function() {
         var clipboard = new ClipboardJS('#copy');
         clipboard.on('success', function (e) {
             console.log('Authorization Code Script: Clipboard copy success:', e.text);
-            alert("Code copied successfully");
+            alert("{{ __('home.code_copied_successfully') }}");
             e.clearSelection();
         });
         clipboard.on('error', function (e) {
             console.error('Authorization Code Script: Clipboard copy error:', e.action, e.trigger);
-            alert("Failed to copy code");
+            alert("{{ __('home.failed_to_copy_code') }}");
         });
     } else {
         console.error('Authorization Code Script: ClipboardJS not initialized');

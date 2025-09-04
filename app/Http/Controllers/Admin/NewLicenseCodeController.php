@@ -526,7 +526,7 @@ class NewLicenseCodeController extends Controller
                 'status' => 0,   // 状态  0 利润记录  1 充值记录
                 'type' => 1,     // 金额状态  1 增加 2 减少
                 'number' => $data['number'],
-                'event' => $name . " " . trans('general.generate') . $AssortLevel->assorts->assort_name,
+                'event' => $name . " " . trans('general.generate') . $equipment->assorts->assort_name,
                 'own_id' => $id,   // 事件用户id
                 'create_id' => $id, // 当前用户id
                 'assort_id' => $equipment->assorts->id,

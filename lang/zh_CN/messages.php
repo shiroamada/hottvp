@@ -9,7 +9,7 @@ return [
     'app.name_extended' => 'HOT TV+',
 
     // Sidebar Main
-    'sidebar.dashboard' => '仪表板',
+    'sidebar.dashboard' => '首页',
     'sidebar.license_code_management.title' => '授权码管理',
     'sidebar.license_code_management.generate' => '生成授权码',
     'sidebar.license_code_management.list' => '授权码列表',

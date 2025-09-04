@@ -26,39 +26,45 @@
                                 <div class="kt-card-content p-5">
                                     <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
                                         <div class="shrink-0">
-                                            <img class="rounded-xl object-cover" width="165" height="165"
-                                                 src="{{ !empty($user['photo']) ? $user['photo'] : asset('public/images/users/user-09-247x247.png') }}"
-                                                 alt="{{ $user['name'] ?? '' }}">
+                                            <img
+                                                class="rounded-xl object-cover"
+                                                width="165"
+                                                height="165"
+                                                src="{{ !empty($info->photo) ? $info->photo : asset('public/images/users/user-09-247x247.png') }}"
+                                                alt="{{ $info->name ?? '' }}"
+                                            >
                                         </div>
+
                                         <div class="grow grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                                             <div>
                                                 <span class="text-muted-foreground">{{ trans('adminUser.name') }}:</span>
-                                                <span class="font-medium">{{ $user['name'] }}</span>
+                                                <span class="font-medium">{{ $info->name ?? '' }}</span>
                                             </div>
                                             <div>
                                                 <span class="text-muted-foreground">{{ trans('adminUser.email') }}:</span>
-                                                <span class="font-medium">{{ $user['email'] }}</span>
+                                                <span class="font-medium">{{ $info->email ?? '' }}</span>
                                             </div>
                                             <div>
                                                 <span class="text-muted-foreground">{{ trans('adminUser.phone') }}:</span>
-                                                <span class="font-medium">{{ $user['phone'] }}</span>
+                                                <span class="font-medium">{{ $info->phone ?? '' }}</span>
                                             </div>
                                             <div>
                                                 <span class="text-muted-foreground">{{ trans('adminUser.level') }}:</span>
-                                                <span class="font-medium">{{ isset($user->levels->level_name) ? $user->levels->level_name : trans('adminUser.admin') }}</span>
+                                                <span class="font-medium">{{ optional($info->levels)->level_name ?? trans('adminUser.admin') }}</span>
                                             </div>
                                             <div>
                                                 <span class="text-muted-foreground">{{ trans('adminUser.account') }}:</span>
-                                                <span class="font-medium">{{ $user['account'] }}</span>
+                                                <span class="font-medium">{{ $info->account ?? '' }}</span>
                                             </div>
                                             <div>
                                                 <span class="text-muted-foreground">{{ trans('adminUser.remark') }}:</span>
-                                                <span class="font-medium">{{ $user['remark'] }}</span>
+                                                <span class="font-medium">{{ $info->remark ?? '' }}</span>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="flex justify-end gap-3 mt-5">
-                                        <a href="{{ route('profile.userEdit') }}" class="kt-btn kt-btn-primary">
+                                        <a href="{{ route('admin.users.userEdit') }}" class="kt-btn kt-btn-primary">
                                             {{ trans('general.update_user_info') }}
                                         </a>
                                         <button type="button" class="kt-btn kt-btn-warning" onclick="history.go(-1);">

@@ -31,18 +31,18 @@
                         <div class="kt-container-fixed flex items-center justify-between flex-wrap gap-3">
                             <div class="flex items-center flex-wrap gap-1 lg:gap-5">
                                 <h1 class="font-medium text-lg text-mono">
-                                    {{ __('messages.license_list.title') }}
+                                    {{ __('authCode.managers') }}
                                 </h1>
                             </div>
                             <div class="flex items-center gap-3">
                                 <a href="{{ route('license.generate') }}" class="kt-btn kt-btn-primary">
-                                    {{ __('messages.license_list.generate_new') }}
+                                    {{ __('authCode.newAuthCode') }}
                                 </a>
                                 <a href="{{ route('license.detail') }}" class="kt-btn kt-btn-outline kt-btn-secondary">
-                                    {{ __('messages.license_list.view_last_batch') }}
+                                    {{ __('authCode.view_last_batch') }}
                                 </a>
                                 <a href="{{ route('license.down') }}" class="kt-btn kt-btn-outline kt-btn-secondary">
-                                    {{ __('messages.license_list.export_last_batch') }}
+                                    {{ __('authCode.export_last_batch') }}
                                 </a>
                             </div>
                         </div>
@@ -55,44 +55,34 @@
                             <div class="kt-card-content">
                                 <form action="{{ route('license.list') }}" method="GET" class="grid sm:grid-cols-2 md:grid-cols-4 gap-5">
                                     <div>
-                                        <label for="auth_code" class="kt-form-label">Code</label>
-                                        <input type="text" id="auth_code" name="auth_code" class="kt-input" placeholder="Enter code" value="{{ request('auth_code') }}">
+                                        <label for="auth_code" class="kt-form-label">{{ __('authCode.auth_code') }}</label>
+                                        <input type="text" id="auth_code" name="auth_code" class="kt-input" placeholder="{{ __('authCode.enter_code') }}" value="{{ request('auth_code') }}">
                                     </div>
                                     <div>
-                                        <label for="status" class="kt-form-label">Status</label>
+                                        <label for="status" class="kt-form-label">{{ __('general.status') }}</label>
                                         <select id="status" name="status" class="kt-select">
-                                            <option value="">All</option>
-                                            <option value="0" @if(request('status') === '0') selected @endif>Unused</option>
-                                            <option value="1" @if(request('status') === '1') selected @endif>Used</option>
-                                            <option value="2" @if(request('status') === '2') selected @endif>Expired</option>
+                                            <option value="">{{ __('general.all') }}</option>
+                                            <option value="0" @if(request('status') === '0') selected @endif>{{ __('authCode.status_unused') }}</option>
+                                            <option value="1" @if(request('status') === '1') selected @endif>{{ __('authCode.status_have_used') }}</option>
+                                            <option value="2" @if(request('status') === '2') selected @endif>{{ __('authCode.status_was_due') }}</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label for="assort_id" class="kt-form-label">Type</label>
+                                        <label for="assort_id" class="kt-form-label">{{ __('authCode.type') }}</label>
                                         <select id="assort_id" name="assort_id" class="kt-select">
-                                            <option value="">All</option>
-                                            <tbody>
-@forelse ($lists as $list)
-    <tr>
-        <td>{{ $list->id }}</td>
-        <td>{{ $list->code }}</td>
-        <td>{{ $list->created_at }}</td>
-    </tr>
-@empty
-    <tr>
-        <td colspan="3">No data available</td>
-    </tr>
-@endforelse
-</tbody>
+                                            <option value="">{{ __('general.all') }}</option>
+                                            @foreach($assort_list as $assort)
+                                                <option value="{{ $assort->id }}" @if(request('assort_id') == $assort->id) selected @endif>{{ $assort->assort_name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div>
-                                        <label for="date_range" class="kt-form-label">Date Range</label>
-                                        <input type="text" id="date_range" name="date2" class="kt-input" placeholder="Select date range" value="{{ request('date2') }}">
+                                        <label for="date_range" class="kt-form-label">{{ __('general.date_range') }}</label>
+                                        <input type="text" id="date_range" name="date2" class="kt-input" placeholder="{{ __('general.select_date_range') }}" value="{{ request('date2') }}">
                                     </div>
                                     <div class="md:col-span-4 flex justify-end gap-3">
-                                        <button type="submit" class="kt-btn kt-btn-primary">Search</button>
-                                        <a href="{{ route('license.export', request()->query()) }}" class="kt-btn kt-btn-outline kt-btn-primary">Export Excel</a>
+                                        <button type="submit" class="kt-btn kt-btn-primary">{{ __('general.search') }}</button>
+                                        <a href="{{ route('license.export', request()->query()) }}" class="kt-btn kt-btn-outline kt-btn-primary">{{ __('general.export_excel') }}</a>
                                     </div>
                                 </form>
                             </div>
@@ -100,20 +90,20 @@
 
                         <div class="kt-card">
                             <div class="kt-card-header">
-                                <h3 class="kt-card-title">{{ __('messages.license_list.generated_codes') }}</h3>
+                                <h3 class="kt-card-title">{{ __('authCode.generated_codes') }}</h3>
                             </div>
                             <div class="kt-card-content">
                                 <div class="kt-table-responsive">
                                     <table class="kt-table">
                                         <thead>
                                             <tr>
-                                                <th>{{ __('messages.license_list.code') }}</th>
-                                                <th>{{ __('messages.license_list.type') }}</th>
-                                                <th>{{ __('messages.license_list.remark') }}</th>
-                                                <th>{{ __('messages.license_list.status') }}</th>
-                                                <th>{{ __('messages.license_list.created_at') }}</th>
-                                                <th>{{ __('messages.license_list.expired_at') }}</th>
-                                                <th>{{ __('messages.license_list.actions') }}</th>
+                                                <th>{{ __('authCode.auth_code') }}</th>
+                                                <th>{{ __('authCode.type') }}</th>
+                                                <th>{{ __('authCode.remark') }}</th>
+                                                <th>{{ __('general.status') }}</th>
+                                                <th>{{ __('general.created_at') }}</th>
+                                                <th>{{ __('authCode.expire_at') }}</th>
+                                                <th>{{ __('general.action') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -124,11 +114,11 @@
         <td>{{ $code->remark }}</td>
         <td>
             @if($code->status == 0)
-                <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">{{ __('messages.license_list.status_unused') }}</span>
+                <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">{{ __('authCode.status_unused') }}</span>
             @elseif($code->status == 1)
-                <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-warning">{{ __('messages.license_list.status_used') }}</span>
+                <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-warning">{{ __('authCode.status_have_used') }}</span>
             @else
-                <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-danger">{{ __('messages.license_list.status_expired') }}</span>
+                <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-danger">{{ __('authCode.status_was_due') }}</span>
             @endif
         </td>
         <td>{{ $code->created_at->format('Y-m-d H:i:s') }}</td>
@@ -144,7 +134,7 @@
     </tr>
 @empty
     <tr>
-        <td colspan="7" class="text-center">No data found</td>
+        <td colspan="7" class="text-center">{{ __('general.no_data_found') }}</td>
     </tr>
 @endforelse
 
@@ -173,7 +163,7 @@
     <div class="kt-modal-dialog">
         <div class="kt-modal-content">
             <div class="kt-modal-header">
-                <h3 class="kt-modal-title">{{ __('messages.license_list.update_remark_title') }}</h3>
+                <h3 class="kt-modal-title">{{ __('authCode.up_remark') }}</h3>
                 <button class="kt-btn kt-btn-icon kt-btn-sm kt-btn-light-primary" data-kt-modal-dismiss="true">
                     <i class="ki-filled ki-cross"></i>
                 </button>
@@ -182,12 +172,12 @@
                 <form id="update-remark-form-{{ $list->id }}" action="{{ route('license.update', $list->id) }}" method="POST">
                     @csrf
                     <div class="mb-5">
-                        <label for="remark-{{ $list->id }}" class="kt-form-label">{{ __('messages.license_list.remark') }}</label>
+                        <label for="remark-{{ $list->id }}" class="kt-form-label">{{ __('authCode.remark') }}</label>
                         <textarea id="remark-{{ $list->id }}" name="remark" class="kt-input" rows="4">{{ $list->remark }}</textarea>
                     </div>
                     <div class="kt-modal-footer">
-                        <button type="button" class="kt-btn kt-btn-light" data-kt-modal-dismiss="true">Cancel</button>
-                        <button type="submit" class="kt-btn kt-btn-primary">{{ __('messages.license_list.save_remark') }}</button>
+                        <button type="button" class="kt-btn kt-btn-light" data-kt-modal-dismiss="true">{{ __('general.cancel') }}</button>
+                        <button type="submit" class="kt-btn kt-btn-primary">{{ __('general.save') }}</button>
                     </div>
                 </form>
             </div>
@@ -201,7 +191,7 @@
     <div class="kt-modal-dialog modal-dialog-centered">
         <div class="kt-modal-content">
             <div class="kt-modal-header">
-                <h5 class="kt-modal-title">Update Remark</h5>
+                <h5 class="kt-modal-title">{{ __('authCode.up_remark') }}</h5>
                 <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-kt-modal-dismiss="true" aria-label="Close">
                     <i class="ki-duotone ki-cross fs-2x">
                         <span class="path1"></span>
@@ -212,13 +202,13 @@
             <div class="kt-modal-body">
                 <input type="hidden" id="modal_code_id_input">
                 <div class="mb-3">
-                    <label for="modal_remark_input" class="form-label">New Remark:</label>
+                    <label for="modal_remark_input" class="form-label">{{ __('authCode.new_remark') }}:</label>
                     <input type="text" class="form-control" id="modal_remark_input" maxlength="128">
                 </div>
             </div>
             <div class="kt-modal-footer">
-                <button type="button" class="btn btn-light" data-kt-modal-dismiss="true">Close</button>
-                <button type="button" class="btn btn-primary" id="modal_save_remark_button">Save changes</button>
+                <button type="button" class="btn btn-light" data-kt-modal-dismiss="true">{{ __('general.close') }}</button>
+                <button type="button" class="btn btn-primary" id="modal_save_remark_button">{{ __('general.save') }}</button>
             </div>
         </div>
     </div>

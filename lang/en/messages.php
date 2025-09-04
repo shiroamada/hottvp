@@ -19,7 +19,7 @@ return [
     'sidebar.agent_management.title' => 'Agent Management',
     'sidebar.agent_management.add_new' => 'Add New Agent',
     'sidebar.agent_management.list' => 'List Agent',
-    'sidebar.hotcoin_transaction.title' => 'HotCoin Transaction',
+    'sidebar.hotcoin_transaction.title'  => 'HotCoin Transaction',
     'sidebar.hotcoin_transaction.list' => 'Transaction List',
     'sidebar.costing.title' => 'Costing',
     'sidebar.costing.list' => 'Cost List',

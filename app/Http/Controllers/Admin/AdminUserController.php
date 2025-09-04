@@ -1431,7 +1431,7 @@ namespace App\Http\Controllers\Admin;
             $id = auth()->guard('admin')->user()->id;
             $info = AdminUserRepository::find($id);
 
-            return view('admin.adminUser.userEdit', [
+            return view('profile.userEdit', [
                 'info' => $info,
             ]);
         }
@@ -1474,7 +1474,7 @@ namespace App\Http\Controllers\Admin;
                 return [
                     'code' => 0,
                     'msg' => trans('general.updateSuccess'),
-                    'redirect' => route('profile.userInfo'), // Redirect to the user info page
+                    'redirect' => route('admin.users.userInfo'), // Redirect to the user info page
                 ];
             } catch (\Exception $e) {
                 DB::rollback();  // 回滚

@@ -66,8 +66,8 @@
                                         @foreach($costingData as $item)
                                             <tr data-id="{{ $item['id'] }}">
                                                 <td>{{ $item['type'] }}</td>
-                                                <td><input type="number" step="0.01" name="retail_price" value="{{ $item['retail_price'] }}" class="kt-input" disabled></td>
-                                                <td><input type="number" step="0.01" name="your_cost" value="{{ $item['your_cost'] }}" class="kt-input" disabled></td>
+                                                <td><input type="number" step="0.01" name="retail_price" value="{{ $item['retail_price'] }}" class="kt-input" style="border: none; background: transparent;" disabled></td>
+                                                <td><input type="number" step="0.01" name="your_cost" value="{{ $item['your_cost'] }}" class="kt-input" style="border: none; background: transparent;" disabled></td>
                                                 <td><input type="number" step="0.01" name="diamond_agent_cost" value="{{ $item['diamond_agent_cost'] }}" class="kt-input" disabled></td>
                                                 <td><input type="number" step="0.01" name="gold_agent_cost" value="{{ $item['gold_agent_cost'] }}" class="kt-input" disabled></td>
                                                 <td><input type="number" step="0.01" name="silver_agent_cost" value="{{ $item['silver_agent_cost'] }}" class="kt-input" disabled></td>
@@ -105,7 +105,10 @@
             button.addEventListener('click', function() {
                 const row = this.closest('tr');
                 row.querySelectorAll('input').forEach(input => {
-                    input.disabled = false;
+                    const name = input.getAttribute('name');
+                    if (name !== 'retail_price' && name !== 'your_cost') {
+                        input.disabled = false;
+                    }
                 });
                 this.style.display = 'none';
                 row.querySelector('.save-btn').style.display = 'inline-block';

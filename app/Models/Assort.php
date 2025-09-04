@@ -7,18 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Assort extends Model
 {
-    use HasFactory;
+    protected $guarded = [];
+    protected $table = 'en_assorts';
 
-    protected $fillable = ['id', 'assort_name', 'duration'];
-
-    protected $table = 'assorts'; // Assuming 'assorts' is the base table name
-
-    // If multilingual support is needed for this table, it should be handled
-    // using Laravel's localization features or separate models/tables.
-    // The dynamic table naming based on session language from the old project
-    // is not a standard Laravel 12 practice.
-    public function levels()
+    public function __construct(array $attributes = [])
     {
-        return $this->hasMany(AssortLevel::class);
+        parent::__construct($attributes);
+
+        $locale = app()->getLocale();
+        if ($locale == 'zh_CN') {
+            $this->setTable('assorts');
+        } elseif ($locale == 'ms') {
+            $this->setTable('my_assorts');
+        } else {
+            $this->setTable('en_assorts');
+        }
     }
 }

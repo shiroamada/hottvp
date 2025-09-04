@@ -75,8 +75,8 @@ Route::get('/agent/list', function () {
     Route::get('/password/change', function () {
         return view('password.change');
     })->name('password.change');
-    Route::get('/costing', [CostingController::class, 'index'])->name('costing.index');
-    Route::post('/costing/update', [CostingController::class, 'update'])->name('costing.update');
+    Route::get('/costing', [CostingController::class, 'index'])->name('costing.index')->middleware('check.level');
+    Route::post('/costing/update', [CostingController::class, 'update'])->name('costing.update')->middleware('check.level');
 });
 
 require __DIR__.'/auth.php';

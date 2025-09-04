@@ -62,4 +62,10 @@ return [
     'auth_code_fail' => 'License code accessing failed',
     'auth_code_gt' => '授权码金额必须大于0',
     'auth_record' => 'Authorization code record',
+    'view_last_batch' => 'View Last Batch',
+    'export_last_batch' => 'Export Last Batch',
+    'enter_code' => 'Enter code',
+    'generated_codes' => 'Generated Codes',
+    'new_remark' => 'New Remark',
+    'generated_trial_codes' => 'Generated Trial Codes',
 ];

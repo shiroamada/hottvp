@@ -26,15 +26,15 @@
                                 <div class="kt-card-content p-5">
                                     <form method="post" action="{{ route('admin.users.userUpdate') }}" id="form" enctype="multipart/form-data">
                                         @csrf
-                                        @method('patch')
+                                        @method('put')
 
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <!-- Photo Upload -->
                                             <div class="md:col-span-2 flex flex-col items-center">
                                                 <img id="img_data" class="rounded-xl object-cover mb-3" width="165" height="165"
-                                                     src="@if(!empty($user->photo)){{$user->photo}}@else {{ asset('public/images/users/user-09-247x247.png') }} @endif"
+                                                     src="@if(!empty($info->photo)){{ $info->photo }}@else {{ asset('public/images/users/user-09-247x247.png') }} @endif"
                                                      alt="User Photo"/>
-                                                <input type="hidden" id="data_photo" name="photo" value="{{ $user->photo ?? '' }}"/>
+                                                <input type="hidden" id="data_photo" name="photo" value="{{ $info->photo ?? '' }}"/>
                                                 <input type="file" id="photo_upload" name="photo_file" class="kt-input w-auto">
                                                 <p class="text-sm text-muted-foreground mt-1">{{ trans('adminUser.photo_upload_tip') }}</p>
                                             </div>
@@ -42,25 +42,27 @@
                                             <!-- Name (Read-only) -->
                                             <div>
                                                 <label for="name" class="text-sm text-muted-foreground">{{ trans('adminUser.name') }}:</label>
-                                                <span class="kt-input w-full border-0 bg-transparent">{{ $user->name ?? '' }}</span>
+                                                <span class="kt-input w-full border-0 bg-transparent">{{ $info->name ?? '' }}</span>
                                             </div>
 
                                             <!-- Account (Read-only) -->
                                             <div>
                                                 <label for="account" class="text-sm text-muted-foreground">{{ trans('adminUser.account') }}:</label>
-                                                <span class="kt-input w-full border-0 bg-transparent">{{ $user->account ?? '' }}</span>
+                                                <span class="kt-input w-full border-0 bg-transparent">{{ $info->account ?? '' }}</span>
                                             </div>
 
                                             <!-- Level (Read-only) -->
                                             <div>
                                                 <label for="level" class="text-sm text-muted-foreground">{{ trans('adminUser.level') }}:</label>
-                                                <span class="kt-input w-full border-0 bg-transparent">{{ $user->levels->level_name ?? '' }}</span>
+                                                <span class="kt-input w-full border-0 bg-transparent">{{ optional($info->levels)->level_name ?? '' }}</span>
                                             </div>
 
                                             <!-- Phone (Editable) -->
                                             <div>
                                                 <label for="phone" class="text-sm text-muted-foreground">{{ trans('adminUser.phone') }}:</label>
-                                                <input id="phone" name="phone" type="text" class="kt-input w-full" value="{{ old('phone', $user->phone) }}" oninput="value=value.replace(/[^\d]/g,'')" maxlength="15" autocomplete="phone" />
+                                                <input id="phone" name="phone" type="text" class="kt-input w-full"
+                                                       value="{{ old('phone', $info->phone ?? '') }}"
+                                                       oninput="value=value.replace(/[^\d]/g,'')" maxlength="15" autocomplete="phone" />
                                                 @error('phone')
                                                     <p class="text-danger text-xs mt-1">{{ $message }}</p>
                                                 @enderror
@@ -69,7 +71,7 @@
                                             <!-- Remark (Editable) -->
                                             <div class="md:col-span-2">
                                                 <label for="remark" class="text-sm text-muted-foreground">{{ trans('adminUser.remark') }}:</label>
-                                                <textarea id="remark" name="remark" class="kt-input w-full" maxlength="128">{{ old('remark', $user->remark) }}</textarea>
+                                                <textarea id="remark" name="remark" class="kt-input w-full" maxlength="128">{{ old('remark', $info->remark ?? '') }}</textarea>
                                                 @error('remark')
                                                     <p class="text-danger text-xs mt-1">{{ $message }}</p>
                                                 @enderror
@@ -95,67 +97,89 @@
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const photoUpload = document.getElementById('photo_upload');
-        const imgData = document.getElementById('img_data');
-        const dataPhoto = document.getElementById('data_photo');
-
-        if (photoUpload) {
-            photoUpload.addEventListener('change', function (event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        imgData.src = e.target.result;
-                        // You might want to upload the file via AJAX here
-                        // and update data_photo with the returned URL
-                        // For now, we'll just update the preview
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-
-        const form = document.getElementById('form');
-        if (form) {
-            form.addEventListener('submit', function (e) {
-                e.preventDefault(); // Prevent default form submission
-
-                const formData = new FormData(form);
-                // If you have a file input, append it to FormData
-                if (photoUpload && photoUpload.files[0]) {
-                    formData.append('photo_file', photoUpload.files[0]);
-                }
-
-                // Add CSRF token
-                formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-                formData.append('_method', 'PATCH'); // For @method('patch')
-
-                fetch(form.action, {
-                    method: 'POST', // Fetch will use POST for FormData, Laravel will interpret _method as PATCH
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json',
-                        // 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // FormData handles this
-                    }
-                })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.code !== 0) {
-                        alert(result.msg || 'Update failed!');
-                    } else {
-                        alert(result.msg || 'Update successful!');
-                        if (result.redirect) {
-                            window.location.href = result.redirect;
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred during update.');
-                });
-            });
-        }
+document.addEventListener('DOMContentLoaded', () => {
+  // image preview (keep yours)
+  const photoUpload = document.getElementById('photo_upload');
+  const imgData = document.getElementById('img_data');
+  if (photoUpload && imgData) {
+    photoUpload.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => { imgData.src = ev.target.result; };
+      reader.readAsDataURL(file);
     });
+  }
+
+  const form = document.getElementById('form');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();                          // stop normal POST
+    clearErrors(form);
+
+    const submitBtn = form.querySelector('[type="submit"]');
+    const origText = submitBtn?.textContent;
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Saving…'; }
+
+    try {
+      const fd = new FormData(form);             // includes _token and _method=PUT
+      // If your backend expects "photo" instead of "photo_file", keep both:
+      // if (fd.has('photo_file')) fd.set('photo', fd.get('photo_file'));
+
+      const resp = await fetch(form.action, {
+        method: 'POST',                           // spoofing PUT via hidden _method
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',  // <— makes $request->ajax() true
+          'Accept': 'application/json'
+        },
+        body: fd
+      });
+
+      // Laravel validation error
+      if (resp.status === 422) {
+        const data = await resp.json();
+        showValidation(form, data.errors || {});
+        throw new Error('Validation failed');
+      }
+
+      const data = await resp.json();
+
+      if (data.code === 0) {
+        // success
+        if (data.redirect) {
+          window.location.href = data.redirect;
+        } else {
+          toast(data.msg || 'Updated successfully'); // or alert(...)
+        }
+      } else {
+        throw new Error(data.msg || 'Update failed');
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err.message || 'Something went wrong.');
+    } finally {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = origText; }
+    }
+  });
+
+  function clearErrors(root) {
+    root.querySelectorAll('.text-danger').forEach(el => el.remove());
+  }
+
+  function showValidation(root, errors) {
+    Object.entries(errors).forEach(([field, messages]) => {
+      const input = root.querySelector(`[name="${field}"]`);
+      if (!input) return;
+      const p = document.createElement('p');
+      p.className = 'text-danger text-xs mt-1';
+      p.textContent = Array.isArray(messages) ? messages[0] : String(messages);
+      input.closest('div')?.appendChild(p);
+    });
+  }
+
+  function toast(msg) { alert(msg); } // replace with your UI toast if available
+});
 </script>
 @endpush
+

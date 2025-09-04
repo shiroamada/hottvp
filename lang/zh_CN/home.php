@@ -34,7 +34,7 @@ return [
     'sub_success' => '提交成功',
     'code_exp' => '验证码错误或者已经过期，请重新填写',
 
-
+'dashboard' => '首页',
     'huobi_balance' => '火币余额',
     'count_code' => '生成授权码总数量',
     'sum_profit' => '总利润',

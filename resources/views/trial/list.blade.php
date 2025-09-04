@@ -31,7 +31,7 @@
                         <div class="kt-container-fixed flex items-center justify-between flex-wrap gap-3 mb-5">
                             <div class="flex items-center flex-wrap gap-1 lg:gap-5">
                                 <h1 class="font-medium text-lg text-mono">
-                                    {{ __('messages.trial_list.title') }}
+                                    {{ __('authCode.try_managers') }}
                                 </h1>
                             </div>
                             <div class="kt-container-fixed">
@@ -40,7 +40,7 @@
                                     {{__('authCode.access_records')}}
                                 </a>
                                 <a href="{{ route('admin.try.add') }}" class="kt-btn kt-btn-primary">
-                                    {{ __('messages.trial_list.generate_new') }}
+                                    {{ __('authCode.tryNewAuthCode') }}
                                 </a>
                             </div>
                         </div>
@@ -53,25 +53,25 @@
                             <div class="kt-card-content">
                                 <form action="{{ route('admin.try.list') }}" method="GET" class="grid sm:grid-cols-2 md:grid-cols-3 gap-5" id="filter-form">
                                     <div>
-                                        <label for="auth_code" class="kt-form-label">Code</label>
-                                        <input type="text" id="auth_code" name="auth_code" class="kt-input" placeholder="Enter code" value="{{ request('auth_code') }}">
+                                        <label for="auth_code" class="kt-form-label">{{ __('authCode.try_code') }}</label>
+                                        <input type="text" id="auth_code" name="auth_code" class="kt-input" placeholder="{{ __('authCode.enter_code') }}" value="{{ request('auth_code') }}">
                                     </div>
                                     <div>
-                                        <label for="status" class="kt-form-label">Status</label>
+                                        <label for="status" class="kt-form-label">{{ __('general.status') }}</label>
                                         <select id="status" name="status" class="kt-select">
-                                            <option value="">All</option>
-                                            <option value="0" @if(request('status') === '0') selected @endif>Unused</option>
-                                            <option value="1" @if(request('status') === '1') selected @endif>Used</option>
-                                            <option value="2" @if(request('status') === '2') selected @endif>Expired</option>
+                                            <option value="">{{ __('general.all') }}</option>
+                                            <option value="0" @if(request('status') === '0') selected @endif>{{ __('authCode.status_unused') }}</option>
+                                            <option value="1" @if(request('status') === '1') selected @endif>{{ __('authCode.status_have_used') }}</option>
+                                            <option value="2" @if(request('status') === '2') selected @endif>{{ __('authCode.status_was_due') }}</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label for="date_range" class="kt-form-label">Date Range</label>
-                                        <input type="text" id="date_range" name="created_at" class="kt-input" placeholder="Select date range" value="{{ request('created_at') }}">
+                                        <label for="date_range" class="kt-form-label">{{ __('general.date_range') }}</label>
+                                        <input type="text" id="date_range" name="created_at" class="kt-input" placeholder="{{ __('general.select_date_range') }}" value="{{ request('created_at') }}">
                                     </div>
                                     <div class="md:col-span-3 flex justify-end gap-3">
-                                        <button type="submit" class="kt-btn kt-btn-primary">Search</button>
-                                        <a href="{{ route('admin.try.export') }}" id="export-btn" class="kt-btn kt-btn-outline kt-btn-primary">Export Excel</a>
+                                        <button type="submit" class="kt-btn kt-btn-primary">{{ __('general.search') }}</button>
+                                        <a href="{{ route('admin.try.export') }}" id="export-btn" class="kt-btn kt-btn-outline kt-btn-primary">{{ __('general.export_excel') }}</a>
                                     </div>
                                 </form>
                             </div>
@@ -79,18 +79,18 @@
 
                         <div class="kt-card">
                             <div class="kt-card-header">
-                                <h3 class="kt-card-title">{{ __('messages.trial_list.generated_codes') }}</h3>
+                                <h3 class="kt-card-title">{{ __('authCode.generated_trial_codes') }}</h3>
                             </div>
                             <div class="kt-card-content">
                                 <div class="kt-table-responsive">
                                     <table class="kt-table">
                                         <thead>
                                             <tr>
-                                                <th>{{ __('messages.license_list.code') }}</th>
-                                                <th>{{ __('messages.license_list.remark') }}</th>
-                                                <th>{{ __('messages.license_list.status') }}</th>
-                                                <th>{{ __('messages.license_list.created_at') }}</th>
-                                                <th>{{ __('messages.license_list.expired_at') }}</th>
+                                                <th>{{ __('authCode.try_code') }}</th>
+                                                <th>{{ __('authCode.remark') }}</th>
+                                                <th>{{ __('general.status') }}</th>
+                                                <th>{{ __('general.created_at') }}</th>
+                                                <th>{{ __('authCode.expire_at') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -100,11 +100,11 @@
                                                 <td>{{ $code->remark }}</td>
                                                 <td>
                                                     @if($code->status == 0)
-                                                        <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">{{ __('messages.license_list.status_unused') }}</span>
+                                                        <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">{{ __('authCode.status_unused') }}</span>
                                                     @elseif($code->status == 1)
-                                                        <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-warning">{{ __('messages.license_list.status_used') }}</span>
+                                                        <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-warning">{{ __('authCode.status_have_used') }}</span>
                                                     @else
-                                                        <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-danger">{{ __('messages.license_list.status_expired') }}</span>
+                                                        <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-danger">{{ __('authCode.status_was_due') }}</span>
                                                     @endif
                                                 </td>
                                                 <td>{{ $code->created_at->format('Y-m-d H:i:s') }}</td>
@@ -112,7 +112,7 @@
                                             </tr>
                                             @empty
                                             <tr>
-                                                <td colspan="5" class="text-center">{{ __('messages.license_list.no_codes_found') }}</td>
+                                                <td colspan="5" class="text-center">{{ __('general.no_data_found') }}</td>
                                             </tr>
                                             @endforelse
                                         </tbody>

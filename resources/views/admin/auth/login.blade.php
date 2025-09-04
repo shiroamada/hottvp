@@ -13,14 +13,14 @@
                     <span class="text-sm text-secondary-foreground me-1.5">
                         Need an account?
                     </span>
-                    <a class="text-sm link" href="{{ route('register') }}">
+                    <a class="text-sm link" href="{{ route('admin.register') }}">
                         Sign up
                     </a>
                 </div>
                 @endif
             </div>
 
-            <!-- Session Status -->
+            {{-- Session Status --}}
             @if (session('status'))
                 <div class="kt-alert kt-alert-outline kt-alert-success mb-4">
                     <div class="kt-alert-icon">
@@ -32,7 +32,7 @@
                 </div>
             @endif
 
-            <!-- Validation Errors -->
+            {{-- Validation Errors --}}
             @if ($errors->any())
                 <div class="kt-alert kt-alert-outline kt-alert-destructive mb-4">
                     <div class="kt-alert-icon">
@@ -49,36 +49,47 @@
                 </div>
             @endif
 
+            {{-- LOGIN (email or username) --}}
             <div class="flex flex-col gap-1">
-                <label for="email" class="kt-form-label font-normal text-mono">
-                    Email
+                <label for="login" class="kt-form-label font-normal text-mono">
+                    Email or Username
                 </label>
-                <input id="email" name="email" class="kt-input @error('email') border-danger @enderror" placeholder="email@email.com" type="email" value="{{ old('email') }}" required autofocus autocomplete="username"/>
-                @error('email')
+                <input
+                    id="login"
+                    name="login"
+                    class="kt-input @error('login') border-danger @enderror"
+                    placeholder="email@example.com or yourusername"
+                    type="text"
+                    value="{{ old('login') }}"
+                    required
+                    autofocus
+                    autocomplete="username"
+                />
+                @error('login')
                     <div class="text-danger text-sm mt-1">{{ $message }}</div>
                 @enderror
             </div>
+
+            {{-- PASSWORD --}}
             <div class="flex flex-col gap-1">
                 <div class="flex items-center justify-between gap-1">
                     <label for="password" class="kt-form-label font-normal text-mono">
                         Password
                     </label>
-                    @if (Route::has('auth.password.request'))
-                    <a class="text-sm kt-link shrink-0" href="{{ route('auth.password.request') }}">
+                    @if (Route::has('admin.password.request'))
+                    <a class="text-sm kt-link shrink-0" href="{{ route('admin.password.request') }}">
                         Forgot Password?
                     </a>
                     @endif
                 </div>
                 <div class="kt-input @error('password') border-danger @enderror" data-kt-toggle-password="true">
-                    <input id="password" name="password" placeholder="Enter Password" type="password" value="" required autocomplete="current-password"/>
+                    <input id="password" name="password" placeholder="Enter Password" type="password" required autocomplete="current-password"/>
                     <button class="kt-btn kt-btn-sm kt-btn-ghost kt-btn-icon bg-transparent! -me-1.5" data-kt-toggle-password-trigger="true" type="button">
                         <span class="kt-toggle-password-active:hidden">
-                            <i class="ki-filled ki-eye text-muted-foreground">
-                            </i>
+                            <i class="ki-filled ki-eye text-muted-foreground"></i>
                         </span>
                         <span class="hidden kt-toggle-password-active:block">
-                            <i class="ki-filled ki-eye-slash text-muted-foreground">
-                            </i>
+                            <i class="ki-filled ki-eye-slash text-muted-foreground"></i>
                         </span>
                     </button>
                 </div>
@@ -86,12 +97,13 @@
                     <div class="text-danger text-sm mt-1">{{ $message }}</div>
                 @enderror
             </div>
+
+            {{-- REMEMBER ME --}}
             <label class="kt-label">
                 <input id="remember_me" class="kt-checkbox kt-checkbox-sm" name="remember" type="checkbox" value="1"/>
-                <span class="kt-checkbox-label">
-                    Remember me
-                </span>
+                <span class="kt-checkbox-label">Remember me</span>
             </label>
+
             <button type="submit" class="kt-btn kt-btn-primary flex justify-center grow">
                 Sign In
             </button>

@@ -40,6 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'authorization.admin' => \App\Http\Middleware\AdminAuthorization::class,
             'admin.controller' => \App\Http\Middleware\AdminControllerMiddleware::class,
             'admin.utility' => \App\Http\Middleware\AdminUtilityMiddleware::class,
+            'check.level' => \App\Http\Middleware\CheckLevel::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

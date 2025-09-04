@@ -20,6 +20,28 @@ class AdminLoginRequest extends FormRequest
     }
 
     /**
+     * Normalize incoming data before validation.
+     * - If old form still sends "email", map it to "login".
+     * - Trim whitespace.
+     */
+    protected function prepareForValidation(): void
+    {
+        $login = $this->input('login');
+
+        if ($login === null && $this->filled('email')) {
+            $login = $this->input('email');
+        }
+
+        if (is_string($login)) {
+            $login = trim($login);
+        }
+
+        $this->merge([
+            'login' => $login,
+        ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
@@ -27,7 +49,7 @@ class AdminLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'login'    => ['required', 'string'], // email OR username
             'password' => ['required', 'string'],
         ];
     }
@@ -41,11 +63,18 @@ class AdminLoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::guard('admin')->attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $rawLogin = (string) $this->input('login');
+        $isEmail  = filter_var($rawLogin, FILTER_VALIDATE_EMAIL) !== false;
+
+        $credentials = $isEmail
+            ? ['email' => Str::lower($rawLogin), 'password' => $this->input('password')]
+            : ['account' => $rawLogin, 'password' => $this->input('password')];
+
+        if (! Auth::guard('admin')->attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'login' => trans('auth.failed'),
             ]);
         }
 
@@ -68,7 +97,7 @@ class AdminLoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            'login' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -80,6 +109,9 @@ class AdminLoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        $value = (string) $this->input('login', '');
+        $normalized = filter_var($value, FILTER_VALIDATE_EMAIL) ? Str::lower($value) : $value;
+
+        return Str::transliterate($normalized) . '|' . $this->ip();
     }
 }

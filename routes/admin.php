@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\AssortController;
 use App\Http\Controllers\Admin\CancelController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ChannelController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\NewLicenseCodeController;
 use App\Http\Controllers\Admin\EquipmentController;
 use App\Http\Controllers\Admin\HuobiController;
@@ -40,7 +41,8 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
         Route::get('/users/lower/{id}', [AdminUserController::class, 'lower'])->name('users.lower');
         Route::put('/users/remark/{id}', [AdminUserController::class, 'remark'])->name('users.remark');
         Route::put('/users/userUpdate', [AdminUserController::class, 'userUpdate'])->name('users.userUpdate');
-
+        Route::get('/users/userInfo', [AdminUserController::class, 'userInfo'])->name('users.userInfo');
+        Route::get('/users/userEdit', [AdminUserController::class, 'userEdit'])->name('users.userEdit');
         // Add new route for all users
         Route::get('/users/all', [AdminUserController::class, 'all'])->name('users.all');
 

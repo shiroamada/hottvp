@@ -112,4 +112,9 @@ return [
     "login_first" => "Please login first",
     "Overvisiting" => "Access too frequent, please try again later",
     "internal_error" => "System error, please contact administrator",
+    'all' => 'All',
+    'date_range' => 'Date Range',
+    'select_date_range' => 'Select date range',
+    'created_at' => 'Created At',
+    'no_data_found' => 'No data found',
 ];

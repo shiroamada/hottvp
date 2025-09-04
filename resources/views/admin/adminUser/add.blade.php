@@ -19,9 +19,9 @@
                     <h1 class="font-medium text-lg text-mono">
                         <i class="ki-filled ki-abstract-28 me-2"></i>
                         @if(isset($id))
-                            {{ __('messages.agent_edit.title') }}
+                            {{ __('adminUser.edit_title') }}
                         @else
-                            {{ __('messages.agent_add.title') }}
+                            {{ __('adminUser.create_title') }}
                         @endif
                     </h1>
                 </div>
@@ -36,9 +36,9 @@
                     <div class="kt-card-header">
                         <h3 class="kt-card-title">
                             @if(isset($id))
-                                {{ __('messages.agent_edit.form_title') }}
+                                {{ __('adminUser.edit_form_title') }}
                             @else
-                                {{ __('messages.agent_add.form_title') }}
+                                {{ __('adminUser.create_form_title') }}
                             @endif
                         </h3>
                     </div>
@@ -51,15 +51,15 @@
                                 @endif
     
                                 <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                                    <label class="kt-form-label max-w-56">{{ __('messages.agent_add.name') }}</label>
-                                    <input class="kt-input grow" placeholder="{{ __('messages.agent_list.agent_name_placeholder') }}" type="text" name="name" value="{{ $user->name ?? '' }}" maxlength="20" id="agency_name">
+                                    <label class="kt-form-label max-w-56">{{ __('adminUser.name') }}</label>
+                                    <input class="kt-input grow" placeholder="{{ __('adminUser.agent_name_placeholder') }}" type="text" name="name" value="{{ $user->name ?? '' }}" maxlength="20" id="agency_name">
                                 </div>
                                 
                                 @if(auth()->guard('admin')->user()->id == 1)
                                 <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                                    <label class="kt-form-label max-w-56">{{ __('messages.agent_add.channel') }}</label>
+                                    <label class="kt-form-label max-w-56">{{ __('adminUser.channel') }}</label>
                                     <select class="kt-select grow" id="channel_id" name="channel_id">
-                                        <option value="0">{{ __('messages.general.select') }}</option>
+                                        <option value="0">{{ __('general.select') }}</option>
                                         @foreach($channels ?? [] as $v)
                                             <option value="{{ $v['channel_id'] }}" {{ isset($user) && $user->channel_id == $v['channel_id'] ? 'selected' : '' }}>
                                                 {{ $v['channel_name'] }}
@@ -70,9 +70,9 @@
                                 @endif
                                 
                                 <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                                    <label class="kt-form-label max-w-56">{{ __('messages.agent_add.level') }}</label>
+                                    <label class="kt-form-label max-w-56">{{ __('adminUser.level') }}</label>
                                     <select class="kt-select grow" id="level_id" name="level_id">
-                                        <option value="0">{{ __('messages.agent_create.select_level') }}</option>
+                                        <option value="0">{{ __('adminUser.select_level') }}</option>
                                         @foreach($level ?? [] as $v)
                                             @if($v['id'] != 4)
                                                 <option value="{{ $v['id'] }}" 
@@ -94,15 +94,15 @@
                                 @if(auth()->guard('admin')->user()->id == 1)
                                 <!-- Entry barriers for super admin -->
                                 <div>
-                                    <label class="kt-form-label block font-medium mb-2">{{ __('messages.agent_add.barriers') }}</label>
+                                    <label class="kt-form-label block font-medium mb-2">{{ __('adminUser.barriers') }}</label>
                                     <div class="kt-table-responsive">
                                         <table class="kt-table">
                                             <thead>
                                                 <tr>
-                                                    <th>{{ __('messages.agent_add.gold_threshold') }}</th>
-                                                    <th>{{ __('messages.agent_add.silver_threshold') }}</th>
-                                                    <th>{{ __('messages.agent_add.bronze_threshold') }}</th>
-                                                    <th>{{ __('messages.agent_add.custom_threshold') }}</th>
+                                                    <th>{{ __('adminUser.gold_threshold') }}</th>
+                                                    <th>{{ __('adminUser.silver_threshold') }}</th>
+                                                    <th>{{ __('adminUser.bronze_threshold') }}</th>
+                                                    <th>{{ __('adminUser.custom_threshold') }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -131,15 +131,15 @@
                                 @endif
                                 
                                 <div>
-                                    <label class="kt-form-label block font-medium mb-2">{{ __('messages.agent_add.remark') }}</label>
+                                    <label class="kt-form-label block font-medium mb-2">{{ __('adminUser.remark') }}</label>
                                     <textarea class="kt-textarea grow" rows="3" name="remark" maxlength="128">{{ $user->remark ?? '' }}</textarea>
                                 </div>
                                 
                                 <div>
-                                    <label class="kt-form-label block font-medium mb-2">{{ __('messages.agent_add.recharge') }}</label>
+                                    <label class="kt-form-label block font-medium mb-2">{{ __('adminUser.recharge') }}</label>
                                     <input class="kt-input" type="text" name="balance" value="{{ $user->balance ?? '' }}" 
                                         id="balance" onkeyup="onlyNumber(this, 2)" maxlength="8">
-                                    <p class="text-sm text-muted-foreground mt-2">{{ __('messages.agent_add.available_balance') }}: 
+                                    <p class="text-sm text-muted-foreground mt-2">{{ __('adminUser.available_balance') }}: 
                                         <span class="font-bold text-primary">{{ number_format(auth()->guard('admin')->user()->balance, 2) }}</span>
                                     </p>
                                     <p class="text-sm text-muted-foreground mt-1" id="need"></p>
@@ -148,15 +148,15 @@
                                 @if(auth()->guard('admin')->user()->id == 1 || 
                                     (auth()->guard('admin')->user()->level_id == 3 && auth()->guard('admin')->user()->type == 2))
                                 <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                                    <label class="kt-form-label max-w-56">{{ __('messages.agent_add.type') }}</label>
+                                    <label class="kt-form-label max-w-56">{{ __('adminUser.type') }}</label>
                                     <div class="flex gap-5 grow">
                                         <div class="flex items-center gap-2">
                                             <input class="kt-radio" type="radio" name="type" value="1" {{ isset($user) && $user->type == 1 ? 'checked' : '' }}>
-                                            <label for="permission_normal">{{ __('messages.agent_add.general_type') }}</label>
+                                            <label for="permission_normal">{{ __('adminUser.general_type') }}</label>
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <input class="kt-radio" type="radio" name="type" value="2" {{ !isset($user) || (isset($user) && $user->type == 2) ? 'checked' : '' }}>
-                                            <label for="permission_enhanced">{{ __('messages.agent_add.enhance_type') }}</label>
+                                            <label for="permission_enhanced">{{ __('adminUser.enhance_type') }}</label>
                                         </div>
                                     </div>
                                 </div>
@@ -164,13 +164,13 @@
                                 
                                 <div class="flex justify-end gap-3">
                                     <button type="button" class="kt-btn kt-btn-outline" onclick="history.go(-1);">
-                                        {{ __('messages.general.return') }}
+                                        {{ __('general.return') }}
                                     </button>
                                     <button class="kt-btn kt-btn-primary" type="submit" id="submitBtn">
                                         @if(isset($id))
-                                            {{ __('messages.agent_edit.submit') }}
+                                            {{ __('adminUser.edit_submit') }}
                                         @else
-                                            {{ __('messages.agent_add.submit') }}
+                                            {{ __('adminUser.add_submit') }}
                                         @endif
                                     </button>
                                 </div>
@@ -211,7 +211,7 @@ window.addEventListener('load', function () {
                         jQuery('#costs-container').removeClass('hidden').html(response);
                         const minAmount = jQuery('option:selected', '#level_id').attr('data-min-amount');
                         const levelName = jQuery('option:selected', '#level_id').attr('data-level-name');
-                        jQuery('#need').html("{{ __('messages.agent_add.min_amount_message') }}".replace(':amount', minAmount).replace(':level', levelName));
+                        jQuery('#need').html("{{ __('adminUser.min_amount_message') }}".replace(':amount', minAmount).replace(':level', levelName));
                     }
                 });
             } else {
@@ -238,7 +238,7 @@ window.addEventListener('load', function () {
                     }
                     alert(result.msg);
                     if (result.redirect) {
-                        location.href = "{{ route('admin.users.detail') }}?id=" + result.id;
+                        location.href = "{{ route('admin.users.detail') }}"?id=" + result.id;
                     }
                 },
                 error: function(xhr) {
@@ -251,7 +251,7 @@ window.addEventListener('load', function () {
                         }
                         alert(errorMessage);
                     } else {
-                        alert("{{ __('messages.general.error') }}");
+                        alert("{{ __('general.error') }}");
                     }
                 }
             });
