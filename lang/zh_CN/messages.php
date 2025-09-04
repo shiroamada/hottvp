@@ -19,7 +19,7 @@ return [
     'sidebar.agent_management.title' => '代理管理',
     'sidebar.agent_management.add_new' => '添加新代理',
     'sidebar.agent_management.list' => '代理列表',
-    'sidebar.hotcoin_transaction' => 'HotCoin 交易',
+    'sidebar.hotcoin_transaction' => 'HotCoin管理',
     'sidebar.all_agents' => '所有代理',
 
     // Sidebar Secondary/User Menu

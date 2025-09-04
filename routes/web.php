@@ -20,7 +20,7 @@ Route::get('language/{locale}', function ($locale) {
 })->name('language.switch');
 
 Route::get('/', function () {
-    return view('index');
+    return redirect('/admin/dashboard');
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');

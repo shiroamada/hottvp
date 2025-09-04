@@ -8,19 +8,19 @@ class Level extends Model
 {
     protected $fillable = ['id', 'level_name'];
 
-    protected $table = 'en_levels';
+    protected $table = 'en_levels'; // Default table, will be overridden by constructor
 
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
 
-        $customer_lang_name = session('customer_lang_name');
-        if (! empty($customer_lang_name) && array_key_exists($customer_lang_name, config('app.locales'))) {
-            if ($customer_lang_name != 'zh') {
-                $this->table = $customer_lang_name.'_levels';
-            } else {
-                $this->table = 'levels';
-            }
+        $locale = app()->getLocale();
+        if ($locale == 'zh_CN') {
+            $this->setTable('levels');
+        } elseif ($locale == 'ms') {
+            $this->setTable('my_levels');
+        } else {
+            $this->setTable('en_levels');
         }
     }
 }

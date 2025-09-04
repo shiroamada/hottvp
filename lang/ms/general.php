@@ -15,7 +15,8 @@ return [
 
     'id' => 'ID',
     'status' => 'Status',
-    
+    'hotcoin_transaction.title'  => 'Pengurusan HotCoin',
+
     'order' => 'Pesanan',
     'create' => 'Masa Dicipta',
     'update' => 'Masa Dikemas kini',

@@ -19,7 +19,7 @@ return [
     'create' => '创建时间',
     'update' => '更新时间',
     'action' => '操作',
-
+    'hotcoin_transaction.title' => '火币管理',
     'isEnabled' => '是否启用',
     'enable' => '启用',
     'forbidden' => '禁用',

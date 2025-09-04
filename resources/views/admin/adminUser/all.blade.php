@@ -38,11 +38,11 @@
                     {{ trans('adminUser.managers') }}
                   </h1>
                 </div>
-                <div class="flex items-center flex-wrap gap-1.5 lg:gap-3.5">
+                <!-- <div class="flex items-center flex-wrap gap-1.5 lg:gap-3.5">
                   <a href="{{ route('admin.users.create') }}" class="kt-btn kt-btn-primary">
                     {{ trans('adminUser.newAdministrator') }}
                   </a>
-                </div>
+                </div> -->
               </div>
               <!-- End of Container -->
             </div>

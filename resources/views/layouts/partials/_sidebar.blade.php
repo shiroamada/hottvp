@@ -25,7 +25,7 @@
       <!-- Primary Menu -->
       <div class="kt-menu flex flex-col w-full gap-1.5 px-3.5" data-kt-menu="true" data-kt-menu-accordion-expand-all="false" id="sidebar_primary_menu">
        <div class="kt-menu-item {{ request()->routeIs('dashboard') || request()->is('/') ? 'active' : '' }}">
-        <a class="kt-menu-link gap-2.5 py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('dashboard') }}">
+        <a class="kt-menu-link gap-2.5 py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('admin.dashboard') }}">
          <span class="kt-menu-icon items-start text-lg text-secondary-foreground kt-menu-item-active:text-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
           <i class="ki-filled ki-home-3">
           </i>
@@ -153,7 +153,7 @@
           </i>
          </span>
          <span class="kt-menu-title text-sm text-foreground font-medium kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-          {{ __('messages.sidebar.hotcoin_transaction.title') }}
+          {{ __('general.hotcoin_transaction.title') }}
          </span>
         </a>
        </div>
@@ -242,6 +242,7 @@
     <!-- End of Sidebar kt-menu-->
     <!-- Footer -->
     <div class="flex flex-center justify-between shrink-0 ps-4 pe-3.5 mb-3.5" id="sidebar_footer">
+     @auth('admin')
      <!-- User -->
      <div data-kt-dropdown="true" data-kt-dropdown-offset="10px, 10px" data-kt-dropdown-offset-rtl="-20px, 10px" data-kt-dropdown-placement="bottom-start" data-kt-dropdown-placement-rtl="bottom-end" data-kt-dropdown-trigger="click">
       <div class="cursor-pointer shrink-0" data-kt-dropdown-toggle="true">
@@ -323,6 +324,7 @@
       </div>
       </form>
      </div>
+     @endauth
     </div>
     <!-- End of Footer -->
    </div>
