@@ -132,9 +132,9 @@ function createCode($length = 12)
         // Fallback to local code generation
         $codes = [];
         for ($i = 0; $i < $data['number']; $i++) {
-            $code = \Illuminate\Support\Str::upper(\Illuminate\Support\Str::random(12));
+            $code = createCode(12);
             while (\App\Models\AuthCode::where('auth_code', $code)->exists()) {
-                $code = \Illuminate\Support\Str::upper(\Illuminate\Support\Str::random(12));
+                $code = createCode(12);
             }
             $codes[] = $code;
         }

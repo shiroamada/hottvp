@@ -77,7 +77,7 @@
             <!-- Dropdown for Activation Code Type -->
             <div class="grow w-full sm:w-auto">
                 <select class="kt-btn kt-btn-outline w-full" name="assort_id" id="standardSelect" style="appearance: none; padding: 5px; font-weight: 500;">
-                    <option value="">{{ __('general.select_code') }}</option>
+                    <option value="">{{ __('home.select_code') }}</option>
                     @foreach($activationCodePresets ?? [] as $v)
                         <option value="{{ $v->assort_id }}"
                                 data-money="{{ $v->money ?? 0 }}"

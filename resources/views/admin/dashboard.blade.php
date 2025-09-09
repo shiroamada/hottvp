@@ -1,4 +1,4 @@
-@extends('admin.layouts.master')
+@extends('layouts.master')
 
 @section('content')
 <!-- Page -->
@@ -27,7 +27,7 @@
                     <div class="pb-5">
                         <div class="kt-container-fixed flex items-center justify-between flex-wrap gap-3">
                             <div class="flex items-center flex-wrap gap-1 lg:gap-5">
-                                <h1 class="font-medium text-lg text-mono">Dashboard</h1>
+                                <h1 class="font-medium text-lg text-mono">{{ __('home.dashboard') }}</h1>
                             </div>
                             <div class="flex items-center flex-wrap gap-1.5 lg:gap-3.5">
                                 @php
@@ -70,14 +70,14 @@
                             <!-- begin: grid -->
                             <div class="grid lg:grid-cols-3 gap-5 lg:gap-7.5 items-stretch">
                                 <div class="lg:col-span-3 flex flex-col gap-5 lg:gap-7.5">
-          <!-- Top section: Activation Code Generation -->
+         <!-- Top section: Activation Code Generation -->
 <div class="kt-card">
     <div class="kt-card-content p-5">
         <div class="flex flex-col sm:flex-row items-center gap-3">
             <!-- Dropdown for Activation Code Type -->
             <div class="grow w-full sm:w-auto">
                 <select class="kt-btn kt-btn-outline w-full" name="assort_id" id="standardSelect" style="appearance: none; padding: 5px; font-weight: 500;">
-                    <option value="">Select Code</option>
+                    <option value="">{{ __('home.select_code') }}</option>
                     @foreach($activationCodePresets ?? [] as $v)
                         <option value="{{ $v->assort_id }}"
                                 data-money="{{ $v->money ?? 0 }}"
@@ -89,41 +89,61 @@
                 </select>
             </div>
             <!-- Button that triggers the modal -->
-            <button class="kt-btn kt-btn-primary w-full sm:w-auto whitespace-nowrap" type="button" id="submitBtn">
-                Authorization Code
+            <button class="kt-btn kt-btn-primary w-full sm:w-auto whitespace-nowrap" type="button" data-kt-modal-toggle="#activationModal" id="submitBtn">
+                {{ __('general.authorization_code') }}
             </button>
         </div>
     </div>
 </div>
 
 <!-- Modal for Authorization Code -->
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden" id="activationModal">
-    <div class="kt-card bg-background rounded-xl w-full max-w-md p-5">
-        <div class="flex justify-between items-center mb-4">
-            <h5 class="text-lg font-semibold text-mono">Message</h5>
-            <button class="kt-btn kt-btn-icon kt-btn-ghost" id="closeModal">
-                <i class="ki-filled ki-cross"></i>
+<div class="kt-modal" id="activationModal" data-kt-modal="true">
+    <div class="kt-modal-content max-w-md">
+        <div class="kt-modal-header">
+            <h3 class="kt-modal-title">{{ __('home.message') }}</h3>
+            <button
+                type="button"
+                class="kt-modal-close"
+                aria-label="Close modal"
+                data-kt-modal-dismiss="#activationModal"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-x"
+                    aria-hidden="true"
+                >
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                </svg>
             </button>
         </div>
-        <div class="kt-card-content">
+        <div class="kt-modal-body">
             <form id="form">
                 @csrf
                 <input class="form-control" type="hidden" name="mini_money" value="" id="mini_money">
-                <p class="text-center text-sm text-secondary-foreground" id="users">Membership Authorization Code</p>
+                <p class="text-center text-sm text-secondary-foreground" id="users">{{ __('home.membership_authorization_code') }}</p>
                 <div class="flex justify-center items-center gap-3 mt-4 mb-4">
                     <h3 class="text-lg font-semibold" id="auth_code"></h3>
                     <button class="kt-btn kt-btn-primary" data-clipboard-text="" id="copy">
-                        Copy
+                        {{ __('home.copy') }}
                     </button>
                 </div>
                 <div class="flex flex-col gap-3">
-                    <label class="text-sm text-secondary-foreground" for="standardRemark">Remark</label>
+                    <label class="text-sm text-secondary-foreground" for="standardRemark">{{ __('home.remark') }}</label>
                     <textarea class="kt-btn kt-btn-outline w-full" id="standardRemark" rows="3" name="remark" maxlength="128"></textarea>
                 </div>
             </form>
         </div>
-        <div class="flex justify-center mt-4">
-            <button class="kt-btn kt-btn-primary" id="confirmBtn">Confirm</button>
+        <div class="kt-modal-footer">
+            <button class="kt-btn kt-btn-primary" data-kt-modal-dismiss="#activationModal" id="confirmBtn">{{ __('home.confirm') }}</button>
         </div>
     </div>
 </div>
@@ -138,7 +158,7 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold text-purple-400">{{ number_format($balance, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">HOTCOIN Balance</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.huobi_balance') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -152,8 +172,8 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold">{{ number_format($monthlyGeneratedCurrentMonth, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">Monthly Generated Quantity</div>
-                                                        <div class="text-xs text-muted-foreground">No. Activation Code (This Month)</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.month_code') }}</div>
+                                                        <div class="text-xs text-muted-foreground">{{ __('home.month_code1') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -167,8 +187,8 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold">{{ number_format($generatedLastMonth, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">Generated Quantity</div>
-                                                        <div class="text-xs text-muted-foreground">Last Month Activation Code</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.last_month_code') }}</div>
+                                                        <div class="text-xs text-muted-foreground">{{ __('home.last_month_code1') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -182,7 +202,7 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold">{{ number_format($totalGeneratedQuantity, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">Generated Activation Code Total Quantity</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.count_code') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -198,15 +218,15 @@
                                                 </div>
                                                 <div class="grow">
                                                     <div class="text-2xl font-semibold">{{ number_format($usageHotcoinLastMonth, 2) }}</div>
-                                                    <div class="text-sm text-secondary-foreground">Usage of HOTCOIN</div>
-                                                    <div class="text-xs text-muted-foreground">Last Month</div>
+                                                    <div class="text-sm text-secondary-foreground">{{ __('home.last_month_huobi') }}</div>
+                                                    <div class="text-xs text-muted-foreground">{{ __('home.last_month_huobi1') }}</div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <!-- Downline Agent Section -->
-                                    <h3 class="text-lg font-semibold text-mono mt-2.5">Downline Agent</h3>
+                                    <h3 class="text-lg font-semibold text-mono mt-2.5">{{ __('home.lower_agency') }}</h3>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-7.5">
                                         <!-- This Month Profit -->
                                         <div class="kt-card">
@@ -217,7 +237,7 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold">{{ number_format($thisMonthProfit, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">This Month Profit</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.month_lower_profit') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -231,7 +251,7 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold">{{ number_format($lastMonthProfit, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">Last Month Profit</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.last_month_profit') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -245,7 +265,7 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold">{{ number_format($totalProfit, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">Total Profit</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.sum_profit') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -259,7 +279,7 @@
                                                     </div>
                                                     <div class="grow">
                                                         <div class="text-2xl font-semibold">{{ number_format($totalMembers, 2) }}</div>
-                                                        <div class="text-sm text-secondary-foreground">Total Members</div>
+                                                        <div class="text-sm text-secondary-foreground">{{ __('home.count_agency') }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -300,197 +320,154 @@
 <!-- End of Page -->
 @endsection
 
-@section('js')
+@push('scripts')
 <script>
-    console.log('JavaScript loaded');
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Authorization Code Script: TOP OF SCRIPT BLOCK EXECUTED.');
+    console.log('Authorization Code Script: Script started.');
+    console.log('Authorization Code Script: DOMContentLoaded');
 
     // Check dependencies
     if (typeof jQuery === 'undefined') {
-        console.error('jQuery is not loaded');
+        console.error('Authorization Code Script: jQuery is not loaded');
         alert('jQuery is required but not loaded.');
-    }
-    if (typeof layui === 'undefined') {
-        console.error('Layui is not loaded');
+        return;
     }
     if (typeof ClipboardJS === 'undefined') {
-        console.error('ClipboardJS is not loaded');
+        console.error('Authorization Code Script: ClipboardJS is not loaded');
     }
 
-    // Use jQuery directly
-    var $ = window.jQuery;
-    var layer = window.layui ? layui.layer : {
-        msg: function(message, options) {
-            console.log('Fallback alert:', message);
-            alert(message);
-        }
-    };
-
-    var csrf_token = $('meta[name=csrf-token]').eq(0).attr('content');
-    console.log('CSRF Token:', csrf_token);
-
-    var ajax_options = {
-        headers: {'X-CSRF-Token': csrf_token},
-        type: 'post',
-        dataType: 'json',
-        error: function (resp, stat, text) {
-            console.error('AJAX Error:', resp.status, text, resp.responseText);
-            if (window.form_submit && typeof form_submit.prop === 'function') {
-                form_submit.prop('disabled', false);
-            }
-            if (resp.status === 422) {
-                try {
-                    var parse = JSON.parse(resp.responseText);
-                    if (parse && parse.errors) {
-                        var key = Object.keys(parse.errors)[0];
-                        layer.msg(parse.errors[key][0], {shift: 6});
-                    }
-                } catch (e) {
-                    console.error('Parse Error:', e);
-                    layer.msg('Invalid response format', {shift: 6});
-                }
-            } else if (resp.status === 404) {
-                layer.msg('Resource not found', {icon: 5});
-            } else if (resp.status === 401) {
-                layer.msg('Please login first', {shift: 6});
-            } else if (resp.status === 429) {
-                layer.msg('Too many requests, please try again later', {shift: 6});
-            } else if (resp.status === 419) {
-                layer.msg('Invalid request. Please refresh the page.', {shift: 6});
-            } else if (resp.status === 500) {
-                layer.msg('Internal server error, please contact administrator', {shift: 6});
-            } else {
-                try {
-                    var parse = JSON.parse(resp.responseText);
-                    if (parse && parse.msg) {
-                        layer.msg(parse.msg, {shift: 6});
-                    } else {
-                        layer.msg('Unknown error, please contact administrator', {shift: 6});
-                    }
-                } catch (e) {
-                    layer.msg('Unknown error, please contact administrator', {shift: 6});
-                }
-            }
-        }
-    };
-    $.ajaxSetup(ajax_options);
+    var $ = jQuery;
+    var csrf_token = $('meta[name="csrf-token"]').attr('content') || '{{csrf_token()}}';
+    console.log('Authorization Code Script: CSRF Token:', csrf_token);
 
     // Modal toggle functions
-    function showModal() {
-        console.log('Showing modal');
-        var modal = document.getElementById('activationModal');
-        if (modal) {
-            modal.classList.remove('hidden');
-        } else {
-            console.error('Modal #activationModal not found');
-        }
-    }
+    
 
-    function hideModal() {
-        console.log('Hiding modal');
-        var modal = document.getElementById('activationModal');
-        if (modal) {
-            modal.classList.add('hidden');
-        }
-    }
-
-    // Button click handler
+    // Button click handler for generating code
     var submitBtn = document.getElementById('submitBtn');
     if (submitBtn) {
-        console.log('submitBtn found');
+        console.log('Authorization Code Script: submitBtn found');
         submitBtn.addEventListener('click', function() {
-            console.log('Authorization Code button clicked');
-            showModal();
-            var mini_money = $("#standardSelect").find("option:selected").attr("data-money");
-            var iteValue = $("#standardSelect").find("option:selected").attr("data-name");
-            var duration = $("#standardSelect").find("option:selected").attr("data-duration");
-            var assort_id = $("#standardSelect").find("option:selected").val();
-            console.log('Selected values:', {mini_money, iteValue, duration, assort_id});
-            $("#users").html(iteValue ? iteValue + " Authorization Code" : "Membership Authorization Code");
-            if (typeof(iteValue) === "undefined") {
-                layer.msg("Please select a code type", {shift: 6});
-                hideModal();
-                return false;
-            }
+                console.log('Authorization Code Script: Authorization Code button clicked');
+                
+                var mini_money = $("#standardSelect").find("option:selected").attr("data-money");
+                var iteValue = $("#standardSelect").find("option:selected").attr("data-name");
+                var duration = $("#standardSelect").find("option:selected").attr("data-duration");
+                var assort_id = $("#standardSelect").find("option:selected").val();
+                
+                console.log('Authorization Code Script: Selected values:', {mini_money, iteValue, duration, assort_id});
+                
+                $("#users").html(iteValue ? iteValue + " {{ __('home.authorization_code') }}" : "{{ __('home.membership_authorization_code') }}");
+                
+                if (typeof(iteValue) === "undefined" || !assort_id) {
+                    alert("{{ __('home.select_code_type') }}");
+                    return false;
+                }
 
-            var url = '{{ route('admin.code.save') ?? '/admin/code/save' }}';
-            console.log('Sending AJAX to:', url);
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: {day: duration, type: 1, number: 1, assort_id: assort_id, mini_money: mini_money},
-                headers: {'X-CSRF-Token': csrf_token},
-                success: function (result) {
-                    console.log('AJAX Success:', result);
-                    if (result.code !== 0) {
-                        layer.msg(result.msg || 'Failed to generate code', {shift: 6, skin: 'alert-secondary alert-lighter'});
-                        hideModal();
-                        return false;
+                // KTUI will show the modal via data-kt-modal-toggle
+                // showModal(); // Removed custom showModal call
+
+                var url = '{{ route('admin.code.save') ?? '/admin/code/save' }}';
+                console.log('Authorization Code Script: Sending AJAX to:', url);
+                
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {day: duration, type: 1, number: 1, assort_id: assort_id, mini_money: mini_money, _token: csrf_token},
+                    dataType: 'json',
+                    headers: {'X-CSRF-Token': csrf_token},
+                    success: function (result) {
+                        console.log('Authorization Code Script: AJAX Success:', result);
+                        if (result.code !== 0) {
+                            alert(result.msg || "{{ __('home.failed_to_generate_code') }}");
+                            // KTUI will hide the modal via data-kt-modal-dismiss
+                            // hideModal(); // Removed custom hideModal call
+                            return false;
+                        }
+                        $("#auth_code").html(result.data);
+                        $("#copy").attr("data-clipboard-text", result.data);
+                        window.code_id = result.id;
+                    },
+                    error: function (resp, stat, text) {
+                        console.error('Authorization Code Script: AJAX Error:', resp.status, text, resp.responseText);
+                        alert("{{ __('home.error_generating_code') }}");
+                        // KTUI will hide the modal via data-kt-modal-dismiss
+                        // hideModal(); // Removed custom hideModal call
                     }
-                    $("#auth_code").html(result.data);
-                    $("#copy").attr("data-clipboard-text", result.data);
-                    window.code_id = result.id;
-                },
-                error: ajax_options.error
+                });
             });
-        });
     } else {
-        console.error('submitBtn not found');
+        console.error('Authorization Code Script: submitBtn not found');
     }
 
-    // Close modal
-    var closeModalBtn = document.getElementById('closeModal');
-    if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', hideModal);
-    } else {
-        console.error('closeModal button not found');
-    }
+    
 
-    // Confirm button
-    var confirmBtn = document.getElementById('confirmBtn');
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', function() {
-            console.log('Confirm button clicked');
+    // Confirm button function
+        function authCode() {
+            console.log('Authorization Code Script: Confirm button clicked');
             var remark = $("#standardRemark").val();
             var code = $("#auth_code").html();
             var url = '{{ route('admin.code.remark') ?? '/admin/code/remark' }}';
-            console.log('Sending remark AJAX to:', url, {remark, code});
+            
+            console.log('Authorization Code Script: Sending remark AJAX to:', url, {remark, code});
+            
             $.ajax({
                 url: url,
-                type: "PUT",
-                data: {remark: remark, code: code},
+                type: 'PUT',
+                data: {remark: remark, code: code, _token: csrf_token},
+                dataType: 'json',
                 headers: {'X-CSRF-Token': csrf_token},
                 success: function (result) {
-                    console.log('Remark AJAX Success:', result);
+                    console.log('Authorization Code Script: Remark AJAX Success:', result);
                     if (result.code !== 0) {
-                        layer.msg(result.msg || 'Failed to save remark', {shift: 6, skin: 'alert-secondary alert-lighter'});
+                        alert(result.msg || "{{ __('home.failed_to_save_remark') }}");
                         return false;
                     }
                     if (result.redirect) {
-                        location.href = '{{ route('admin.code.index') ?? '/admin/code' }}';
+                        location.href = '{{ route('license.list') ?? '/admin/code' }}';
                     }
-                    hideModal();
+                    // KTUI will hide the modal via data-kt-modal-dismiss
+                    // hideModal(); // Removed custom hideModal call
                 },
-                error: ajax_options.error
+                error: function (resp, stat, text) {
+                    console.error('Authorization Code Script: Remark AJAX Error:', resp.status, text, resp.responseText);
+                    // Simplified error messages
+                    if (resp.status === 404) {
+                        alert("{{ __('home.save_feature_not_found') }}");
+                    } else if (resp.status === 422) {
+                         alert("{{ __('home.invalid_data_provided') }}");
+                    } else if (resp.status === 500) {
+                        alert("{{ __('home.server_error') }}");
+                    } else {
+                        alert("{{ __('home.unknown_error') }}");
+                    }
+                }
             });
-        });
-    } else {
-        console.error('confirmBtn not found');
-    }
+        }
+
+        var confirmBtn = document.getElementById('confirmBtn');
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', authCode);
+        } else {
+            console.error('Authorization Code Script: confirmBtn not found');
+        }
 
     // Clipboard functionality
     if (typeof ClipboardJS !== 'undefined') {
         var clipboard = new ClipboardJS('#copy');
         clipboard.on('success', function (e) {
-            console.log('Clipboard copy success:', e.text);
-            layer.msg("Code copied successfully", {shift: 5});
+            console.log('Authorization Code Script: Clipboard copy success:', e.text);
+            alert("{{ __('home.code_copied_successfully') }}");
             e.clearSelection();
         });
         clipboard.on('error', function (e) {
-            console.error('Clipboard copy error:', e.action, e.trigger);
-            layer.msg("Failed to copy code", {shift: 6});
+            console.error('Authorization Code Script: Clipboard copy error:', e.action, e.trigger);
+            alert("{{ __('home.failed_to_copy_code') }}");
         });
     } else {
-        console.error('ClipboardJS not initialized');
+        console.error('Authorization Code Script: ClipboardJS not initialized');
     }
+});
 </script>
-@endsection
+@endpush
