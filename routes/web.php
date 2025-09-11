@@ -78,5 +78,9 @@ Route::get('/agent/list', function () {
     Route::get('/costing', [CostingController::class, 'index'])->name('costing.index')->middleware('check.level');
     Route::post('/costing/update', [CostingController::class, 'update'])->name('costing.update')->middleware('check.level');
 });
+//TO DO remove in production
+Route::get('/debug-phpinfo', function () {
+    phpinfo();
+});
 
 require __DIR__.'/auth.php';
