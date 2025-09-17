@@ -1,10 +1,8 @@
 <?php
 
-
 namespace App\Repository;
 
 use App\Model\Admin\Log;
-use App\Repository\Searchable;
 
 class LogRepository
 {
@@ -21,15 +19,16 @@ class LogRepository
         $data->transform(function ($item) {
             // 因列表展示用的layui table组件未进行xss处理，故在后端进行xss处理
             xssFilter($item);
+
             return $item;
         });
 
-//        return [
-//            'code' => 0,
-//            'msg' => '',
-//            'count' => $data->total(),
-//            'data' => $data->items(),
-//        ];
+        //        return [
+        //            'code' => 0,
+        //            'msg' => '',
+        //            'count' => $data->total(),
+        //            'data' => $data->items(),
+        //        ];
         return $data;
     }
 

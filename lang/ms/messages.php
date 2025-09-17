@@ -9,7 +9,7 @@ return [
     'app.name_extended' => 'HOT TV+',
 
     // Sidebar Main
-    'sidebar.dashboard' => 'Papan Pemuka',
+    'sidebar.dashboard' => 'Halaman Utama',
     'sidebar.license_code_management.title' => 'Pengurusan Kod Lesen',
     'sidebar.license_code_management.generate' => 'Jana Kod Lesen',
     'sidebar.license_code_management.list' => 'Senarai Kod',
@@ -203,5 +203,39 @@ return [
             'customized_minimum_cost' => 'KOS MINIMUM TERSUAI',
             'action' => 'TINDAKAN',
         ],
+    ],
+
+    // General translations
+    'general' => [
+        'select_code' => 'Pilih Kod',
+        'authorization_code' => 'Kod Pengesahan',
+        'message' => 'Mesej',
+        'membership_authorization_code' => 'Kod Pengesahan Keahlian',
+        'confirm' => 'Sahkan',
+        'select' => 'Pilih',
+        'createSuccess' => 'Berjaya dicipta',
+        'createFailed' => 'Gagal dicipta',
+        'updateSuccess' => 'Berjaya dikemas kini',
+        'updateFailed' => 'Gagal dikemas kini',
+        'generate' => 'dijana',
+        'return' => 'Kembali',
+        'error' => 'Ralat',
+    ],
+
+    // Home translations
+    'home' => [
+        'copy' => 'Salin',
+    ],
+
+    // AuthCode translations
+    'authCode' => [
+        'remark' => 'Catatan',
+        'auth_code_fail' => 'Penjanaan kod pengesahan gagal',
+        'exceed' => 'Melebihi had',
+    ],
+
+    // Huobi translations
+    'huobi' => [
+        'money' => 'MYR',
     ],
 ];

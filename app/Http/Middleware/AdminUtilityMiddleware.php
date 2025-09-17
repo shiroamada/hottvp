@@ -2,29 +2,31 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Admin\Cost;
+use App\Models\Admin\Level;
+use App\Repository\Admin\AdminUserRepository;
+use App\Repository\Admin\CostRepository;
+use App\Repository\Admin\RetailRepository;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
-use App\Repository\Admin\AdminUserRepository;
-use App\Repository\Admin\RetailRepository;
-use App\Repository\Admin\CostRepository;
-use App\Models\Admin\AdminUser;
-use App\Models\Admin\Level;
-use App\Models\Admin\Cost;
-use App\Models\Admin\Equipment;
-use Illuminate\Support\Facades\DB;
 
 class AdminUtilityMiddleware
 {
     protected $idss = [];
+
     protected $ids_list_all = [];
+
     protected $ids_list_all_tt = [];
+
     protected $lowers = [];
+
     protected $ids = [];
+
     protected $ids_list = [];
+
     protected $count = 0;
-    
+
     /**
      * Handle an incoming request.
      */
@@ -38,40 +40,56 @@ class AdminUtilityMiddleware
         $this->ids = [];
         $this->ids_list = [];
         $this->count = 0;
-        
+
         // Store utility methods in the request for controllers to use
         $request->attributes->set('utility', $this);
-        
+
         return $next($request);
     }
 
     /**
      * Get parent ID by recursively finding the top-level parent
-     * 
-     * @param int $uid User ID
+     *
+     * @param  int  $uid  User ID
      * @return int Parent ID
      */
     public function getParentId($uid)
     {
-        $where = ['id' => $uid];
-        $info = AdminUserRepository::findByWhere($where);
-        if ($info->pid > 1) {
-            return $this->getParentId($info->pid);
+        $user = AdminUserRepository::find($uid);
+        if (! $user) {
+            return 0; // Or throw an exception, depending on desired error handling
         }
 
-        return $info['id'];
+        // If the user has no parent (pid is 0 or 1, assuming 1 is the root admin)
+        // or if they are already the top-level agent (level_id 3, assuming 3 is the top level)
+        // then they are their own parent for costing purposes.
+        if ($user->pid <= 1 || $user->level_id == 3) {
+            return $user->id;
+        }
+
+        // Traverse up the hierarchy until the top-level parent is found
+        $current_user = $user;
+        while ($current_user->pid > 1 && $current_user->level_id != 3) {
+            $parent = AdminUserRepository::find($current_user->pid);
+            if (! $parent) {
+                break; // Parent not found, stop traversing
+            }
+            $current_user = $parent;
+        }
+
+        return $current_user->id;
     }
 
     /**
      * Get lower IDs recursively with specific condition
-     * 
-     * @param int $uid User ID
+     *
+     * @param  int  $uid  User ID
      * @return array Lower IDs
      */
     public function getLowerIdss($uid)
     {
         $this->idss[] = $uid;
-        
+
         $where = ['pid' => $uid];
         $infos = AdminUserRepository::getListByWhere($where);
         if ($infos) {
@@ -82,24 +100,24 @@ class AdminUtilityMiddleware
                 $this->getLowerIdss($info->id);
             }
         }
-        
+
         return $this->idss;
     }
 
     /**
      * Get lower IDs by all with level filtering
-     * 
-     * @param int $uid User ID
-     * @param int $level_id Level ID
+     *
+     * @param  int  $uid  User ID
+     * @param  int  $level_id  Level ID
      * @return array Lower IDs
      */
     public function getLowerIdsByAll($uid, $level_id = 0)
     {
         $ids = [];
-        
+
         if ($level_id > 0) {
             $users = AdminUserRepository::getListByWhere(['pid' => $uid, 'level_id' => $level_id]);
-                
+
             foreach ($users as $user) {
                 $ids[] = $user->id;
                 // Recurse for this user's children
@@ -108,7 +126,7 @@ class AdminUtilityMiddleware
         } else {
             $this->getAllChildrenIds($uid, $ids);
         }
-        
+
         return $ids;
     }
 
@@ -118,7 +136,7 @@ class AdminUtilityMiddleware
     private function getAllChildrenIdsFiltered($id, array &$ids, $level_id): void
     {
         $children = AdminUserRepository::getListByWhere(['pid' => $id, 'level_id' => $level_id]);
-            
+
         foreach ($children as $child) {
             $ids[] = $child->id;
             $this->getAllChildrenIdsFiltered($child->id, $ids, $level_id);
@@ -126,7 +144,7 @@ class AdminUtilityMiddleware
     }
 
     /**
-     * Helper function to get child IDs recursively 
+     * Helper function to get child IDs recursively
      */
     private function getAllChildrenIds($id, array &$ids): void
     {
@@ -139,8 +157,8 @@ class AdminUtilityMiddleware
 
     /**
      * Get lower by IDs recursively
-     * 
-     * @param int $uid User ID
+     *
+     * @param  int  $uid  User ID
      * @return array Lower IDs
      */
     public function getLowerByIds($uid)
@@ -155,48 +173,46 @@ class AdminUtilityMiddleware
                 }
             }
         }
-        
+
         return $this->lowers;
     }
 
     /**
      * Get downline recursively
-     * 
-     * @param array $members Members array
-     * @param int $mid Member ID
-     * @param int $level Level
+     *
+     * @param  array  $members  Members array
+     * @param  int  $mid  Member ID
+     * @param  int  $level  Level
      * @return array Downline IDs
      */
     public function get_downline($members, $mid, $level = 0)
     {
-        $arr = array();
+        $arr = [];
         foreach ($members as $key => $v) {
-            if ($v['pid'] == $mid) {  //pid为0的是顶级分类
+            if ($v['pid'] == $mid) {  // pid为0的是顶级分类
                 $v['level'] = $level + 1;
                 $arr[] = $v->id;
                 $arr = array_merge($arr, $this->get_downline($members, $v['id'], $level + 1));
             }
         }
+
         return $arr;
     }
 
     /**
      * Check if request is AJAX
-     * 
-     * @param Request $request
-     * @return void
      */
     public function isAjax(Request $request): void
     {
-        if (!$request->ajax()) {
+        if (! $request->ajax()) {
             abort(403, 'Only AJAX requests are allowed.');
         }
     }
-    
+
     /**
      * Get retail data
-     * 
-     * @param int $parent_id Parent ID
+     *
+     * @param  int  $parent_id  Parent ID
      * @return array Retail data
      */
     public function getRetail($parent_id)
@@ -206,11 +222,11 @@ class AdminUtilityMiddleware
 
         return $retailList->toArray();
     }
-    
+
     /**
      * Get level cost
-     * 
-     * @param int $parent_id Parent ID
+     *
+     * @param  int  $parent_id  Parent ID
      * @return array Level cost data
      */
     public function getLevelCost($parent_id)
@@ -220,11 +236,11 @@ class AdminUtilityMiddleware
 
         return $retailList->toArray();
     }
-    
+
     /**
      * Get lower IDs
-     * 
-     * @param int $uid User ID
+     *
+     * @param  int  $uid  User ID
      * @return array Lower IDs
      */
     public function getLowerId($uid)
@@ -239,14 +255,14 @@ class AdminUtilityMiddleware
                 $this->getLowerId($info->id);
             }
         }
-        
+
         return $this->ids;
     }
-    
+
     /**
      * Get lower IDs
-     * 
-     * @param int $uid User ID
+     *
+     * @param  int  $uid  User ID
      * @return array Lower IDs
      */
     public function getLowerIds($uid)
@@ -259,14 +275,14 @@ class AdminUtilityMiddleware
                 $this->getLowerIds($info->id);
             }
         }
-        
+
         return $this->ids_list;
     }
-    
+
     /**
      * Get level count
-     * 
-     * @param int $id User ID
+     *
+     * @param  int  $id  User ID
      * @return int Count
      */
     public function getLevel($id)
@@ -274,12 +290,12 @@ class AdminUtilityMiddleware
         $count_where = ['pid' => $id];
         $ids = AdminUserRepository::getIdsByWhere($count_where);
         foreach ($ids as $info) {
-            if (!empty($info)) {
+            if (! empty($info)) {
                 $this->count++;
                 $this->getLevel($info);
             }
         }
-        
+
         return $this->count;
     }
-} 
+}

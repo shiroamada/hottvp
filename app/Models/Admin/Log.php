@@ -10,7 +10,7 @@ class Log extends Model
 
     public static $searchField = [
         'user_name' => '用户',
-        'url' => 'URL'
+        'url' => 'URL',
     ];
 
     public static $listField = [

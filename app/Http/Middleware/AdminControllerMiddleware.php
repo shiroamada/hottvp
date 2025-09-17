@@ -2,19 +2,18 @@
 
 namespace App\Http\Middleware;
 
+use App\Repository\Admin\EntityRepository;
+use App\Repository\Admin\MenuRepository;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
-use App\Repository\Admin\MenuRepository;
-use App\Repository\Admin\EntityRepository;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminControllerMiddleware
 {
     protected $breadcrumb = [];
-    
+
     /**
      * Handle an incoming request.
      */
@@ -34,16 +33,16 @@ class AdminControllerMiddleware
         // if (is_null($route)) {
         //     return $next($request);
         // }
-        
+
         // $routeName = $request->route()->getName();
-        
+
         // // Get current group
         // $group = MenuRepository::getGroup($routeName);
         // View::share([
-        //     'light_cur_route' => $routeName, 
+        //     'light_cur_route' => $routeName,
         //     'light_cur_group' => $group
         // ]);
-        
+
         // if (is_null($currentRootMenu = MenuRepository::root($routeName))) {
         //     View::share('light_menu', []);
         // } else {
@@ -65,4 +64,4 @@ class AdminControllerMiddleware
             $message->to($to)->subject($subject);
         });
     }
-} 
+}

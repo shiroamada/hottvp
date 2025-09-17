@@ -63,18 +63,19 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($costingData as $index => $item)
-                                            <tr>
+                                        @foreach($costingData as $item)
+                                            <tr data-id="{{ $item['id'] }}">
                                                 <td>{{ $item['type'] }}</td>
-                                                <td>{{ $item['retail_price'] }}</td>
-                                                <td>{{ $item['your_cost'] }}</td>
-                                                <td>{{ $item['diamond_agent_cost'] }}</td>
-                                                <td>{{ $item['gold_agent_cost'] }}</td>
-                                                <td>{{ $item['silver_agent_cost'] }}</td>
-                                                <td>{{ $item['bronze_agent_cost'] }}</td>
-                                                <td>{{ $item['customized_minimum_cost'] }}</td>
+                                                <td><input type="number" step="0.01" name="retail_price" value="{{ $item['retail_price'] }}" class="kt-input" style="border: none; background: transparent;" disabled></td>
+                                                <td><input type="number" step="0.01" name="your_cost" value="{{ $item['your_cost'] }}" class="kt-input" style="border: none; background: transparent;" disabled></td>
+                                                <td><input type="number" step="0.01" name="diamond_agent_cost" value="{{ $item['diamond_agent_cost'] }}" class="kt-input" disabled></td>
+                                                <td><input type="number" step="0.01" name="gold_agent_cost" value="{{ $item['gold_agent_cost'] }}" class="kt-input" disabled></td>
+                                                <td><input type="number" step="0.01" name="silver_agent_cost" value="{{ $item['silver_agent_cost'] }}" class="kt-input" disabled></td>
+                                                <td><input type="number" step="0.01" name="bronze_agent_cost" value="{{ $item['bronze_agent_cost'] }}" class="kt-input" disabled></td>
+                                                <td><input type="number" step="0.01" name="customized_minimum_cost" value="{{ $item['customized_minimum_cost'] }}" class="kt-input" disabled></td>
                                                 <td class="text-end">
-                                                    <a href="#" class="kt-btn kt-btn-sm kt-btn-primary">EDIT</a>
+                                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-primary edit-btn">EDIT</button>
+                                                    <button type="submit" class="kt-btn kt-btn-sm kt-btn-success save-btn" style="display:none;">SAVE</button>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -99,7 +100,64 @@
 
 @push('scripts')
 <script>
-    // Debug the data
-    console.log('Costing data:', @json($costingData));
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                row.querySelectorAll('input').forEach(input => {
+                    const name = input.getAttribute('name');
+                    if (name !== 'retail_price' && name !== 'your_cost') {
+                        input.disabled = false;
+                    }
+                });
+                this.style.display = 'none';
+                row.querySelector('.save-btn').style.display = 'inline-block';
+            });
+        });
+
+        document.querySelectorAll('.save-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const id = row.dataset.id;
+                const data = {
+                    _token: '{{ csrf_token() }}',
+                    assort_id: id,
+                    retail_price: row.querySelector('input[name="retail_price"]').value,
+                    your_cost: row.querySelector('input[name="your_cost"]').value,
+                    diamond_agent_cost: row.querySelector('input[name="diamond_agent_cost"]').value,
+                    gold_agent_cost: row.querySelector('input[name="gold_agent_cost"]').value,
+                    silver_agent_cost: row.querySelector('input[name="silver_agent_cost"]').value,
+                    bronze_agent_cost: row.querySelector('input[name="bronze_agent_cost"]').value,
+                    customized_minimum_cost: row.querySelector('input[name="customized_minimum_cost"]').value,
+                };
+
+                fetch('{{ route('costing.update') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': data._token
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert(result.message);
+                        row.querySelectorAll('input').forEach(input => {
+                            input.disabled = true;
+                        });
+                        this.style.display = 'none';
+                        row.querySelector('.edit-btn').style.display = 'inline-block';
+                    } else {
+                        alert(result.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while saving.');
+                });
+            });
+        });
+    });
 </script>
 @endpush

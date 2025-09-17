@@ -17,7 +17,6 @@ class AdminRedirectIfAdminAuthenticated
         return $next($request);
     }
 
-
     /**
      * Get the authentication guard to be used by the middleware.
      *

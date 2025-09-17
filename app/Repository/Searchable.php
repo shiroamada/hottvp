@@ -17,7 +17,7 @@ trait Searchable
         }
 
         foreach ($condition as $k => $v) {
-            if (!is_array($v) && isset($searchField[$k]['searchType'])) {
+            if (! is_array($v) && isset($searchField[$k]['searchType'])) {
                 $condition[$k] = [$searchField[$k]['searchType'], $v];
             }
         }
@@ -26,7 +26,7 @@ trait Searchable
             $type = 'like';
             $value = $v;
             if (is_array($v)) {
-                list($type, $value) = $v;
+                [$type, $value] = $v;
             }
             $value = trim($value);
             // 搜索值为空字符串则忽略该条件

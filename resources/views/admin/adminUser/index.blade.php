@@ -13,14 +13,15 @@
       <img class="hidden min-h-[30px]" src="/assets/media/app/mini-logo-gray-dark.svg"/>
      </a>
      <button class="kt-btn kt-btn-icon kt-btn-ghost -me-2" data-kt-drawer-toggle="#sidebar">
-      <i class="ki-filled ki-menu">
-      </i>
+      <i class="ki-filled ki-menu"></i>
      </button>
     </div>
     <!-- End of Container -->
    </header>
    <!-- End of Header -->
+
    @include('layouts/partials/_sidebar')
+
    <!-- Wrapper -->
    <div class="flex flex-col lg:flex-row grow pt-(--header-height) lg:pt-0">
     <!-- Main -->
@@ -44,6 +45,7 @@
             <!-- End of Container -->
         </div>
         <!-- End of Toolbar -->
+
         <!-- Container -->
         <div class="kt-container-fixed">
             <div class="grid gap-5 lg:gap-7.5">
@@ -63,6 +65,7 @@
                             </form>
                         </div>
                     </div>
+
                     <div class="kt-card-content">
                         <div class="grid">
                             <div class="kt-scrollable-x-auto">
@@ -84,11 +87,13 @@
                                         @foreach($lists as $v)
                                             <tr>
                                                 <td>{{ $v['id'] }}</td>
+
                                                 @if($v['is_cancel'] != 0)
                                                     <td class="text-muted">{{ $v['name'] ?? "" }} {{ __('messages.general.is_del') }}</td>
                                                 @else
                                                     <td>{{ $v['name'] ?? "" }}</td>
                                                 @endif
+
                                                 <td>
                                                     {{ $v->levels->level_name ?? "" }}
                                                     @if(auth()->guard('admin')->user()->level_id <= 3)
@@ -97,7 +102,9 @@
                                                         @endif
                                                     @endif
                                                 </td>
+
                                                 <td>{{ number_format($v['balance'], 2) }}</td>
+
                                                 <td>
                                                     <?php
                                                     if (auth()->guard('admin')->user()->id == 1) {
@@ -121,51 +128,92 @@
                                                         {{ number_format($profit, 2) }}
                                                     @endif
                                                 </td>
+
                                                 <td>
                                                     @if(mb_strlen($v['remark']) > 10)
-                                                        {{ mb_substr($v['remark'], 0, 10) }}...
+                                                        <div x-data="{ open: false }" class="relative">
+                                                            <span @mouseover="open = true" @mouseout="open = false" class="cursor-pointer">
+                                                                {{ mb_substr($v['remark'], 0, 10) }}...
+                                                            </span>
+                                                            <div x-show="open"
+                                                                 x-transition
+                                                                 class="absolute z-10 w-64 p-2 -mt-1 text-sm leading-tight text-white transform -translate-x-1/2 -translate-y-full bg-gray-800 rounded-lg shadow-lg">
+                                                                {{ $v['remark'] }}
+                                                            </div>
+                                                        </div>
                                                     @else
                                                         {{ $v['remark'] }}
                                                     @endif
                                                 </td>
+
                                                 <td>{{ $v['created_at'] }}</td>
+
+                                                <!-- Actions dropdown (details/summary with purple left stripe highlight) -->
                                                 <td class="text-end">
-                                                    <div class="relative">
-                                                        <button type="button" class="kt-btn kt-btn-sm kt-btn-primary dropdown-toggle" 
-                                                                onclick="toggleDropdown({{ $v['id'] }})">
-                                                            {{ __('messages.agent_list.table.action') }}
-                                                        </button>
-                                                        <div id="dropdown-{{ $v['id'] }}" class="dropdown-menu absolute right-0 mt-2 hidden rounded-md shadow-md shadow-[rgba(0,0,0,0.05)] border border-border bg-card text-card-foreground py-2 z-50" style="min-width: 150px; background-color: var(--background-card);">
-                                                            @if(auth()->guard('admin')->user()->id != 2)
-                                                                <a class="block px-4 py-2 text-sm dropdown-item" href="{{ route('admin.users.check', ['id' => $v['id']]) }}">
-                                                                    {{ __('messages.agent_list.check') }}
-                                                                </a>
-                                                                @if($v['is_cancel'] == 0)
-                                                                    <a class="block px-4 py-2 text-sm dropdown-item" href="{{ route('admin.users.recharge', ['id' => $v['id']]) }}">
-                                                                        {{ __('messages.agent_list.recharge') }}
-                                                                    </a>
-                                                                @endif
-                                                                @if($v['is_cancel'] != 2)
-                                                                    <a class="block px-4 py-2 text-sm dropdown-item" href="{{ route('admin.users.lower', ['id' => $v['id']]) }}">
-                                                                        {{ __('messages.agent_list.lower_agent') }}
-                                                                    </a>
-                                                                @endif
-                                                            @else
-                                                                <a class="block px-4 py-2 text-sm dropdown-item" href="{{ route('admin.users.look', ['id' => $v['id']]) }}">
-                                                                    {{ __('messages.agent_list.check_cost') }}
-                                                                </a>
-                                                                <a class="block px-4 py-2 text-sm dropdown-item" href="{{ route('admin.users.lower', ['id' => $v['id']]) }}">
-                                                                    {{ __('messages.agent_list.lower') }}
-                                                                </a>
-                                                                <a class="block px-4 py-2 text-sm dropdown-item" href="{{ route('admin.users.check', ['id' => $v['id']]) }}">
-                                                                    {{ __('messages.agent_list.check') }}
-                                                                </a>
-                                                                <a class="block px-4 py-2 text-sm dropdown-item" href="{{ route('admin.users.recharge', ['id' => $v['id']]) }}">
-                                                                    {{ __('messages.agent_list.recharge') }}
-                                                                </a>
-                                                            @endif
-                                                        </div>
+                                                  <details class="relative group" data-row="{{ $v['id'] }}">
+                                                    <summary
+                                                      class="kt-btn kt-btn-sm kt-btn-primary select-none cursor-pointer list-none"
+                                                      aria-haspopup="menu"
+                                                      aria-expanded="false"
+                                                    >
+                                                      {{ __('messages.agent_list.table.action') }}
+                                                    </summary>
+
+                                                    <div
+                                                      role="menu"
+                                                      class="absolute right-0 mt-2 rounded-md shadow-md border border-border bg-card text-card-foreground py-2 z-50 min-w-[150px]"
+                                                      style="background-color: var(--background-card);"
+                                                    >
+                                                      @if(auth()->guard('admin')->user()->id != 2)
+                                                        <a class="block px-4 py-2 text-sm" role="menuitem"
+                                                           href="{{ route('admin.users.check', ['id' => $v['id']]) }}">
+                                                          {{ __('messages.agent_list.check') }}
+                                                        </a>
+
+                                                        @if($v['is_cancel'] == 0)
+                                                          <a class="block px-4 py-2 text-sm" role="menuitem"
+                                                             href="{{ route('admin.users.recharge', ['id' => $v['id']]) }}">
+                                                            {{ __('messages.agent_list.recharge') }}
+                                                          </a>
+                                                        @endif
+
+                                                        @if($v['is_cancel'] != 2)
+                                                          
+
+                                                          <!-- <form action="{{ route('admin.users.delete', $v->id) }}" method="POST"
+                                                                onsubmit="return confirm('{{ __('messages.general.delete_confirm') }}');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm" role="menuitem">
+                                                              {{ __('messages.agent_list.delete') }}
+                                                            </button>
+                                                          </form> -->
+
+                                                          <a class="block px-4 py-2 text-sm" role="menuitem"
+                                                             href="{{ route('admin.users.lower', ['id' => $v['id']]) }}">
+                                                            {{ __('messages.agent_list.lower_agent') }}
+                                                          </a>
+                                                        @endif
+                                                      @else
+                                                        <a class="block px-4 py-2 text-sm" role="menuitem"
+                                                           href="{{ route('admin.users.look', ['id' => $v['id']]) }}">
+                                                          {{ __('messages.agent_list.check_cost') }}
+                                                        </a>
+                                                        <a class="block px-4 py-2 text-sm" role="menuitem"
+                                                           href="{{ route('admin.users.lower', ['id' => $v['id']]) }}">
+                                                          {{ __('messages.agent_list.lower') }}
+                                                        </a>
+                                                        <a class="block px-4 py-2 text-sm" role="menuitem"
+                                                           href="{{ route('admin.users.check', ['id' => $v['id']]) }}">
+                                                          {{ __('messages.agent_list.check') }}
+                                                        </a>
+                                                        <a class="block px-4 py-2 text-sm" role="menuitem"
+                                                           href="{{ route('admin.users.recharge', ['id' => $v['id']]) }}">
+                                                          {{ __('messages.agent_list.recharge') }}
+                                                        </a>
+                                                      @endif
                                                     </div>
+                                                  </details>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -182,6 +230,7 @@
                 </div>
             </div>
         </div>
+        <!-- End Container -->
       </main>
      </div>
     </div>
@@ -195,175 +244,108 @@
 
 @push('styles')
 <style>
-    :root {
-        --background-card: #ffffff;
-        --hover-background: #f3f4f6;
-        --hover-text: #111827;
-        --active-color: #6366f1;
-        --active-color-dark: #818cf8;
-    }
-    
-    .dark {
-        --background-card: #1f2937;
-        --hover-background: #374151;
-        --hover-text: #f9fafb;
-        --active-color: #818cf8;
-        --active-color-dark: #a5b4fc;
-    }
-    
-    .dropdown-menu {
-        background-color: var(--background-card) !important;
-    }
-    
-    .dropdown-menu a {
-        transition: all 0.2s ease;
-        border-left: 3px solid transparent;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .dropdown-menu a:hover,
-    .dropdown-menu a:focus,
-    .dropdown-menu a.dropdown-item-active {
-        background-color: var(--hover-background) !important;
-        color: var(--hover-text) !important;
-        border-left: 3px solid var(--active-color);
-        padding-left: calc(1rem - 3px);
-        outline: none;
-    }
-    
-    .dropdown-menu a:active {
-        background-color: var(--active-color) !important;
-        color: white !important;
-    }
-    
-    /* Visual indicator for the currently hovered/focused item */
-    .dropdown-menu a:hover::before,
-    .dropdown-menu a:focus::before,
-    .dropdown-menu a.dropdown-item-active::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        height: 100%;
-        width: 3px;
-        background-color: var(--active-color);
-    }
-    
-    /* Make sure the dropdown menu itself has a clear focus outline */
-    .dropdown-menu:focus-within {
-        outline: 2px solid var(--active-color);
-        outline-offset: 2px;
-    }
-    
-    .dark .dropdown-menu a:hover::before,
-    .dark .dropdown-menu a:focus::before,
-    .dark .dropdown-menu a.dropdown-item-active::before {
-        background-color: var(--active-color-dark);
-    }
-    
-    .dark .dropdown-menu a:hover,
-    .dark .dropdown-menu a:focus,
-    .dark .dropdown-menu a.dropdown-item-active {
-        border-left-color: var(--active-color-dark);
-    }
+  :root {
+    --background-card: #ffffff;
+    --hover-background: #f3f4f6;      /* light hover bg */
+    --hover-text: #111827;            /* near-black text */
+    --active-color: #6366f1;          /* indigo-500 (purple-ish) */
+    --active-color-dark: #818cf8;     /* indigo-400 (for dark mode stripe) */
+  }
+  .dark {
+    --background-card: #1f2937;       /* gray-800 */
+    --hover-background: #374151;      /* gray-700 */
+    --hover-text: #f9fafb;            /* gray-50 */
+    --active-color: #818cf8;          /* lighter for contrast in dark */
+    --active-color-dark: #a5b4fc;     /* even lighter stripe in dark */
+  }
+
+  /* Hide default ▶ marker on <summary> */
+  details > summary::-webkit-details-marker { display: none; }
+  details > summary { outline: none; }
+
+  /* Base item style in the dropdown */
+  [role="menu"] a,
+  [role="menu"] button {
+    position: relative;
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+    overflow: hidden; /* keep the stripe snug */
+  }
+
+  /* Hover/Focus states + purple left stripe */
+  [role="menu"] a:hover,
+  [role="menu"] a:focus,
+  [role="menu"] button:hover,
+  [role="menu"] button:focus {
+    background-color: var(--hover-background);
+    color: var(--hover-text);
+    border-left-color: var(--active-color);
+    padding-left: calc(1rem - 3px); /* compensate for border-left */
+    outline: none;
+  }
+
+  /* The visual stripe itself */
+  [role="menu"] a:hover::before,
+  [role="menu"] a:focus::before,
+  [role="menu"] button:hover::before,
+  [role="menu"] button:focus::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0;
+    height: 100%; width: 3px;
+    background-color: var(--active-color);
+  }
+
+  /* Active press feedback */
+  [role="menu"] a:active,
+  [role="menu"] button:active {
+    background-color: var(--active-color);
+    color: #fff;
+  }
+
+  /* Dark-mode: use lighter purple for the stripe & border */
+  .dark [role="menu"] a:hover,
+  .dark [role="menu"] a:focus,
+  .dark [role="menu"] button:hover,
+  .dark [role="menu"] button:focus {
+    border-left-color: var(--active-color-dark);
+  }
+  .dark [role="menu"] a:hover::before,
+  .dark [role="menu"] a:focus::before,
+  .dark [role="menu"] button:hover::before,
+  .dark [role="menu"] button:focus::before {
+    background-color: var(--active-color-dark);
+  }
 </style>
 @endpush
 
 @push('scripts')
 <script>
-    // Delete user functionality if needed
-    function deleteUser(url) {
-        if (confirm("{{ __('messages.general.delete_confirm') }}")) {
-            $.ajax({
-                url: url,
-                type: "DELETE",
-                headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-                success: function (result) {
-                    if (result.code !== 0) {
-                        alert(result.msg);
-                        return false;
-                    }
-                    alert(result.msg);
-                    if (result.reload) {
-                        location.reload();
-                    }
-                    if (result.redirect) {
-                        location.href = '{!! url()->current() !!}';
-                    }
-                }
-            });
-        }
+  // Ensure only one dropdown (details) is open at a time
+  document.addEventListener('toggle', function (e) {
+    if (e.target.tagName.toLowerCase() !== 'details') return;
+    const isOpen = e.target.hasAttribute('open');
+    if (isOpen) {
+      document.querySelectorAll('td details[open]').forEach(d => {
+        if (d !== e.target) d.removeAttribute('open');
+      });
     }
-    
-    // Show/hide dropdown
-    function toggleDropdown(id) {
-        const dropdown = document.getElementById('dropdown-' + id);
-        const allDropdowns = document.querySelectorAll('[id^="dropdown-"]');
-        
-        // Hide all other dropdowns
-        allDropdowns.forEach(menu => {
-            if (menu.id !== 'dropdown-' + id) {
-                menu.classList.add('hidden');
-            }
-        });
-        
-        // Toggle current dropdown
-        dropdown.classList.toggle('hidden');
-        
-        // Ensure dropdown has proper background
-        if (!dropdown.classList.contains('hidden')) {
-            // Force solid background color based on current theme
-            if (document.documentElement.classList.contains('dark')) {
-                dropdown.style.backgroundColor = '#1f2937'; // Dark mode background
-            } else {
-                dropdown.style.backgroundColor = '#ffffff'; // Light mode background
-            }
-        }
-    }
-    
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!event.target.closest('.dropdown-toggle') && !event.target.closest('.dropdown-menu')) {
-            document.querySelectorAll('[id^="dropdown-"]').forEach(menu => {
-                menu.classList.add('hidden');
-            });
-        }
+    const sum = e.target.querySelector('summary');
+    if (sum) sum.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }, true);
+
+  // Close open dropdowns when clicking outside
+  document.addEventListener('click', function (e) {
+    document.querySelectorAll('td details[open]').forEach(d => {
+      if (!d.contains(e.target)) {
+        d.removeAttribute('open');
+        const sum = d.querySelector('summary');
+        if (sum) sum.setAttribute('aria-expanded', 'false');
+      }
     });
-    
-    // Initialize dropdowns with proper background colors when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-        // Set CSS variable for dropdown backgrounds
-        const root = document.documentElement;
-        if (root.classList.contains('dark')) {
-            root.style.setProperty('--background-card', '#1f2937');
-        } else {
-            root.style.setProperty('--background-card', '#ffffff');
-        }
-        
-        // Apply to all existing dropdowns
-        document.querySelectorAll('[id^="dropdown-"]').forEach(dropdown => {
-            if (root.classList.contains('dark')) {
-                dropdown.style.backgroundColor = '#1f2937';
-            } else {
-                dropdown.style.backgroundColor = '#ffffff';
-            }
-            
-            // Add event listeners for dropdown menu items
-            dropdown.querySelectorAll('a').forEach(item => {
-                // On hover, add active class
-                item.addEventListener('mouseenter', function() {
-                    dropdown.querySelectorAll('a').forEach(el => el.classList.remove('dropdown-item-active'));
-                    this.classList.add('dropdown-item-active');
-                });
-                
-                // On focus
-                item.addEventListener('focus', function() {
-                    dropdown.querySelectorAll('a').forEach(el => el.classList.remove('dropdown-item-active'));
-                    this.classList.add('dropdown-item-active');
-                });
-            });
-        });
-    });
+  });
+
+  // Initialize aria-expanded = false
+  document.querySelectorAll('td details > summary').forEach(s => s.setAttribute('aria-expanded', 'false'));
 </script>
 @endpush

@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin\AdminUser;
 use Illuminate\Http\Request;
-use App\Models\User; // Assuming agents are users
 
 class AgentController extends Controller
 {
     /**
      * Display a listing of the agents.
      */
-    public function list()
+    public function list(Request $request)
     {
-        // For now, we'll return an empty array of agents.
-        // In the future, you would fetch this from the database.
-        // e.g., $agents = User::where('is_agent', true)->get();
-        $agents = [];
+        $perPage = $request->get('per_page', 15);
+        $agents = AdminUser::paginate($perPage);
 
         return view('agent.list', compact('agents'));
     }

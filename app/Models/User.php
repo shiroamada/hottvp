@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+// ignore this user model, use AdminUser model instead in every scenario
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,7 +12,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -94,9 +95,9 @@ class User extends Authenticatable
     /**
      * Get the hotcoin transactions for this user.
      */
-    public function hotcoinTransactions()
+    public function huobis()
     {
-        return $this->hasMany(HotcoinTransaction::class, 'agent_id');
+        return $this->hasMany(\App\Models\Admin\Huobi::class, 'user_id');
     }
 
     /**
@@ -105,5 +106,13 @@ class User extends Authenticatable
     public function monthlyProfits()
     {
         return $this->hasMany(AgentMonthlyProfit::class, 'agent_id');
+    }
+
+    public function getCostForPreset(\App\Models\Assort $preset)
+    {
+        // This is a placeholder. In a real application, you would have a table
+        // that defines the cost of each preset for each agent level.
+        // For now, we'll just return the default cost from the preset.
+        return $preset->hotcoin_cost;
     }
 }

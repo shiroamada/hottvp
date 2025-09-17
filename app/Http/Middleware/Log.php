@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Jobs\WriteSystemLog;
 use App\Repository\Admin\LogRepository;
 use Carbon\Carbon;
 use Closure;
-use App\Jobs\WriteSystemLog;
 
 class Log
 {
@@ -13,14 +13,13 @@ class Log
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next, $guard = '')
     {
         $data = [];
         if ($guard !== '') {
-            $user =auth()->guard($guard)->user();
+            $user = auth()->guard($guard)->user();
             if ($user) {
                 $data['user_id'] = $user->id;
                 $data['user_name'] = $user->name;

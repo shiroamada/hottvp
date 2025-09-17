@@ -19,7 +19,7 @@ return [
     'sidebar.agent_management.title' => 'Agent Management',
     'sidebar.agent_management.add_new' => 'Add New Agent',
     'sidebar.agent_management.list' => 'List Agent',
-    'sidebar.hotcoin_transaction.title' => 'HotCoin Transaction',
+    'sidebar.hotcoin_transaction.title'  => 'HotCoin Transaction',
     'sidebar.hotcoin_transaction.list' => 'Transaction List',
     'sidebar.costing.title' => 'Costing',
     'sidebar.costing.list' => 'Cost List',
@@ -166,7 +166,7 @@ return [
         'return' => 'Return',
         'select_level' => 'Select',
     ],
-    
+
     // License Generation Page
     'license_generate' => [
         'title' => 'Batch Generation Activation Code',
@@ -226,6 +226,7 @@ return [
         'delete_success' => 'Deleted successfully',
         'delete_confirm' => 'Are you sure you want to delete this item?',
         'is_del' => '(Deleted)',
+
     ],
 
     'agent_add' => [
@@ -312,7 +313,7 @@ return [
         'amount_require' => 'Amount is required',
         'recharge_tips' => 'Insufficient balance for recharge',
     ],
-    
+
     'equipment' => [
         'money' => 'Money',
         'retail_price' => 'Retail Price',
@@ -358,4 +359,76 @@ return [
     // AdminUser
     'adminUser.assort' => 'Assort',
     'adminUser.entry_barriers' => 'Entry Barriers',
+
+    'license_generate.return' => 'Return',
+
+    'license_list.title' => 'License Code List',
+    'license_list.generate_new' => 'Generate New Code',
+    'license_list.generated_codes' => 'Generated Codes',
+    'license_list.code' => 'Code',
+    'license_list.type' => 'Type',
+    'license_list.remark' => 'Remark',
+    'license_list.status' => 'Status',
+    'license_list.created_at' => 'Created At',
+    'license_list.expired_at' => 'Expiry Date',
+    'license_list.status_unused' => 'Unused',
+    'license_list.status_used' => 'Used',
+    'license_list.status_expired' => 'Expired',
+    'license_list.no_codes_found' => 'No codes found.',
+    'license_list.actions' => 'Actions',
+    'license_list.update_remark_title' => 'Update Remark',
+    'license_list.save_remark' => 'Save Remark',
+    'license_list.view_last_batch' => 'View Last Batch',
+    'license_list.export_last_batch' => 'Export Last Batch',
+
+    'license_detail.title' => 'Last Batch Details',
+    'license_detail.download_batch' => 'Download Batch',
+    'license_detail.back_to_list' => 'Back to List',
+    'license_detail.last_batch_codes' => 'Last Batch Generated Codes',
+
+    'trial_list.title' => 'Trial Code List',
+    'trial_list.generate_new' => 'Generate New Trial Code',
+    'trial_list.generated_codes' => 'Generated Trial Codes',
+
+    'trial_generate.title' => 'Generate Trial Code',
+    'trial_generate.available_quantity' => 'Available Trial Codes',
+    'trial_generate.generation_quantity' => 'Generation Quantity',
+    'trial_generate.remarks' => 'Remarks',
+    'trial_generate.apply_for_trial_code' => 'Generate Trial Code',
+    'trial_generate.reset' => 'Reset',
+    'trial_generate.return' => 'Return',
+
+    // General translations
+    'general' => [
+        'select_code' => 'Select Code',
+        'authorization_code' => 'Authorization Code',
+        'message' => 'Message',
+        'membership_authorization_code' => 'Membership Authorization Code',
+        'confirm' => 'Confirm',
+        'select' => 'Select',
+        'createSuccess' => 'Created successfully',
+        'createFailed' => 'Creation failed',
+        'updateSuccess' => 'Updated successfully',
+        'updateFailed' => 'Update failed',
+        'generate' => 'generated',
+        'return' => 'Return',
+        'error' => 'Error',
+    ],
+
+    // Home translations
+    'home' => [
+        'copy' => 'Copy',
+    ],
+
+    // AuthCode translations
+    'authCode' => [
+        'remark' => 'Remark',
+        'auth_code_fail' => 'Authorization code generation failed',
+        'exceed' => 'Exceeded limit',
+    ],
+
+    // Huobi translations
+    'huobi' => [
+        'money' => 'MYR',
+    ],
 ];

@@ -2,27 +2,97 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuthCode;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class TrialCodeController extends Controller
 {
-    public function index()
+    public function index(Request $request): View
     {
-        $trialCodes = collect([
-            (object)['id' => 96910, 'code' => 'KNZCGUZKXDU', 'status' => 'Used', 'remarks' => 'me', 'expired_date' => '2024-03-22', 'created_time' => '2024-03-21 13:47:47'],
-            (object)['id' => 96909, 'code' => 'BEPLWWDMDOMDO', 'status' => 'New', 'remarks' => 'me', 'expired_date' => '', 'created_time' => '2024-03-21 13:47:47'],
-            (object)['id' => 96908, 'code' => 'HXEBQUMDYBV', 'status' => 'New', 'remarks' => 'me', 'expired_date' => '', 'created_time' => '2024-03-21 13:47:47'],
-            (object)['id' => 96907, 'code' => 'BQLYQIXSRPOE', 'status' => 'New', 'remarks' => 'me', 'expired_date' => '', 'created_time' => '2024-03-21 13:47:47'],
-            (object)['id' => 96906, 'code' => 'WKBCMXIZDROG', 'status' => 'New', 'remarks' => 'me', 'expired_date' => '', 'created_time' => '2024-03-21 13:47:47'],
-            (object)['id' => 96903, 'code' => 'IHCQGDPGIGIY', 'status' => 'Used', 'remarks' => 'Alice', 'expired_date' => '2024-03-21', 'created_time' => '2024-03-20 00:01:29'],
-            (object)['id' => 96902, 'code' => 'MXAXRPTYJSMD', 'status' => 'New', 'remarks' => 'Alice', 'expired_date' => '', 'created_time' => '2024-03-20 00:01:29'],
-            (object)['id' => 96901, 'code' => 'SPAOMGSPXWCU', 'status' => 'New', 'remarks' => 'Alice', 'expired_date' => '', 'created_time' => '2024-03-20 00:01:29'],
-            (object)['id' => 96900, 'code' => 'XLWFQIVTKHCV', 'status' => 'New', 'remarks' => 'Alice', 'expired_date' => '', 'created_time' => '2024-03-20 00:01:29'],
-            (object)['id' => 96899, 'code' => 'UZQNVWZDQHU', 'status' => 'New', 'remarks' => 'Alice', 'expired_date' => '', 'created_time' => '2024-03-20 00:01:29'],
-            (object)['id' => 93773, 'code' => 'VLIULOGCEPSR', 'status' => 'Used', 'remarks' => '', 'expired_date' => '2023-10-19', 'created_time' => '2023-10-18 15:16:26'],
-            (object)['id' => 93772, 'code' => 'ZTIQRIFYYFZD', 'status' => 'Used', 'remarks' => '', 'expired_date' => '2023-10-22', 'created_time' => '2023-10-18 15:16:26'],
-            (object)['id' => 93771, 'code' => 'UJKYVFWTPHON', 'status' => 'Used', 'remarks' => '', 'expired_date' => '2023-11-03', 'created_time' => '2023-10-18 15:16:26'],
+        $user = Auth::guard('admin')->user();
+        $query = AuthCode::where('user_id', $user->id)
+            ->where('is_try', 2) // Filter for trial codes
+            ->with('assort');
+
+        // Apply filters
+        if ($request->filled('auth_code')) {
+            $query->where('auth_code', 'like', '%' . $request->input('auth_code') . '%');
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        if ($request->filled('date_range')) {
+            $dates = explode(' - ', $request->input('date_range'));
+            if (count($dates) == 2) {
+                $query->whereBetween('created_at', [$dates[0] . ' 00:00:00', $dates[1] . ' 23:59:59']);
+            }
+        }
+
+        $codes = $query->latest()->paginate(20)->withQueryString();
+
+        return view('trial.list', compact('codes'));
+    }
+
+    public function create(): View
+    {
+        $availableTrialCodes = Auth::guard('admin')->user()->try_num;
+
+        return view('trial.generate', compact('availableTrialCodes'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'number' => 'required|integer|min:1|max:100',
+            'remark' => 'nullable|string|max:255',
         ]);
-        return view('trial.list', compact('trialCodes'));
+
+        $user = Auth::guard('admin')->user();
+        $quantity = $request->number;
+
+        if ($quantity > $user->try_num) {
+            return back()->withErrors(['error' => 'You do not have enough trial codes available.'])->withInput();
+        }
+
+        DB::beginTransaction();
+        try {
+            $generatedCodes = [];
+            // Trial codes are typically for a short duration, e.g., 1 day.
+            // The old project hardcoded assort_id = 5 for trial codes. We will do the same for now.
+            $expiryDate = now()->addDays(1);
+
+            for ($i = 0; $i < $quantity; $i++) {
+                $generatedCodes[] = [
+                    'assort_id' => 5, // Hardcoded as per old project logic
+                    'user_id' => $user->id,
+                    'auth_code' => strtoupper(Str::random(12)),
+                    'num' => 1,
+                    'type' => $user->type,
+                    'remark' => $request->remark,
+                    'is_try' => 2, // 2 for trial code
+                    'expire_at' => $expiryDate,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            DB::table('auth_codes')->insert($generatedCodes);
+
+            // Decrement the user's try_num
+            $user->decrement('try_num', $quantity);
+
+            DB::commit();
+
+            return redirect()->route('trial.list')->with('success', 'Successfully generated '.$quantity.' trial codes.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'An error occurred while generating the codes. Please try again.'])->withInput();
+        }
     }
 }

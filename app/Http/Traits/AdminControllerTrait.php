@@ -7,14 +7,16 @@ use Illuminate\Http\Request;
 trait AdminControllerTrait
 {
     protected $formNames = [];
+
     protected $agent = 3;
-    
+
     /**
      * Get utility middleware service from the request
      */
-    protected function utility(Request $request = null)
+    protected function utility(?Request $request = null)
     {
         $request = $request ?? request();
+
         return $request->attributes->get('utility');
     }
 
@@ -73,7 +75,7 @@ trait AdminControllerTrait
     {
         return $this->utility()->get_downline($users, $id, $level_id);
     }
-    
+
     /**
      * Get retail data - delegates to AdminUtilityMiddleware
      */
@@ -81,7 +83,7 @@ trait AdminControllerTrait
     {
         return $this->utility()->getRetail($parent_id);
     }
-    
+
     /**
      * Get level cost - delegates to AdminUtilityMiddleware
      */
@@ -89,4 +91,4 @@ trait AdminControllerTrait
     {
         return $this->utility()->getLevelCost($parent_id);
     }
-} 
+}

@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Jobs\WriteSystemLog;
 use App\Repository\Admin\LogRepository;
 use Carbon\Carbon;
 use Closure;
-use App\Jobs\WriteSystemLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log as LaravelLog;
 
@@ -14,8 +14,6 @@ class LogAdminMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
@@ -26,7 +24,7 @@ class LogAdminMiddleware
             $data['user_id'] = $user->id;
             $data['user_name'] = $user->name;
         }
-        
+
         $data['url'] = $request->url();
         $data['ua'] = $request->userAgent();
         $data['ip'] = (string) $request->getClientIp();
@@ -40,7 +38,7 @@ class LogAdminMiddleware
 
         LaravelLog::info('Admin area accessed', [
             'url' => $request->url(),
-            'user_id' => $user->id ?? 'guest'
+            'user_id' => $user->id ?? 'guest',
         ]);
 
         if (config('light.log_async_write')) {
@@ -52,4 +50,4 @@ class LogAdminMiddleware
 
         return $next($request);
     }
-} 
+}

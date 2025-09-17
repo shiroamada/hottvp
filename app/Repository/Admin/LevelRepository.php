@@ -12,14 +12,15 @@ class LevelRepository
 
     public static function list($perPage, $condition = [])
     {
-//        DB::connection()->enableQueryLog();#开启执行日志
+        //        DB::connection()->enableQueryLog();#开启执行日志
         $data = Level::query()
             ->where(function ($query) use ($condition) {
                 Searchable::buildQuery($query, $condition);
             })
             ->orderBy('id', 'asc')
             ->paginate($perPage);
-//        print_r(DB::getQueryLog());   //获取查询语句、参数和执行时间
+
+        //        print_r(DB::getQueryLog());   //获取查询语句、参数和执行时间
         return $data;
     }
 
@@ -62,10 +63,11 @@ class LevelRepository
 
     /**
      * @Title: incrementContract
+     *
      * @Description: 定义自增字段
-     * @param $where
-     * @param $value
+     *
      * @return int
+     *
      * @Author: 李军伟
      */
     public static function incrementContract($where, $value)
@@ -75,10 +77,11 @@ class LevelRepository
 
     /**
      * @Title: decrementContract
+     *
      * @Description: 定义自减字段
-     * @param $where
-     * @param $value
+     *
      * @return int
+     *
      * @Author: 李军伟
      */
     public static function decrementContract($where, $value)

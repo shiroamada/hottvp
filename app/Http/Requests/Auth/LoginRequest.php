@@ -20,6 +20,28 @@ class LoginRequest extends FormRequest
     }
 
     /**
+     * Normalize incoming data before validation.
+     * - If the old form still sends "email", map it to "login".
+     * - Trim whitespace.
+     */
+    protected function prepareForValidation(): void
+    {
+        $login = $this->input('login');
+
+        if ($login === null && $this->filled('email')) {
+            $login = $this->input('email');
+        }
+
+        if (is_string($login)) {
+            $login = trim($login);
+        }
+
+        $this->merge([
+            'login' => $login,
+        ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -27,7 +49,8 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            // Accept either a account or an email in a single field
+            'login'    => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -41,11 +64,20 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $rawLogin = (string) $this->input('login');
+        $isEmail  = filter_var($rawLogin, FILTER_VALIDATE_EMAIL) !== false;
+
+        // Build credentials array based on detected type
+        $credentials = $isEmail
+            ? ['email' => Str::lower($rawLogin), 'password' => $this->input('password')]
+            : ['account' => $rawLogin, 'password' => $this->input('password')];
+
+        if (! Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
+            // Attach the error to the 'login' field (since that's what the form uses now)
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'login' => trans('auth.failed'),
             ]);
         }
 
@@ -68,7 +100,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            'login' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -80,6 +112,11 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        // Use the 'login' value (email or username) + IP
+        $value = (string) $this->input('login', '');
+        // If it's an email, normalize to lowercase to avoid duplicates
+        $normalized = filter_var($value, FILTER_VALIDATE_EMAIL) ? Str::lower($value) : $value;
+
+        return Str::transliterate($normalized) . '|' . $this->ip();
     }
 }

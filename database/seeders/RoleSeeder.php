@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -13,11 +12,12 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::create(['name' => 'super admin']);
-        Role::create(['name' => 'diamond agent']);
-        Role::create(['name' => 'gold agent']);
-        Role::create(['name' => 'silver agent']);
-        Role::create(['name' => 'bronze agent']);
-        Role::create(['name' => 'custom agent']);
+        Role::create(['name' => 'super admin', 'guard_name' => 'admin']);
+        Role::create(['name' => 'admin', 'guard_name' => 'admin']);
+        Role::create(['name' => 'diamond agent', 'guard_name' => 'admin']);
+        Role::create(['name' => 'gold agent', 'guard_name' => 'admin']);
+        Role::create(['name' => 'silver agent', 'guard_name' => 'admin']);
+        Role::create(['name' => 'bronze agent', 'guard_name' => 'admin']);
+        Role::create(['name' => 'custom agent', 'guard_name' => 'admin']);
     }
 }
