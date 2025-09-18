@@ -14,13 +14,13 @@
     <table class="kt-table">
         <thead>
             <tr>
-                <th>{{ __('messages.agent_add.package') }}</th>
-                <th>{{ __('messages.agent_add.retail_price') }}</th>
-                <th>{{ __('messages.agent_add.your_cost') }}</th>
-                <th>{{ __('messages.agent_add.agent_cost') }}</th>
-                <th>{{ __('messages.agent_add.your_profit') }}</th>
+                <th>{{ __('messages.costing.table.license_code_type') }}</th>
+                <th>{{ __('messages.costing.table.retail_price') }}</th>
+                <th>{{ __('messages.costing.table.your_cost') }}</th>
+                <th>{{ __('messages.costing.table.agent_cost') }}</th>
+                <th>{{ __('messages.costing.table.your_profit') }}</th>
                 @if($isEditable)
-                    <th>{{ __('adminUser.a_cost_limit') }}</th>
+                    <th>{{ __('messages.costing.table.customized_minimum_cost') }}</th>
                 @endif
             </tr>
         </thead>
@@ -72,7 +72,7 @@
             @else
                 <tr>
                     <td colspan="{{ $colCount }}" class="text-center">
-                        {{ __('messages.agent_add.no_cost_data') }}
+                        {{ __('messages.costing.no_cost_data') }}
                     </td>
                 </tr>
             @endif

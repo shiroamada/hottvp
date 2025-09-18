@@ -18,7 +18,7 @@
                             <div class="flex items-center flex-wrap gap-1 lg:gap-5">
                                 <h1 class="font-medium text-lg text-mono">
                                     <i class="ki-filled ki-eye me-2"></i>
-                                    {{ __('messages.agent_visual.title') }}
+                                    {{ __('adminUser.check') }}
                                 </h1>
                             </div>
                             <div class="flex items-center flex-wrap gap-1.5 lg:gap-3.5">

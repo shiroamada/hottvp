@@ -20,9 +20,9 @@
                 <h1 class="font-medium text-lg text-mono">
                   <i class="ki-filled ki-abstract-28 me-2"></i>
                   @if(isset($id))
-                    {{ __('adminUser.edit_title') }}
+                    {{ __('adminUser.editAdministrator') }}
                   @else
-                    {{ __('adminUser.create_title') }}
+                    {{ __('adminUser.newAdministrator') }}
                   @endif
                 </h1>
               </div>
@@ -152,7 +152,7 @@
                                value="{{ $user->balance ?? '' }}"
                                id="balance" onkeyup="onlyNumber(this, 2)" maxlength="8">
                         <p class="text-sm text-muted-foreground mt-2">
-                          {{ __('adminUser.available_balance') }}:
+                          {{ __('adminUser.use_huobi') }}:
                           <span class="font-bold text-primary">{{ number_format(auth()->guard('admin')->user()->balance, 2) }}</span>
                         </p>
                         <p class="text-sm text-muted-foreground mt-1" id="need"></p>
@@ -183,9 +183,9 @@
                         </button>
                         <button class="kt-btn kt-btn-primary" type="submit" id="submitBtn">
                           @if(isset($id))
-                            {{ __('adminUser.edit_submit') }}
+                            {{ __('adminUser.editAdministrator') }}
                           @else
-                            {{ __('adminUser.add_submit') }}
+                            {{ __('adminUser.newAdministrator') }}
                           @endif
                         </button>
                       </div>
