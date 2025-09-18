@@ -197,7 +197,26 @@ return [
         'reset' => 'RESET',
         'return' => 'RETURN',
     ],
-
+// Agent Detail Page
+'agent_detail' => [
+        'title' => 'Agent Details',
+        'new_agent_credentials' => 'New Agent Credentials',
+        'credentials_notice' => 'New Agent Credentials',
+        'password' => 'Password',
+        'copy_credentials' => 'Copy Login Credentials',
+        'done' => 'Done',
+        'account' => 'Account',
+        'id' => 'ID',
+        'name' => 'Agent Name',
+        'agent_level' => 'Agent Level',
+        'balance' => 'Balance',
+        'accumulated_profit' => 'Accumulated Profit',
+        'remark' => 'Remark',
+        'created_time' => 'Created Time',
+        'action' => 'Action',
+        'edit' => 'Edit',
+        'return' => 'Return',
+    ],
     // Costing Page
     'costing' => [
         'title' => 'Level Configuration List',
@@ -205,6 +224,8 @@ return [
             'license_code_type' => 'LICENSE CODE TYPE',
             'retail_price' => 'RETAIL PRICE',
             'your_cost' => 'YOUR COST',
+            'your_profit' => 'YOUR PROFIT',
+            'agent_cost' => 'AGENT COST',
             'diamond_agent_cost' => 'DIAMOND AGENT COST',
             'gold_agent_cost' => 'GOLD AGENT COST',
             'silver_agent_cost' => 'SILVER AGENT COST',

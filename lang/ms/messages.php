@@ -188,7 +188,26 @@ return [
         'reset' => 'TETAPKAN SEMULA',
         'return' => 'KEMBALI',
     ],
-
+// Agent Detail Page
+'agent_detail' => [
+        'title' => 'Butiran Ejen',
+        'new_agent_credentials' => 'Maklumat Ejen Baharu',
+        'credentials_notice' => 'Maklumat Ejen Baharu',
+        'password' => 'Kata Laluan',
+        'copy_credentials' => 'Salin Maklumat Log Masuk',
+        'done' => 'Selesai',
+        'account' => 'Akaun',
+        'id' => 'ID',
+        'name' => 'Nama Ejen',
+        'agent_level' => 'Tahap Ejen',
+        'balance' => 'Baki',
+        'accumulated_profit' => 'Keuntungan Terkumpul',
+        'remark' => 'Catatan',
+        'created_time' => 'Masa Dicipta',
+        'action' => 'Tindakan',
+        'edit' => 'Sunting',
+        'return' => 'Kembali',
+    ],
     // Costing Page
     'costing' => [
         'title' => 'Senarai Konfigurasi Tahap',
@@ -196,6 +215,8 @@ return [
             'license_code_type' => 'JENIS KOD LESEN',
             'retail_price' => 'HARGA RUNCIT',
             'your_cost' => 'KOS ANDA',
+            'your_profit' => 'KEUNTUNGAN ANDA',
+            'agent_cost' => 'KOS EJEN',
             'diamond_agent_cost' => 'KOS EJEN BERLIAN',
             'gold_agent_cost' => 'KOS EJEN EMAS',
             'silver_agent_cost' => 'KOS EJEN PERAK',

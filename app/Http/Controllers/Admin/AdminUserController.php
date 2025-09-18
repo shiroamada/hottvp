@@ -234,14 +234,26 @@ namespace App\Http\Controllers\Admin;
                 $level_list = $level->toArray();
             }
             // 展示渠道列表
-            $apiStr = 'channels';
-            $api = new APIHelper;
-            $res = $api->get($apiStr);
-            $data = json_decode($res, true);
+            $channels = [];
+            try {
+                $apiStr = 'channels';
+                $api = new APIHelper;
+                $res = $api->get($apiStr);
+                $data = json_decode($res, true);
+                if (isset($data['data']) && is_array($data['data'])) {
+                    $channels = $data['data'];
+                }
+            } catch (\Exception $e) {
+                // API not available, defaulting to empty channel list.
+                // This will prevent a crash, and the business logic in the save method
+                // will handle the absence of a channel ID correctly.
+            }
+
+            \Illuminate\Support\Facades\Log::info('Channels from API: ', $channels);
 
             return view('admin.adminUser.add', [
                 'level' => $level_list,
-                'channels' => $data['data'],
+                'channels' => $channels,
             ]);
         }
 

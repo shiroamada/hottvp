@@ -55,7 +55,7 @@ class APIHelper
 
     public function get($apiStr, $header = [])
     {
-        $baseUri = env('BASE_URL');
+        $baseUri = env('API_BASE_URL', 'http://sea.test/public/index.php/v2/1/');
         $fullUrl = $baseUri . $apiStr;
         
         \Log::info("=== APIHelper GET Request Debug ===");
