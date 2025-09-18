@@ -257,6 +257,6 @@ return [
 
     // Huobi translations
     'huobi' => [
-        'money' => 'MYR',
+        'money' => 'HOTCOIN',
     ],
 ];
