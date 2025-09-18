@@ -6,7 +6,7 @@ return [
     'English' => 'English',
     '中文' => 'Chinese',
     'Bahasa' => 'Malay',
-    'app.name_extended' => 'HOT TV+',
+    'app.name_extended' => 'WOW TV',
 
     // Sidebar Main
     'sidebar.dashboard' => 'Dashboard',

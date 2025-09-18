@@ -1,5 +1,5 @@
 @extends('layouts.master')
-
+<!-- using this dashboard view -->
 @section('content')
 <!-- Page -->
 <div class="flex grow">
@@ -39,24 +39,12 @@
                                 @endphp
                                 <div class="kt-menu kt-menu-default" data-kt-menu="true">
                                     <div class="kt-menu-item" data-kt-menu-item-offset="0, 0" data-kt-menu-item-placement="bottom-end" data-kt-menu-item-toggle="dropdown" data-kt-menu-item-trigger="hover">
-                                        <button class="kt-menu-toggle kt-btn kt-btn-outline flex-nowrap">
+                                        <div class="flex items-center flex-nowrap">
                                             <span class="flex items-center me-1">
                                                 <i class="ki-filled ki-calendar text-base!"></i>
                                             </span>
                                             <span class="hidden md:inline text-nowrap">{{ $currentCarbonDate->format('F, Y') }}</span>
                                             <span class="inline md:hidden text-nowrap">{{ $currentCarbonDate->format('M y') }}</span>
-                                            <span class="flex items-center lg:ms-4">
-                                                <i class="ki-filled ki-down text-xs!"></i>
-                                            </span>
-                                        </button>
-                                        <div class="kt-menu-dropdown w-48 py-2 kt-scrollable-y max-h-[250px]">
-                                            @foreach ($monthOptions as $month)
-                                                <div class="kt-menu-item{{ $month->isSameMonth($currentCarbonDate) ? ' active' : '' }}">
-                                                    <a class="kt-menu-link" href="#" data-month="{{ $month->format('Y-m') }}">
-                                                        <span class="kt-menu-title">{{ $month->format('F, Y') }}</span>
-                                                    </a>
-                                                </div>
-                                            @endforeach
                                         </div>
                                     </div>
                                 </div>

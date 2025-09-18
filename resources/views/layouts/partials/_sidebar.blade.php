@@ -11,7 +11,7 @@
        <div class="kt-menu-item grow" data-kt-menu-item-offset="0px,0px" data-kt-menu-item-placement="bottom-start" data-kt-menu-item-toggle="dropdown" data-kt-menu-item-trigger="hover">
         <div class="kt-menu-label cursor-pointer text-mono font-medium grow justify-between">
          <span class="text-base font-medium text-mono grow justify-start">
-          HOT TV+
+          WOW TV
          </span>
         </div>
        </div>
