@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
-
 use App\Http\Controllers\Controller;
 // use App\Models\ActivationCode;
 // We might use this or calculate on the fly
@@ -149,7 +147,7 @@ $locale = session('customer_lang_name');
         // ->orderBy('assort_id')
         // ->get();
         
-        return view('dashboard', compact(
+        return view('admin.dashboard', compact(
             'balance',
             'monthlyGeneratedCurrentMonth',
             'generatedLastMonth',
