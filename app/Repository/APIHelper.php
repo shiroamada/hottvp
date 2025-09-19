@@ -49,8 +49,7 @@ class APIHelper
             \Log::error("Request URL: " . $fullUrl);
             \Log::error("Request Body: " . json_encode($body));
             \Log::error("=== End APIHelper POST Error ===");
-            // throw $e;
-            return null;
+            throw $e;
         }
     }
 
@@ -88,8 +87,7 @@ class APIHelper
             \Log::error("Error Code: " . $e->getCode());
             \Log::error("Request URL: " . $fullUrl);
             \Log::error("=== End APIHelper GET Error ===");
-            return null;
-            // throw $e;
+            throw $e;
         }
     }
     
