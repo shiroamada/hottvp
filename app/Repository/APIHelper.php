@@ -9,7 +9,7 @@ class APIHelper
     public function post($body, $apiStr)
     {
         // Use environment variable or fallback to sea.test
-        $baseUri = env('API_BASE_URL', 'http://sea.test/public/index.php/v2/1/');
+        $baseUri = env('API_BASE_URL');
         $fullUrl = $baseUri . $apiStr;
         
         \Log::info("=== APIHelper POST Request Debug ===");
@@ -49,13 +49,14 @@ class APIHelper
             \Log::error("Request URL: " . $fullUrl);
             \Log::error("Request Body: " . json_encode($body));
             \Log::error("=== End APIHelper POST Error ===");
-            throw $e;
+            // throw $e;
+            return null;
         }
     }
 
     public function get($apiStr, $header = [])
     {
-        $baseUri = env('API_BASE_URL', 'http://sea.test/public/index.php/v2/1/');
+        $baseUri = env('API_BASE_URL');
         $fullUrl = $baseUri . $apiStr;
         
         \Log::info("=== APIHelper GET Request Debug ===");
@@ -87,7 +88,8 @@ class APIHelper
             \Log::error("Error Code: " . $e->getCode());
             \Log::error("Request URL: " . $fullUrl);
             \Log::error("=== End APIHelper GET Error ===");
-            throw $e;
+            return null;
+            // throw $e;
         }
     }
     
@@ -98,7 +100,7 @@ class APIHelper
      */
          public function testEndpoint($endpoint = null)
      {
-         $baseUri = $endpoint ?: env('API_BASE_URL', 'http://sea.test/public/index.php/v2/1/');
+         $baseUri = $endpoint ?: env('API_BASE_URL');
         
         \Log::info("=== Testing Endpoint Connectivity ===");
         \Log::info("Testing URL: " . $baseUri);

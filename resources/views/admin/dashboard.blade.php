@@ -310,7 +310,7 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {  
     console.log('Authorization Code Script: TOP OF SCRIPT BLOCK EXECUTED.');
     console.log('Authorization Code Script: Script started.');
     console.log('Authorization Code Script: DOMContentLoaded');
