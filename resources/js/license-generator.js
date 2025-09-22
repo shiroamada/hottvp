@@ -65,9 +65,9 @@ $(function () {
                 data: $(form).serialize(),
                 dataType: 'json',
                 success: function (res) {
-                    if (res.code === 200) {
+                    if (res.code === 0) {
                         alert(res.msg);
-                        window.location.reload();
+                        window.location.href = $(form).data('list-url');
                     } else {
                         alert(res.msg || '请求失败');
                     }

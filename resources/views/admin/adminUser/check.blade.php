@@ -82,13 +82,13 @@
                           <span class="text-muted-foreground">{{ __('adminUser.account') }}:</span>
                           <span class="font-medium">{{ $info['account'] }}</span>
                         </div>
-
-                        @if(($info['is_new'] ?? 1) == 0)
+<!-- if not yet verify, show password -->
+                        <!-- @if(($info['is_new'] ?? 1) == 0)
                           <div class="flex gap-2">
                             <span class="text-muted-foreground">{{ __('adminUser.password') }}:</span>
                             <span class="font-medium">{{ $info['password'] }}</span>
                           </div>
-                        @endif
+                        @endif -->
 
                         <div class="md:col-span-2 flex gap-2">
                           <span class="text-muted-foreground">{{ __('adminUser.remark') }}:</span>

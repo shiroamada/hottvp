@@ -128,8 +128,8 @@
 
                                                 <td>
                                                     @if(mb_strlen($v['remark']) > 10)
-                                                        <div x-data="{ open: false }" class="relative">
-                                                            <span @mouseover="open = true" @mouseout="open = false" class="cursor-pointer">
+                                                        <div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative">
+                                                            <span class="cursor-pointer">
                                                                 {{ mb_substr($v['remark'], 0, 10) }}...
                                                             </span>
                                                             <div x-show="open"
@@ -318,31 +318,59 @@
 
 @push('scripts')
 <script>
-  // Ensure only one dropdown (details) is open at a time
-  document.addEventListener('toggle', function (e) {
+  // This script addresses the issue of dropdowns inside a scrollable table being clipped.
+  // It works by temporarily setting the 'overflow' property of the scrollable container to 'visible'
+  // when a dropdown is open, allowing it to render outside the container's bounds.
+
+  const handleToggle = (e) => {
     if (e.target.tagName.toLowerCase() !== 'details') return;
-    const isOpen = e.target.hasAttribute('open');
-    if (isOpen) {
+
+    const dropdown = e.target;
+    const scrollParent = dropdown.closest('.kt-scrollable-x-auto');
+    if (!scrollParent) return;
+
+    // --- Close other dropdowns ---
+    if (dropdown.hasAttribute('open')) {
       document.querySelectorAll('td details[open]').forEach(d => {
-        if (d !== e.target) d.removeAttribute('open');
+        if (d !== dropdown) d.removeAttribute('open');
       });
     }
-    const sum = e.target.querySelector('summary');
-    if (sum) sum.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-  }, true);
 
-  // Close open dropdowns when clicking outside
-  document.addEventListener('click', function (e) {
-    document.querySelectorAll('td details[open]').forEach(d => {
-      if (!d.contains(e.target)) {
-        d.removeAttribute('open');
-        const sum = d.querySelector('summary');
-        if (sum) sum.setAttribute('aria-expanded', 'false');
+    // --- Manage Overflow ---
+    // Use a timeout to allow the close-others logic to finish before we check for open dropdowns.
+    setTimeout(() => {
+      const anyOpen = scrollParent.querySelector('details[open]');
+      if (anyOpen) {
+        scrollParent.style.overflow = 'visible';
+      } else {
+        // Use overflowX to avoid affecting vertical scroll behavior
+        scrollParent.style.overflow = 'auto';
       }
-    });
-  });
+    }, 0);
 
-  // Initialize aria-expanded = false
+    // --- ARIA attributes ---
+    const summary = dropdown.querySelector('summary');
+    if (summary) {
+      summary.setAttribute('aria-expanded', dropdown.hasAttribute('open'));
+    }
+  };
+
+  const handleClickOutside = (e) => {
+    const openDetails = document.querySelectorAll('td details[open]');
+    if (openDetails.length === 0) return;
+
+    const isClickInside = Array.from(openDetails).some(d => d.contains(e.target));
+
+    if (!isClickInside) {
+      openDetails.forEach(d => d.removeAttribute('open'));
+      // The 'toggle' event will fire for each closed dropdown and handle the overflow reset.
+    }
+  };
+
+  document.addEventListener('toggle', handleToggle, true);
+  document.addEventListener('click', handleClickOutside);
+
+  // Initialize aria-expanded = false on page load
   document.querySelectorAll('td details > summary').forEach(s => s.setAttribute('aria-expanded', 'false'));
 </script>
 @endpush

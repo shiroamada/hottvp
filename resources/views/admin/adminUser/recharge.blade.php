@@ -75,12 +75,13 @@
                       <div class="text-sm text-muted-foreground mb-1">{{ __('adminUser.remark') }}:</div>
                       <div class="font-medium break-words">{{ $info['remark'] ?? '' }}</div>
                     </div>
-                      @if(($info['is_new'] ?? 1) == 0)
-                      <div class="flex gap-2">
+                    <!-- if havent verify, show the password -->
+                      @if(($info['is_new'] ?? 1) == 0) 
+                      <!-- <div class="flex gap-2">
                         <span class="text-muted-foreground">{{ __('adminUser.password') }}:</span>
                         <span class="font-medium break-words">{{ $info['password'] }}</span>
                       </div>
-                      @endif
+                      @endif -->
                     </div>
                   </div>
                 </div>
@@ -184,9 +185,7 @@
     v = v.replace(/^\./g, '');
     // single dot
     v = v.replace(/\.{2,}/g, '.');
-    v = v.replace('.', '$#
-).replace(/\./g, '').replace('$#
-, '.');
+    v = v.replace('.', '#').replace(/\./g, '').replace('#', '.');
     // keep 2 decimals
     v = v.replace(/^(\-)?(\d+)\.(\d\d).*$/, '$1$2.$3');
 
