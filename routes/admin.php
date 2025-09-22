@@ -62,6 +62,7 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
         Route::post('/users/level_update', [AdminUserController::class, 'levelUpdate'])->name('users.level_update');
         Route::get('/users/cost/{id}', [AdminUserController::class, 'cost'])->name('users.cost');
         Route::post('/users/cost_update', [AdminUserController::class, 'costUpdate'])->name('users.cost_update');
+        Route::post('/users/adjust', [AdminUserController::class, 'adjust'])->name('users.adjust');
 
         Route::get('/configs', 'ConfigController@index')->name('config.index');
         Route::get('/configs/list', 'ConfigController@list')->name('config.list');

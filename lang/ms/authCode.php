@@ -29,6 +29,7 @@ return [
     'status_have_used' => 'Telah Digunakan',
     'status_was_due' => 'Telah Luput',
     'up_remark' => 'Kemas kini Catatan',
+    'up_remark_for_code' => 'Kemas Kini Catatan untuk Kod: :code',
 
     'av_number' => 'Kuantiti tersedia',
     'apply_code' => 'Mohon kod percubaan',

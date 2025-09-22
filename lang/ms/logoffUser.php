@@ -26,7 +26,7 @@ return [
     'pass' => 'Oleh',
     'reject' => 'Menolak',
     'create' => 'Tarikh Hantar',
-    'usable_HotCoin' => 'Bilangan HotCoin Yang Ada',
+    'usable_HotCoin' => 'Bilangan WOWCOIN Yang Ada',
     'cancelled_record' => 'Rekod Dibatalkan',
 
     'managers' => 'Log Keluar Senarai Pengguna',

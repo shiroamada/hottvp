@@ -19,7 +19,7 @@ return [
     'sidebar.agent_management.title' => 'Agent Management',
     'sidebar.agent_management.add_new' => 'Add New Agent',
     'sidebar.agent_management.list' => 'List Agent',
-    'sidebar.hotcoin_transaction.title'  => 'HotCoin Transaction',
+    'sidebar.hotcoin_transaction.title'  => 'WOWCOIN Transaction',
     'sidebar.hotcoin_transaction.list' => 'Transaction List',
     'sidebar.costing.title' => 'Costing',
     'sidebar.costing.list' => 'Cost List',
@@ -158,7 +158,7 @@ return [
     'agent_create' => [
         'title' => 'Add New Agent',
         'top_up_amount' => 'Top Up Amount',
-        'available_hotcoin' => 'Your Available HOTCOIN Amount',
+        'available_hotcoin' => 'Your Available WOWCOIN Amount',
         'permission' => 'Permission',
         'permission_normal' => 'Normal',
         'permission_enhanced' => 'Enhanced',
@@ -174,17 +174,17 @@ return [
         'choose_code_type' => 'Please Choose the Code Type',
         'quantity' => 'Quantity',
         'remarks' => 'Remarks',
-        'need_hotcoin' => 'Need HOTCOIN',
-        'hotcoin_balance' => 'HOTCOIN Balance',
+        'need_hotcoin' => 'Need WOWCOIN',
+        'hotcoin_balance' => 'WOWCOIN Balance',
         'batch_generate' => 'BATCH GENERATION ACTIVATION CODE',
         'reset' => 'RESET',
         'return' => 'RETURN',
-        'license_30_day' => '30-day license code 7.50 HOTCOIN',
-        'license_90_day' => '90-day license code 15.00 HOTCOIN',
-        'license_180_day' => '180-day license code 30.00 HOTCOIN',
-        'license_365_day' => '365-day license code 60.00 HOTCOIN',
-        'license_1_day' => '1-day license code 1.00 HOTCOIN',
-        'license_7_day' => '7-day license code 3.00 HOTCOIN',
+        'license_30_day' => '30-day license code 7.50 WOWCOIN',
+        'license_90_day' => '90-day license code 15.00 WOWCOIN',
+        'license_180_day' => '180-day license code 30.00 WOWCOIN',
+        'license_365_day' => '365-day license code 60.00 WOWCOIN',
+        'license_1_day' => '1-day license code 1.00 WOWCOIN',
+        'license_7_day' => '7-day license code 3.00 WOWCOIN',
     ],
 
     // Trial Generation Page
@@ -450,6 +450,6 @@ return [
 
     // Huobi translations
     'huobi' => [
-        'money' => 'MYR',
+        'money' => 'WOWCOIN',
     ],
 ];

@@ -152,7 +152,7 @@ return [
     'agent_create' => [
         'title' => '添加新代理',
         'top_up_amount' => '充值金额',
-        'available_hotcoin' => '您可用的 HOTCOIN 金额',
+        'available_hotcoin' => '您可用的 WOWCOIN 金额',
         'permission' => '权限',
         'permission_normal' => '普通',
         'permission_enhanced' => '增强',
@@ -261,6 +261,6 @@ return [
 
     // Huobi translations
     'huobi' => [
-        'money' => '美元',
+        'money' => 'WOW币',
     ],
 ];

@@ -184,7 +184,7 @@
 @endforeach
 
 <!-- Metronic Update Remark Modal -->
-<div class="kt-modal fade" id="kt_modal_update_remark" tabindex="-1">
+<div class="kt-modal fade" id="kt_modal_update_remark" tabindex="-1" data-title-template="{{ __('authCode.up_remark_for_code') }}">
     <div class="kt-modal-dialog modal-dialog-centered">
         <div class="kt-modal-content">
             <div class="kt-modal-header">

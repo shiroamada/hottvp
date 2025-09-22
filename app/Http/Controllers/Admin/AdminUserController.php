@@ -725,7 +725,7 @@ namespace App\Http\Controllers\Admin;
                     $i++;
                 }
             }
-            Equipment::query()->insert($list);
+            AssortLevel::query()->insert($list);
             // 记录国代的零售价
             foreach ($assort_list as $it => $assort) {
                 if ($it == 0) {
@@ -1359,7 +1359,7 @@ namespace App\Http\Controllers\Admin;
          *
          * @Author: 李军伟
          */
-        public function level($id)
+        public function level(Request $request, $id)
         {
             // 获取用户信息
             $info = AdminUserRepository::find($id);
@@ -1383,8 +1383,9 @@ namespace App\Http\Controllers\Admin;
                     ->get();
             }
 
-            $parent_id = $this->getParentId(auth()->guard('admin')->user()->id);
-            $level_cost = $this->getLevelCost($parent_id);
+            $utility = $request->attributes->get('utility');
+            $parent_id = $utility->getParentId(auth()->guard('admin')->user()->id);
+            $level_cost = $utility->getLevelCost($parent_id);
             $level_list = [];
             if (auth()->guard('admin')->user()->id != 1 || auth()->guard('admin')->user()->level_id != 4) {
                 foreach ($level->toArray() as $k => $v) {
@@ -1650,7 +1651,8 @@ namespace App\Http\Controllers\Admin;
             try {
                 $parameter = $request->input();
                 $parameter['user_id'] = auth()->guard('admin')->user()->id;
-                $parameter['parent_id'] = $this->getParentId(auth()->guard('admin')->user()->id);
+                                $utility = $request->attributes->get('utility');
+                $parameter['parent_id'] = $utility->getParentId(auth()->guard('admin')->user()->id);
                 LogoffUserRepository::add($parameter);
                 $data = ['is_cancel' => 1, 'is_relation' => 1];
                 AdminUserRepository::update(auth()->guard('admin')->user()->id, $data);
@@ -1821,9 +1823,10 @@ namespace App\Http\Controllers\Admin;
          *
          * @Author: 李军伟
          */
-        public function cost($id)
+        public function cost(Request $request, $id)
         {
-            $parent_id = $this->getParentId(auth()->guard('admin')->user()->id);
+            $utility = $request->attributes->get('utility');
+            $parent_id = $utility->getParentId(auth()->guard('admin')->user()->id);
             $guodai_where = ['user_id' => $parent_id];
             $res = EquipmentRepository::findByWhere($guodai_where);
             // 获取选择的级别对应配置的金额
@@ -1833,7 +1836,7 @@ namespace App\Http\Controllers\Admin;
                 if (auth()->guard('admin')->user()->level_id == 8) {
                     $own_money = Defined::query()->where(['user_id' => auth()->guard('admin')->user()->id])->orderBy('money', 'ASC')->pluck('money');
                 } else {
-                    $own_money = Equipment::query()->where(['level_id' => auth()->guard('admin')->user()->level_id, 'user_id' => $parent_id])->orderBy('money', 'ASC')->pluck('money');
+                    $own_money = AssortLevel::query()->where(['level_id' => auth()->guard('admin')->user()->level_id, 'user_id' => $parent_id])->orderBy('money', 'ASC')->pluck('money');
                 }
             } else {
                 $choice_where = ['level_id' => 8, 'user_id' => 1];
@@ -1842,10 +1845,10 @@ namespace App\Http\Controllers\Admin;
                 if (auth()->guard('admin')->user()->level_id == 8) {
                     $own_money = Defined::query()->where(['user_id' => auth()->guard('admin')->user()->id])->orderBy('money', 'ASC')->pluck('money');
                 } else {
-                    $own_money = Equipment::query()->where(['level_id' => auth()->guard('admin')->user()->level_id, 'user_id' => 1])->orderBy('money', 'ASC')->pluck('money');
+                    $own_money = AssortLevel::query()->where(['level_id' => auth()->guard('admin')->user()->level_id, 'user_id' => 1])->orderBy('money', 'ASC')->pluck('money');
                 }
             }
-            $choice_money = Equipment::query()->where($choice_where)->pluck('money');
+            $choice_money = AssortLevel::query()->where($choice_where)->pluck('money');
             // 获取自己下级的级别对应配置的金额
             $agency_money = Defined::query()->where(['user_id' => $id])->orderBy('money', 'ASC')->pluck('money');
             // 获取配置列表
@@ -1858,7 +1861,7 @@ namespace App\Http\Controllers\Admin;
                 }
             }
             // 获取当前国代的零售成本
-            $cost = $this->getRetail($parent_id);
+            $cost = $utility->getRetail($parent_id);
             foreach ($assort as $key => $item) {
                 $data[$key]['cost'] = $cost;
                 $data[$key]['assort'] = $assort->toArray();
@@ -1894,8 +1897,9 @@ namespace App\Http\Controllers\Admin;
                 // 如果不是ajax方式，则非法请求
                 $this->isAjax($request);
                 $parameter = $request->only($this->formNames);
-                $parent_id = $this->getParentId(auth()->guard('admin')->user()->id);
-                $cost = $this->getRetail($parent_id);
+                $utility = $request->attributes->get('utility');
+                $parent_id = $utility->getParentId(auth()->guard('admin')->user()->id);
+                $cost = $utility->getRetail($parent_id);
                 // 先验证数据的完整性
                 if ($parameter['agency'] == '') {
                     return [
@@ -2002,7 +2006,7 @@ namespace App\Http\Controllers\Admin;
                     } else {
                         $choice_where = ['level_id' => 8, 'user_id' => 1];
                     }
-                    $choice_money = Equipment::query()->where($choice_where)->orderBy('money', 'ASC')->pluck('money');
+                    $choice_money = AssortLevel::query()->where($choice_where)->orderBy('money', 'ASC')->pluck('money');
                     if ($agency[$key] < $choice_money[$key]) {
                         return [
                             'code' => 1,

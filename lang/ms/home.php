@@ -35,13 +35,13 @@ return [
     'code_exp' => 'Kod Pengesahan Salah Atau Telah Tamat Tempoh, Sila Isi Semula',
 
 
-    'HotCoin_balance' => 'Imbangan HotCoin',
+    'HotCoin_balance' => 'Imbangan WOWCOIN',
     'count_code' => 'Jumlah Kod Kebenaran Dijana',
     'sum_profit' => 'Jumlah Keuntungan',
     'month_code' => 'Bilangan Kod Kebenaran',
     'month_code1' => 'Yang Dihasilkan Bulan Ini',
     'month_lower_profit' => 'Keuntungan Untuk Bulan Ini',
-    'last_month_HotCoin' => 'Bulan Lalu Memakan HotCoin',
+    'last_month_HotCoin' => 'Bulan Lalu Memakan WOWCOIN',
     'last_month_code' => 'Bilangan Kod Kebenaran',
     'last_month_code1' => 'YangDihasilkan Bulan Lalu',
     'last_month_profit' => 'Keuntungan Bulan Lalu',

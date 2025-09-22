@@ -26,7 +26,7 @@ return [
     'pass' => '通过',
     'reject' => '驳回',
     'create' => '提交日期',
-    'usable_huobi' => '可用火币数量',
+    'usable_huobi' => '可用WOW币数量',
     'cancelled_record' => '已注销记录',
 
     'managers' => '注销用户列表',

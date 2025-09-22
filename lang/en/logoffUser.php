@@ -26,7 +26,7 @@ return [
     'pass' => 'Pass',
     'reject' => 'Reject',
     'create' => 'Submit date',
-    'usable_huobi' => 'Quantity of available HOTCOIN',
+    'usable_huobi' => 'Quantity of available WOWCOIN',
     'cancelled_record' => 'Cancellation record',
 
     'managers' => 'Cancelled User List',

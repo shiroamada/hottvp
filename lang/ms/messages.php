@@ -19,7 +19,7 @@ return [
     'sidebar.agent_management.title' => 'Pengurusan Ejen',
     'sidebar.agent_management.add_new' => 'Tambah Ejen Baru',
     'sidebar.agent_management.list' => 'Senarai Ejen',
-    'sidebar.hotcoin_transaction' => 'Transaksi HotCoin',
+    'sidebar.hotcoin_transaction' => 'Transaksi WowCoin',
     'sidebar.all_agents' => 'Semua Ejen',
 
     // Sidebar Secondary/User Menu
@@ -149,7 +149,7 @@ return [
     'agent_create' => [
         'title' => 'Tambah Ejen Baharu',
         'top_up_amount' => 'Jumlah Tambah Nilai',
-        'available_hotcoin' => 'Jumlah HOTCOIN Anda yang Tersedia',
+        'available_hotcoin' => 'Jumlah WOWCOIN Anda yang Tersedia',
         'permission' => 'Kebenaran',
         'permission_normal' => 'Biasa',
         'permission_enhanced' => 'Dipertingkat',
@@ -165,17 +165,17 @@ return [
         'choose_code_type' => 'Sila Pilih Jenis Kod',
         'quantity' => 'Kuantiti',
         'remarks' => 'Catatan',
-        'need_hotcoin' => 'HOTCOIN Diperlukan',
-        'hotcoin_balance' => 'Baki HOTCOIN',
+        'need_hotcoin' => 'WOWCOIN Diperlukan',
+        'hotcoin_balance' => 'Baki WOWCOIN',
         'batch_generate' => 'JANA KOD PENGAKTIFAN SECARA BERKELOMPOK',
         'reset' => 'TETAPKAN SEMULA',
         'return' => 'KEMBALI',
-        'license_30_day' => 'Kod lesen 30 hari 7.50 HOTCOIN',
-        'license_90_day' => 'Kod lesen 90 hari 15.00 HOTCOIN',
-        'license_180_day' => 'Kod lesen 180 hari 30.00 HOTCOIN',
-        'license_365_day' => 'Kod lesen 365 hari 60.00 HOTCOIN',
-        'license_1_day' => 'Kod lesen 1 hari 1.00 HOTCOIN',
-        'license_7_day' => 'Kod lesen 7 hari 3.00 HOTCOIN',
+        'license_30_day' => 'Kod lesen 30 hari 7.50 WOWCOIN',
+        'license_90_day' => 'Kod lesen 90 hari 15.00 WOWCOIN',
+        'license_180_day' => 'Kod lesen 180 hari 30.00 WOWCOIN',
+        'license_365_day' => 'Kod lesen 365 hari 60.00 WOWCOIN',
+        'license_1_day' => 'Kod lesen 1 hari 1.00 WOWCOIN',
+        'license_7_day' => 'Kod lesen 7 hari 3.00 WOWCOIN',
     ],
 
     // Trial Generation Page
@@ -257,6 +257,6 @@ return [
 
     // Huobi translations
     'huobi' => [
-        'money' => 'MYR',
+        'money' => 'WOWCOIN',
     ],
 ];

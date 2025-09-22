@@ -15,18 +15,18 @@ return [
 
     'id' => 'ID',
     'event' => 'Acara',
-    'money' => 'HotCoin',
+    'money' => 'WOWCOIN',
     'created_at' => 'Masa',
 
-    'managers' => 'Senarai HotCoin',
-    'into_code' => 'Mengisi HotCoin',
+    'managers' => 'Senarai WOWCOIN',
+    'into_code' => 'Mengisi WOWCOIN',
     'for_subordinates' => 'Tambah Nilai Untuk Pengisian Bawahan',
     'generate_code' => 'Jana Perbelanjaan Kod Kebenaran',
     'lower_generate_code' => 'Keuntungan Yang Dijana Oleh Pekerja Bawahan',
 
-    'HotCoin_balance' => 'Imbangan HotCoin',
+    'HotCoin_balance' => 'Imbangan WOWCOIN',
     'this_month_recharge' => 'Bulan Ini Adalah Pengisian Semula Peringkat Tertinggi',
-    'add_recharge' => 'Berkumpul Ke HotCoin',
+    'add_recharge' => 'Berkumpul Ke WOWCOIN',
     'add_lower_profit' => 'Keuntungan Terkumpul',
     'huobi_recode' => 'Rekod duit syiling kebakaran',
 ];

@@ -35,13 +35,13 @@ return [
     'code_exp' => 'Verification Error or Expired, Please Enter Again',
 
 
-    'huobi_balance' => 'HOTCOIN Balance',
+    'huobi_balance' => 'WOWCOIN Balance',
     'count_code' => 'Generated Activation Code Total Quantity',
     'sum_profit' => 'Total Profit',
     'month_code' => 'Monthly Generated Quantity',
     'month_code1' => 'No. Activation Code (This Month)',
     'month_lower_profit' => 'This Month Profit',
-    'last_month_huobi' => 'Usage of HOTCOIN',
+    'last_month_huobi' => 'Usage of WOWCOIN',
     'last_month_huobi1' => 'Last Month',
     'last_month_code' => 'Generated Quantity',
     'last_month_code1' => 'Last Month Activation Code',

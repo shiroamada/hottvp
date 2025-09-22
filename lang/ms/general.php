@@ -15,8 +15,9 @@ return [
 
     'id' => 'ID',
     'status' => 'Status',
-    'hotcoin_transaction.title'  => 'Pengurusan HotCoin',
-
+    'hotcoin_transaction.title'  => 'Pengurusan WOWCOIN',
+'close' => "Tutup",
+    'save' => "Simpan",
     'order' => 'Pesanan',
     'create' => 'Masa Dicipta',
     'update' => 'Masa Dikemas kini',

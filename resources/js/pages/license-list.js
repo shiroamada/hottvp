@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
+    const titleTemplate = updateRemarkModal.dataset.titleTemplate || 'Update Remark for Code: :code';
+    console.log('Title Template from data attribute:', titleTemplate); // DEBUG
+    const modalTitle = updateRemarkModal.querySelector('.kt-modal-title');
     const saveRemarkButton = updateRemarkModal.querySelector('#modal_save_remark_button');
 
     // Event listener for the "Update Remark" buttons
@@ -20,11 +23,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const codeId = this.getAttribute('data-id');
             const currentRemark = this.getAttribute('data-remark');
 
-            const modalTitle = updateRemarkModal.querySelector('.kt-modal-title');
             const remarkInput = updateRemarkModal.querySelector('#modal_remark_input');
             const codeIdInput = updateRemarkModal.querySelector('#modal_code_id_input');
 
-            if (modalTitle) modalTitle.textContent = `Update Remark for Code: ${codeId}`;
+            if (modalTitle) {
+                const newTitle = titleTemplate.replace(':code', codeId);
+                console.log('Setting modal title to:', newTitle); // DEBUG
+                modalTitle.textContent = newTitle;
+            }
             if (remarkInput) remarkInput.value = currentRemark;
             if (codeIdInput) codeIdInput.value = codeId;
 

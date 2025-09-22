@@ -29,6 +29,7 @@ return [
     'status_have_used' => '已使用',
     'status_was_due' => '已过期',
     'up_remark' => '修改备注',
+    'up_remark_for_code' => '更新备注: :code',
 
     'av_number' => '可用数量',
     'apply_code' => '获取试看码',

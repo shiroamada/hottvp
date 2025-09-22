@@ -438,13 +438,13 @@
       headers: {'X-CSRF-Token': token},
       success: function (result) {
         if (result.code !== 0) {
-          layer.msg(result.msg, {shift: 6, skin: 'alert-secondary alert-lighter'});
+          toastr.error(result.msg);
           return;
         }
-        layer.msg(result.msg, {shift: 1}, function () {
-          if (result.reload) location.reload();
-          if (result.redirect) location.href = '{!! url()->current() !!}';
-        });
+        toastr.success(result.msg);
+        setTimeout(function() {
+          location.reload();
+        }, 1000);
       },
       error: function (resp) {
         const code = resp?.status;
@@ -456,8 +456,13 @@
           419: "{{ __('general.illegal_request') }}",
           500: "{{ __('general.internal_error') }}"
         }[code];
-        if (t) { layer.msg(t, {shift: 6, skin: 'alert-secondary alert-lighter'}); return; }
-        try { const parse = $.parseJSON(resp.responseText); if (parse) layer.alert(parse.msg); } catch(e){}
+        if (t) { toastr.error(t); return; }
+        try { 
+          const parse = $.parseJSON(resp.responseText); 
+          if (parse && parse.msg) {
+            toastr.error(parse.msg);
+          }
+        } catch(e){}
       }
     });
   }
