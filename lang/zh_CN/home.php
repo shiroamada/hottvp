@@ -38,7 +38,7 @@ return [
     'copy' => '复制',
     'lower_agency' => '下级代理',
     'dashboard' => '仪表盘',
-    'select_code' => '选择代码',
+    'select_code' => '选择授权码',
     'authorization_code' => '授权码',
     'message' => '消息',
     'membership_authorization_code' => '会员授权码',
