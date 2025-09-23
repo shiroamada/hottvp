@@ -165,7 +165,7 @@ return [
     'license_generate' => [
         'title' => '批量生成激活码',
         'type' => '类型',
-        'choose_code_type' => '请选择代码类型',
+        'choose_code_type' => '请选择授权码类型',
         'quantity' => '数量',
         'remarks' => '备注',
         'need_hotcoin' => '需要热币',
@@ -173,12 +173,12 @@ return [
         'batch_generate' => '批量生成激活码',
         'reset' => '重置',
         'return' => '返回',
-        'license_30_day' => '30天许可证代码 7.50热币',
-        'license_90_day' => '90天许可证代码 15.00热币',
-        'license_180_day' => '180天许可证代码 30.00热币',
-        'license_365_day' => '365天许可证代码 60.00热币',
-        'license_1_day' => '1天许可证代码 1.00热币',
-        'license_7_day' => '7天许可证代码 3.00热币',
+        'license_30_day' => '30天许可证授权码 7.50热币',
+        'license_90_day' => '90天许可证授权码 15.00热币',
+        'license_180_day' => '180天许可证授权码 30.00热币',
+        'license_365_day' => '365天许可证授权码 60.00热币',
+        'license_1_day' => '1天许可证授权码 1.00热币',
+        'license_7_day' => '7天许可证授权码 3.00热币',
     ],
 
     // Trial Generation Page
@@ -196,7 +196,7 @@ return [
     'costing' => [
         'title' => '级别配置列表',
         'table' => [
-            'license_code_type' => '许可证代码类型',
+            'license_code_type' => '许可证授权码类型',
             'retail_price' => '零售价格',
             'your_cost' => '您的成本',
             'your_profit' => '您的利润',
@@ -212,7 +212,7 @@ return [
 
     // General translations
     'general' => [
-        'select_code' => '选择代码',
+        'select_code' => '选择授权码',
         'authorization_code' => '授权码',
         'message' => '消息',
         'membership_authorization_code' => '会员授权码',
