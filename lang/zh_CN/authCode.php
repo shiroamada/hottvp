@@ -65,8 +65,8 @@ return [
     'auth_record' => '授权码记录',
     'view_last_batch' => '查看最后一批',
     'export_last_batch' => '导出最后一批',
-    'enter_code' => '输入代码',
-    'generated_codes' => '生成的代码',
+    'enter_code' => '输入授权码',
+    'generated_codes' => '生成的授权码',
     'new_remark' => '新备注',
-    'generated_trial_codes' => '生成的试用代码',
+    'generated_trial_codes' => '生成的试用授权码',
 ];

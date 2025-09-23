@@ -2,50 +2,56 @@
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines are used during authentication for various
-    | messages that we need to display to the user. You are free to modify
-    | these language lines according to your application's requirements.
-    |
-    */
-
-    'account_set' => '账号设置',
+    'account_set' => '账户设置',
     'pass_set' => '请设置新密码',
-    'tips' => '欢迎您，首次登陆请输入您的邮箱，邮箱可以用于账号登录与密码找回等服务',
-    'pass_tips' => '请修改您的初始密码，密码长度必须为8-18位，密码中必须含有数字、字母、符号的其中两种',
-    'pass_tips1' => '密码长度必须为8-18位，密码中必须含有数字、字母、符号的其中两种',
-    'enter_email' => '请输入电子邮箱',
-    'content_1' => '验证码已发送至邮箱:',
-    'content_2' => '，请您输入',
+    'tips' => '欢迎首次登录。请输入您的邮箱，您可以使用邮箱登录、找回密码或获取其他服务。',
+    'pass_tips' => '请设置一个8到18位的新密码。必须包含数字、字母和符号中的两种。',
+    'pass_tips1' => '密码必须是8-18位，包含数字、字母和符号中的两种',
+    'enter_email' => '请输入您的邮箱地址',
+    'content_1' => '验证码已发送到您的邮箱：',
+    'content_2' => '，请输入',
     'enter_code' => '请输入验证码',
     'enter_pass' => '请输入新密码',
     'enter_pass_press' => '请再次输入新密码',
-    'done_set' => '完成设置',
-    'set_tips' => '您的账号已经完成修改，邮箱与账号均可用于登录。请牢记您的账号密码，并定期修改密码，确保财产安全！',
+    'done_set' => '设置完成',
+    'set_tips' => '您的密码已修改。邮箱和账号均可用于登录。请记住您的密码并定期更改以确保安全！',
     'verify' => '验证',
     'affirm' => '确认',
     'email_exist' => '邮箱已存在',
     'email_not' => '邮箱不能为空',
-    'email_not_format' => '邮箱格式不正确',
+    'email_not_format' => '邮箱格式错误',
     'sub_success' => '提交成功',
-    'code_exp' => '验证码错误或者已经过期，请重新填写',
+    'code_exp' => '验证码错误或已过期，请重新输入',
 
-'dashboard' => '首页',
-    'huobi_balance' => 'WOW币余额',
-    'count_code' => '生成授权码总数量',
+    'huobi_balance' => 'WOWCOIN 余额',
+    'count_code' => '生成激活码总数量',
     'sum_profit' => '总利润',
-    'month_code' => '本月生成授权码数量',
+    'month_code' => '每月生成数量',
+    'month_code1' => '本月激活码数量',
     'month_lower_profit' => '本月利润',
-    'last_month_huobi' => '上月消耗WOW币',
-    'last_month_code' => '上月生成授权码数量',
-    'last_month_profit' => '上月利润',
-//    'month_code_num' => ,
-//    'last_month_code_num' => ,
+    'last_month_huobi' => 'WOW币 使用情况',
+    'last_month_huobi1' => '上个月',
+    'last_month_code' => '生成数量',
+    'last_month_code1' => '上个月授权码',
+    'last_month_profit' => '上个月利润',
     'count_agency' => '总会员数',
     'copy' => '复制',
-    'lower_agency' => "下级代理人",
+    'lower_agency' => '下级代理',
+    'dashboard' => '仪表盘',
+    'select_code' => '选择授权码',
+    'authorization_code' => '授权码',
+    'message' => '消息',
+    'membership_authorization_code' => '会员授权码',
+    'remark' => '备注',
+    'confirm' => '确认',
+    'select_code_type' => '请选择授权码类型',
+    'code_copied_successfully' => '授权码复制成功',
+    'failed_to_copy_code' => '授权码复制失败',
+    'failed_to_generate_code' => '生成授权码失败',
+    'error_generating_code' => '生成授权码时发生错误，请重试。',
+    'failed_to_save_remark' => '保存备注失败',
+    'save_feature_not_found' => '未找到保存功能。(404)',
+    'invalid_data_provided' => '提供的数据无效。请检查您的输入。',
+    'server_error' => '服务器错误。请联系管理员。',
+    'unknown_error' => '发生未知错误，请重试。',
 ];

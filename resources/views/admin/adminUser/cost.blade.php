@@ -79,13 +79,13 @@
                           <span class="text-muted-foreground">{{ __('adminUser.account') }}:</span>
                           <span class="font-medium">{{ $info['account'] }}</span>
                         </div>
-
+<!-- 
                         @if(($info['is_new'] ?? 1) == 0)
                           <div class="flex gap-2">
                             <span class="text-muted-foreground">{{ __('adminUser.password') }}:</span>
                             <span class="font-medium">{{ $info['password'] }}</span>
                           </div>
-                        @endif
+                        @endif -->
 
                         <div class="md:col-span-2 flex gap-2">
                           <span class="text-muted-foreground">{{ __('adminUser.remark') }}:</span>
@@ -193,15 +193,15 @@
         $(this).parent().next().html(profit);
       } else {
         if (Number(agency) < Number(own)) {
-          layer.msg("{{ __('adminUser.agency_tips') }}", {shift: 5});
+          toastr.error("{{ __('adminUser.agency_tips') }}");
           $(this).val(0);
           return false;
         } else if (Number(agency) >= Number(price)) {
-          layer.msg("{{ __('equipment.gltPrice') }}", {shift: 5});
+          toastr.error("{{ __('equipment.gltPrice') }}");
           $(this).val(0);
           return false;
         } else if (Number(agency) - Number(own) < 1) {
-          layer.msg("{{ __('equipment.gltZero') }}", {shift: 5});
+          toastr.error("{{ __('equipment.gltZero') }}");
           $(this).val(0);
           return false;
         }
@@ -210,11 +210,11 @@
       }
     } else {
       if (Number(agency) > Number(price)) {
-        layer.msg("{{ __('equipment.gtPrice') }}", {shift: 5});
+        toastr.error("{{ __('equipment.gtPrice') }}");
         $(this).val(0);
         return false;
       } else if (Number(agency) < Number(own)) {
-        layer.msg("{{ __('equipment.ltZero') }}", {shift: 5});
+        toastr.error("{{ __('equipment.ltZero') }}");
         $(this).val(0);
         return false;
       }
@@ -232,7 +232,7 @@
     var agency_id = $("#agency_id").val();
 
     // Collect agency costs
-    $(".agency").each(function (index) {
+    $(".editable > input").each(function (index) {
       agencyList.push(Number($(this).val()));
     });
 
@@ -267,45 +267,36 @@
       success: function (result) {
         if (result.code !== 0) {
           form_submit.prop('disabled', false);
-          layer.msg(result.msg, {shift: 5});
-          return false;
+          toastr.error(result.msg);
+          return;
         }
+        toastr.success(result.msg);
         if (result.redirect) {
-          location.href = '{{ route('admin.users.index') }}';
+          setTimeout(function() {
+            location.href = '{{ route('admin.users.index') }}';
+          }, 1000);
         }
       },
-      error: function (resp, stat, text) {
+      error: function (resp) {
         if (window.form_submit) {
           form_submit.prop('disabled', false);
         }
-        if (resp.status === 422) {
-          var parse = $.parseJSON(resp.responseText);
-          if (parse) {
-            layer.msg(parse.msg, {shift: 6, skin: 'alert-secondary alert-lighter'});
+        const code = resp?.status;
+        const t = {
+          422: "{{ __('general.illegal_request') }}",
+          404: "{{ __('general.resources_not') }}",
+          401: "{{ __('general.login_first') }}",
+          429: "{{ __('general.Overvisiting') }}",
+          419: "{{ __('general.illegal_request') }}",
+          500: "{{ __('general.internal_error') }}"
+        }[code];
+        if (t) { toastr.error(t); return; }
+        try {
+          const parse = $.parseJSON(resp.responseText);
+          if (parse && parse.msg) {
+            toastr.error(parse.msg);
           }
-          return false;
-        } else if (resp.status === 404) {
-          layer.msg("{{ __('general.resources_not') }}", {icon: 5, skin: 'alert-secondary alert-lighter'});
-          return false;
-        } else if (resp.status === 401) {
-          layer.msg("{{ __('general.login_first') }}", {shift: 6, skin: 'alert-secondary alert-lighter'});
-          return false;
-        } else if (resp.status === 429) {
-          layer.msg("{{ __('general.Overvisiting') }}", {shift: 6, skin: 'alert-secondary alert-lighter'});
-          return false;
-        } else if (resp.status === 419) {
-          layer.msg("{{ __('general.illegal_request') }}", {shift: 6, skin: 'alert-secondary alert-lighter'});
-          return false;
-        } else if (resp.status === 500) {
-          layer.msg("{{ __('general.internal_error') }}", {shift: 6, skin: 'alert-secondary alert-lighter'});
-          return false;
-        } else {
-          var parse = $.parseJSON(resp.responseText);
-          if (parse) {
-            layer.alert(parse.msg);
-          }
-          return false;
-        }
+        } catch(e){}
       }
     });
     return false;

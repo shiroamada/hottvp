@@ -125,6 +125,7 @@ return [
     "amount_require" => 'Amount required',
     "captcha_error" => 'Graphic verification code wrong',
     "cost" => 'Adjust Costing',
+    'adjust_success' => 'Successfuly Adjust Costing',
     "check_cost" => 'Check Costing',
     "already_contacted" => 'Contacted',
     "not_contact" => 'Not Contact',

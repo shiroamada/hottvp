@@ -146,4 +146,5 @@ return [
     "copper_num" => "Bilangan Tembaga",
     "defined_num" => "Kuantiti Tersuai",
     'min_amount_message' => ':level Jumlah Tambah Nilai Minimum: :amount',
+    'adjust_success' => 'Pelarasan kos berjaya!',
 ];

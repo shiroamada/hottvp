@@ -72,7 +72,7 @@
                                 data-money="{{ $v->money ?? 0 }}"
                                 data-name="{{ $v->assorts->assort_name ?? '' }}"
                                 data-duration="{{ $v->assorts->duration ?? 0 }}">
-                            {{ $v->assorts->assort_name ?? '' }} {{ $v->money ?? 0 }} MYR
+                            {{ $v->assorts->assort_name ?? '' }} {{ $v->money ?? 0 }} {{ __('messages.huobi.money') }}
                         </option>
                     @endforeach
                 </select>

@@ -147,4 +147,5 @@ return [
     "copper_num" => "铜级数量",
     "defined_num" => "自定义数量",
     'min_amount_message' => ':level 最低充值金额: :amount',
+    'adjust_success' => '成本调整成功！',
 ];
