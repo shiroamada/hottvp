@@ -7,7 +7,7 @@
     <header class="flex lg:hidden items-center fixed z-10 top-0 start-0 end-0 shrink-0 bg-muted h-(--header-height)" id="header">
         <!-- Container -->
         <div class="kt-container-fixed flex items-center justify-between flex-wrap gap-3">
-          
+
             <button class="kt-btn kt-btn-icon kt-btn-ghost -me-2" data-kt-drawer-toggle="#sidebar">
                 <i class="ki-filled ki-menu"></i>
             </button>
@@ -51,11 +51,11 @@
                         <div class="kt-card mb-5">
                             <div class="kt-card-content">
                                 <form action="{{ route('license.list') }}" method="GET" class="grid sm:grid-cols-2 md:grid-cols-4 gap-5">
-                                    <div>
+                                    <div class="kt-form-item">
                                         <label for="auth_code" class="kt-form-label">{{ __('authCode.auth_code') }}</label>
                                         <input type="text" id="auth_code" name="auth_code" class="kt-input" placeholder="{{ __('authCode.enter_code') }}" value="{{ request('auth_code') }}">
                                     </div>
-                                    <div>
+                                    <div class="kt-form-item">
                                         <label for="status" class="kt-form-label">{{ __('general.status') }}</label>
                                         <select id="status" name="status" class="kt-select">
                                             <option value="">{{ __('general.all') }}</option>
@@ -64,7 +64,7 @@
                                             <option value="2" @if(request('status') === '2') selected @endif>{{ __('authCode.status_was_due') }}</option>
                                         </select>
                                     </div>
-                                    <div>
+                                    <div class="kt-form-item">
                                         <label for="assort_id" class="kt-form-label">{{ __('authCode.type') }}</label>
                                         <select id="assort_id" name="assort_id" class="kt-select">
                                             <option value="">{{ __('general.all') }}</option>
@@ -73,7 +73,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div>
+                                    <div class="kt-form-item">
                                         <label for="date_range" class="kt-form-label">{{ __('general.date_range') }}</label>
                                         <input type="text" id="date_range" name="date2" class="kt-input" placeholder="{{ __('general.select_date_range') }}" value="{{ request('date2') }}">
                                     </div>

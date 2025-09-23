@@ -5,10 +5,13 @@ use App\Models\Admin\Config as SiteConfig;
 use App\Models\Admin\SensitiveWord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\PHPMailer;
+use Illuminate\Support\Facades\Mail;
 
 use App\Repository\APIHelper;
+use Illuminate\Support\Facades\DB;
+use App\Models\PreGeneratedCode;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 
 /**
@@ -30,117 +33,197 @@ function createCode($length = 12)
 }
 
 /**
-     * @Title: getApiByBatch
-     * @Description: 批量获取授权码（code码）
-     * @param $data
-     * @return string
-     * @Author: 李军伟
-     */
-    function getApiByBatch($data)
+ * @Title: getApiByBatch
+ * @Description: 批量获取授权码（code码）
+ * @param $data
+ * @return array
+ * @Author: 李军伟
+ */
+function getApiByBatch($data)
 {
-    $type = 1;
-    if (\Auth::guard('admin')->user()->type == 1) {
-        $type = 2;
+    // Common validation
+    $user = Auth::guard('admin')->user();
+    if (!isset($data['number']) || !is_numeric($data['number']) || $data['number'] <= 0) {
+        throw new \InvalidArgumentException('Invalid number of codes: ' . ($data['number'] ?? 'null'));
     }
-    try {
-        // Log input parameters and their types
-        \Log::info('getApiByBatch input parameters: ', [
-            'number' => $data['number'] ?? null,
-            'number_type' => gettype($data['number']),
-            'day' => $data['day'] ?? null,
-            'day_type' => gettype($data['day']),
-            'channel_id' => \Auth::guard('admin')->user()->channel_id,
-            'user_type' => \Auth::guard('admin')->user()->type,
-            'enable_switch' => $type
-        ]);
+    if (!isset($data['day']) || !is_numeric($data['day']) || $data['day'] <= 0) {
+        throw new \InvalidArgumentException('Invalid valid_day: ' . ($data['day'] ?? 'null'));
+    }
 
-        // Validate inputs
-        if (!isset($data['number']) || !is_numeric($data['number']) || $data['number'] <= 0) {
-            throw new \Exception('Invalid number of codes: ' . ($data['number'] ?? 'null'));
-        }
-        if (!isset($data['day']) || !is_numeric($data['day']) || $data['day'] <= 0) {
-            throw new \Exception('Invalid valid_day: ' . ($data['day'] ?? 'null'));
-        }
+    $requested = (int) $data['number'];
+    $typeLabel = ($data['day'] ?? 'N/A') . 'days';
+    $vendor = 'wowtv';
+    $results = [];
+    $preGeneratedEnabled = (bool) config('app.pre_generated_codes_enabled');
 
+    // Helper to format return structure
+    $format = function (array $codes, string $source) use ($typeLabel, $vendor) {
+        $out = [];
+        foreach ($codes as $code) {
+            $out[] = [
+                'code' => $code,
+                'type' => $typeLabel,
+                'vendor' => $vendor,
+                'source' => $source,
+            ];
+        }
+        return $out;
+    };
+
+    // Helper to fetch from PreGeneratedCode atomically
+    $fetchFromPreGenerated = function (int $take) use ($user, $typeLabel) {
+        $codes = [];
+        if ($take <= 0) return $codes;
+        DB::transaction(function () use ($take, $user, &$codes, $typeLabel) {
+            $selected = PreGeneratedCode::whereNull('requested_by')
+                ->where('type', $typeLabel)
+                ->where('vendor', 'wowtv')
+                ->lockForUpdate()
+                ->take($take)
+                ->get();
+            if ($selected->isNotEmpty()) {
+                $ids = $selected->pluck('id');
+                PreGeneratedCode::whereIn('id', $ids)->update([
+                    'requested_by' => $user->id,
+                    'requested_at' => now(),
+                ]);
+                $codes = $selected->pluck('code')->toArray();
+            }
+        });
+        return $codes;
+    };
+
+    // Helper to fetch from API with up to 3 retries
+    $fetchFromApi = function (int $take) use ($user, $data) {
+        $apiType = $user->type == 1 ? 2 : 1;
         $apiStr = 'createCode';
         $api = new APIHelper();
-        $body = [
-            'num' => (int) $data['number'],
-            'valid_day' => (int) $data['day'],
-            'channel_id' => \Auth::guard('admin')->user()->channel_id,
-            'enable_switch' => $type,
-        ];
-        \Log::info('getApiByBatch request body: ', $body);
-
-        // Log API endpoint details (assuming APIHelper has a method to get the base URL)
-        $apiUrl = method_exists($api, 'getBaseUrl') ? $api->getBaseUrl() . '/' . $apiStr : $apiStr;
-        \Log::info('getApiByBatch API endpoint: ', ['url' => $apiUrl]);
-
-        // Make API call with detailed response capture
-        $response = $api->post($body, $apiStr);
-        \Log::info('getApiByBatch raw response: ', [
-            'response' => $response,
-            'response_type' => gettype($response)
-        ]);
-
-        // Check HTTP status code (assuming APIHelper returns a response object with status)
-        if (method_exists($response, 'getStatusCode')) {
-            \Log::info('getApiByBatch HTTP status: ', ['status_code' => $response->getStatusCode()]);
-            \Log::info('getApiByBatch response headers: ', ['headers' => $response->getHeaders()]);
-        }
-
-        // Decode JSON response
-        $decoded = json_decode($response, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            \Log::error('getApiByBatch JSON decode failed: ', [
-                'error' => json_last_error_msg(),
-                'raw_response' => $response
-            ]);
-            throw new \Exception('Failed to decode API response: ' . json_last_error_msg());
-        }
-
-        // Log decoded response
-        \Log::info('getApiByBatch decoded response: ', ['decoded' => $decoded]);
-
-        // Validate response structure
-        if (!isset($decoded['data']) || !is_array($decoded['data'])) {
-            \Log::error('Invalid API response format', ['decoded' => $decoded]);
-            throw new \Exception('API response does not contain valid data array');
-        }
-
-        // Validate code lengths
-        foreach ($decoded['data'] as $index => $code) {
-            if (!is_string($code) || strlen($code) != 12) {
-                \Log::error('Invalid code length', [
-                    'code' => $code,
-                    'length' => is_string($code) ? strlen($code) : 'not a string',
-                    'index' => $index
+        $attempts = 0;
+        while ($attempts < 3) {
+            $attempts++;
+            $body = [
+                'num' => (int) $take,
+                'valid_day' => (int) $data['day'],
+                'channel_id' => $user->channel_id,
+                'enable_switch' => $apiType,
+            ];
+            $response = $api->post($body, $apiStr);
+            if (!$response) {
+                continue;
+            }
+            $decoded = json_decode($response, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                Log::error('getApiByBatch JSON decode failed', [
+                    'error' => json_last_error_msg(),
+                    'raw_response' => $response
                 ]);
-                throw new \Exception('API returned invalid code length: ' . (is_string($code) ? strlen($code) : 'not a string'));
+                continue;
+            }
+            if (!isset($decoded['data']) || !is_array($decoded['data'])) {
+                Log::error('Invalid API response format', ['decoded' => $decoded]);
+                continue;
+            }
+            // Validate code lengths
+            $valid = [];
+            foreach ($decoded['data'] as $index => $code) {
+                if (is_string($code) && strlen($code) == 12) {
+                    $valid[] = $code;
+                } else {
+                    Log::error('Invalid code length from API', [
+                        'code' => $code,
+                        'length' => is_string($code) ? strlen($code) : 'not a string',
+                        'index' => $index
+                    ]);
+                }
+            }
+            if (count($valid) >= $take) {
+                return array_slice($valid, 0, $take);
+            }
+            // If partial, return what we have
+            if (!empty($valid)) {
+                return $valid;
             }
         }
+        Log::warning('API retries exhausted in getApiByBatch');
+        return [];
+    };
 
-        \Log::info('getApiByBatch successful, returning codes: ', ['codes' => $decoded['data']]);
-        return $decoded['data'];
-    } catch (\Exception $e) {
-        \Log::error('getApiByBatch failed: ', [
-            'error' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString()
-        ]);
-        // Fallback to local code generation
-        $codes = [];
-        for ($i = 0; $i < $data['number']; $i++) {
-            $code = createCode(12);
-            while (\App\Models\AuthCode::where('auth_code', $code)->exists()) {
-                $code = createCode(12);
+    // Obsolete - Helper to generate fallback local codes, only for local testing
+    // $generateLocal = function (int $take) {
+    //     $codes = [];
+    //     for ($i = 0; $i < $take; $i++) {
+    //         $code = createCode(12);
+    //         while (\App\Models\AuthCode::where('auth_code', $code)->exists()) {
+    //             $code = createCode(12);
+    //         }
+    //         $codes[] = $code;
+    //     }
+    //     return $codes;
+    // };
+
+    // Strategy
+    if ($preGeneratedEnabled) {
+        // PreGenerated first; if insufficient, notify and then try API to fill remainder
+        $fromPre = $fetchFromPreGenerated($requested);
+        $results = array_merge($results, $format($fromPre, 'PreGeneratedCode'));
+        $remaining = $requested - count($fromPre);
+        if ($remaining > 0) {
+            Log::warning('PreGeneratedCode insufficient with toggle enabled', [
+                'type' => $typeLabel,
+                'vendor' => $vendor,
+                'requested' => $requested,
+                'available' => count($fromPre),
+                'remaining' => $remaining,
+            ]);
+            // Notify admin
+            try {
+                $adminEmail = env('ADMIN_EMAIL', env('MAIL_USERNAME'));
+                if ($adminEmail) {
+                    $subject = 'PreGenerated Codes Low/Insufficient';
+                    $content = 'Requested ' . $requested . ' codes, but only ' . count($fromPre) . ' available in PreGenerated pool. ' .
+                        'Type: ' . $typeLabel . ', Vendor: ' . $vendor . '. ' .
+                        'Requested By: ' . Auth::guard('admin')->user()->email . ' ' .
+                        'PreGeneratedCodeToggle is enabled;';
+                    send_email($adminEmail, $subject, $content);
+                }
+            } catch (\Throwable $e) {
+                Log::error('Failed to send PreGeneratedCode depletion email', ['error' => $e->getMessage()]);
             }
-            $codes[] = $code;
+            // Do NOT call API or generate locally when toggle enabled – strictly return only pre-generated codes
+            // Keep $results as-is to reflect available quantity only
         }
-        \Log::info('Generated fallback codes: ', ['codes' => $codes]);
-        return $codes;
+        return $results;
     }
+
+    // Toggle disabled: API first, then fallback to PreGenerated, then local
+    $fromApi = $fetchFromApi($requested);
+    if (count($fromApi) >= $requested) {
+        return $format($fromApi, 'API');
+    }
+    $results = $format($fromApi, 'API');
+    $remaining = $requested - count($fromApi);
+    $fromPre = $fetchFromPreGenerated($remaining);
+    if (count($fromPre) < $remaining) {
+        Log::warning('PreGeneratedCode insufficient during API fallback', [
+            'requested' => $remaining,
+            'available' => count($fromPre),
+        ]);
+        // Notify admin
+        try {
+            $adminEmail = env('ADMIN_EMAIL', env('MAIL_USERNAME'));
+            if ($adminEmail) {
+                $subject = 'PreGenerated Codes Low/Insufficient';
+                $content = 'API unavailable. Requested ' . $requested . ' codes, only ' . count($fromPre) . ' available in PreGenerated pool. Remaining will be locally generated.';
+                send_email($adminEmail, $subject, $content);
+            }
+        } catch (\Throwable $e) {
+            Log::error('Failed to send PreGeneratedCode depletion email', ['error' => $e->getMessage()]);
+        }
+        //$fromLocal = $generateLocal($remaining - count($fromPre));
+        //return array_merge($results, $format($fromPre, 'PreGeneratedCode'), $format($fromLocal, 'FallbackLocal'));
+    }
+
+    return array_merge($results, $format($fromPre, 'PreGeneratedCode'));
 }
 
 /**
@@ -390,73 +473,27 @@ function get_extension($file)
  */
 function send_email($to, $subject = '', $content = '')
 {
-    // 判断openssl是否开启
-    $openssl_funcs = get_extension_funcs('openssl');
-    if (! $openssl_funcs) {
-        return ['status' => -1, 'msg' => '请先开启openssl扩展'];
-    }
-    $mail = new PHPMailer;
-    // 配置信息
-    if (empty(env('MAIL_HOST')) || empty(env('MAIL_PORT')) || empty(env('MAIL_USERNAME')) || empty(env('MAIL_PASSWORD'))) {
-        return ['error' => 1, 'message' => '邮箱配置不完整'];
-    }
-
-    $mail->CharSet = 'UTF-8'; // 设定邮件编码，默认ISO-8859-1，如果发中文此项必须设置，否则乱码
-    $mail->isSMTP();
-    // Enable SMTP debugging
-    // 0 = off (for production use)
-    // 1 = client messages
-    // 2 = client and server messages
-    $mail->SMTPDebug = 0;
-    // 调试输出格式
-    // $mail->Debugoutput = 'html';
-    // smtp服务器
-    $mail->Host = env('MAIL_HOST');
-    // 端口 - likely to be 25, 465 or 587
-    $mail->Port = env('MAIL_PORT');
-
-    if ($mail->Port == 465) {
-        $mail->SMTPSecure = 'ssl';
-    }// 使用安全协议
-    // Whether to use SMTP authentication
-    $mail->SMTPAuth = true;
-    // 用户名
-    $mail->Username = env('MAIL_USERNAME');
-    // 密码
-    $mail->Password = env('MAIL_PASSWORD');
-    // Set who the message is to be sent from
-    $mail->setFrom(env('MAIL_USERNAME'));
-    // 回复地址
-    $mail->addReplyTo(env('MAIL_USERNAME'), 'hot-tv');
-    // 设置抄送人
-    // $mail->addCC($config['']);
-    // 密送者，Mail Header不会显示密送者信息
-    // $mail->addBCC($config['']);
-
-    // 接收邮件方
-    if (is_array($to)) {
-        foreach ($to as $v) {
-            $mail->addAddress($v);
-        }
-    } else {
-        $mail->addAddress($to);
-    }
-    $mail->isHTML(true); // send as HTML
-    // 标题
-    $mail->Subject = $subject;
-    // HTML内容转换
-    $mail->msgHTML($content);
-    // Replace the plain text body with one created manually
-    // $mail->AltBody = 'This is a plain-text message body';
-    // 添加附件 (填绝对路径) 可以设定名字
-    // $mail->addAttachment('images/phpmailer_mini.png', 'name.jpg');
-    // send the message, check for errors
     try {
-        if ($mail->send());
-
+        $recipients = is_array($to) ? array_values($to) : [$to];
+        Mail::html($content, function ($message) use ($recipients, $subject) {
+            $message->subject($subject);
+            foreach ($recipients as $addr) {
+                if ($addr) {
+                    $message->to($addr);
+                }
+            }
+            // 设置回复地址，默认使用应用的发件地址与名称
+            $fromAddress = config('mail.from.address');
+            if (!empty($fromAddress)) {
+                $message->replyTo($fromAddress, config('mail.from.name', 'wow-tv'));
+            }
+        });
         return ['status' => 1, 'msg' => '邮件发送成功'];
-    } catch (Exception $e) {
-        return ['status' => -1, 'msg' => '发送失败: '.$mail->ErrorInfo];
+    } catch (\Throwable $e) {
+        Log::error('send_email failed', [
+            'error' => $e->getMessage(),
+        ]);
+        return ['status' => -1, 'msg' => '发送失败: ' . $e->getMessage()];
     }
 }
 

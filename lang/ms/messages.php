@@ -178,6 +178,47 @@ return [
         'license_7_day' => 'Kod lesen 7 hari 3.00 WOWCOIN',
     ],
 
+    'pre_generated_codes' => [
+        'import_success' => ':count kod berjaya diimport!',
+        'import_error' => 'Ralat berlaku semasa import. Sila semak log.',
+        'create' => [
+            'title' => 'Import Kod Pra-Janaan',
+            'codes_label' => 'Kod (satu setiap baris)',
+            'codes_placeholder' => "code1\ncode2\ncode3\ncode4\ncode5",
+            'type_label' => 'Jenis',
+            'vendor_label' => 'Vendor',
+            'remark_label' => 'Catatan',
+            'submit' => 'Import Kod',
+        ],
+        'index' => [
+            'title' => 'Kod Pra-Janaan',
+            'import_button' => 'Import Kod',
+            'code_label' => 'Kod',
+            'code_placeholder' => 'Masukkan kod',
+            'status_label' => 'Status',
+            'status_all' => 'Semua',
+            'status_available' => 'Tersedia',
+            'status_requested' => 'Diminta',
+            'date_range_label' => 'Julat Tarikh Import',
+            'date_range_placeholder' => 'Pilih julat tarikh',
+            'search' => 'Cari',
+            'table_title' => 'Senarai Kod',
+            'col_code' => 'Kod',
+            'col_type' => 'Jenis',
+            'col_vendor' => 'Vendor',
+            'col_remark' => 'Catatan',
+            'col_status' => 'Status',
+            'col_imported_by' => 'Diimport Oleh',
+            'col_imported_at' => 'Tarikh Import',
+            'col_requested_by' => 'Diminta Oleh',
+            'col_requested_at' => 'Tarikh Diminta',
+            'badge_available' => 'Tersedia',
+            'badge_requested' => 'Diminta',
+            'na' => 'Tiada',
+            'empty' => 'Tiada kod ditemui.',
+        ],
+    ],
+
     // Trial Generation Page
     'trial_generate' => [
         'title' => 'Mohon Kod Percubaan',
@@ -259,4 +300,9 @@ return [
     'huobi' => [
         'money' => 'WOWCOIN',
     ],
+    'sidebar.pre_generated_codes.title' => 'Kod Pra-Jana',
+    'sidebar.pre_generated_codes.import' => 'Import Kod',
+    'sidebar.pre_generated_codes.list' => 'Senarai Kod',
+    'pre_generated_codes.import_success' => ':count kod berjaya diimport!',
+    'pre_generated_codes.import_error' => 'Ralat berlaku semasa import. Sila semak log.',
 ];

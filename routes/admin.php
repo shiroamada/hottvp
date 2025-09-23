@@ -23,7 +23,7 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        
+
 
 
         // Essential Admin User Management Routes (Core CRUD)
@@ -32,7 +32,7 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
         Route::get('/users/visual/{id}', [AdminUserController::class, 'visual'])->name('users.visual');
         Route::get('/users/stepOne/{id}', [AdminUserController::class, 'stepOne'])->name('users.stepOne');
         Route::get('/users/stepTwo/{id}', [AdminUserController::class, 'stepTwo'])->name('users.stepTwo');
-        Route::get('/users/examine/{id}', [AdminUserController::class, 'examine'])->name('users.examine');        
+        Route::get('/users/examine/{id}', [AdminUserController::class, 'examine'])->name('users.examine');
         Route::get('/users/create', [AdminUserController::class, 'create'])->name('users.create');
         Route::post('/users/save', [AdminUserController::class, 'save'])->name('users.save');
         Route::get('/users/edit/{id}', [AdminUserController::class, 'edit'])->name('users.edit');
@@ -75,7 +75,7 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
 
 
 
-        
+
         Route::get('/assorts', 'AssortController@index')->name('assort.index');
         Route::get('/assorts/create', 'AssortController@create')->name('assort.create');
         Route::post('/assorts', 'AssortController@save')->name('assort.save');
@@ -135,7 +135,16 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
         Route::get('/levels/{id}/edit', 'LevelController@edit')->name('level.edit');
         Route::put('/levels/{id}', 'LevelController@update')->name('level.update');
         Route::get('/levels/{id}/info', 'LevelController@info')->name('level.info');
-        Route::delete('/levels/{id}', 'LevelController@delete')->name('level.delete');
+    //Route::resource('defined', 'DefinedController');
+    //Route::get('get_assort', 'DefinedController@getAssort')->name('defined.get_assort');
+
+    // Pre-generated codes import
+    Route::get('pre-generated-codes', 'PreGeneratedCodeController@index')->name('pre_generated_codes.index');
+    Route::get('pre-generated-codes/create', 'PreGeneratedCodeController@create')->name('pre_generated_codes.create');
+    Route::post('pre-generated-codes', 'PreGeneratedCodeController@store')->name('pre_generated_codes.store');
+
+    // 个人中心
+    Route::get('center', 'CenterController@index')->name('center.index');
 
         Route::get('/try/list', [NewLicenseCodeController::class, 'list'])->name('try.list');
         Route::get('/try/add', [NewLicenseCodeController::class, 'add'])->name('try.add');
@@ -145,5 +154,5 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
 
     });
 
-    
+
 include __DIR__.'/admin-auth.php'; // Include the admin authentication routes

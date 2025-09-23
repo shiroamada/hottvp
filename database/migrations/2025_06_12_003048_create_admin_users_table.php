@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('admin_users', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->integer('pid')->comment('父id');
             $table->integer('level_id')->comment('级别id');
             $table->integer('channel_id')->comment('所属渠道id');

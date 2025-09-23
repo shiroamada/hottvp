@@ -8,7 +8,7 @@
 <header class="flex lg:hidden items-center fixed z-10 top-0 start-0 end-0 shrink-0 bg-muted h-(--header-height)" id="header">
 <!-- Container -->
 <div class="kt-container-fixed flex items-center justify-between flex-wrap gap-3">
-   
+
     <button class="kt-btn kt-btn-icon kt-btn-ghost -me-2" data-kt-drawer-toggle="#sidebar">
     <i class="ki-filled ki-menu">
     </i>
@@ -18,7 +18,7 @@
 </header>
 <!-- End of Header -->
 @include('layouts/partials/_sidebar')
-<!-- Wrapper -->         
+<!-- Wrapper -->
 <div class="flex flex-col lg:flex-row grow pt-(--header-height) lg:pt-0">
 <!-- Main -->
 <div class="flex flex-col grow items-stretch rounded-xl bg-background border border-input lg:ms-(--sidebar-width) mt-0 lg:mt-[15px] m-[15px]">
@@ -65,11 +65,12 @@
         <label class="kt-form-label max-w-56">{{ __('messages.license_generate.quantity') }}</label>
         <input class="kt-input grow" id="num" name="number" type="text" maxlength="3" autocomplete="off" />
 
+        <div class="kt-form-message"></div>
     </div>
 
     <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
         <label class="kt-form-label max-w-56">{{ __('messages.license_generate.remarks') }}</label>
-        <textarea class="kt-input grow" id="standardRemark" name="remark" rows="3" maxlength="128"></textarea>
+        <textarea class="kt-textarea grow" id="standardRemark" name="remark" rows="3" maxlength="128"></textarea>
     </div>
 
     <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">

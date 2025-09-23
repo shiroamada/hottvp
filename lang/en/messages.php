@@ -25,6 +25,10 @@ return [
     'sidebar.costing.list' => 'Cost List',
     'sidebar.all_agents' => 'All Agents',
 
+    'sidebar.pre_generated_codes.title' => 'Pre-Generated Codes',
+    'sidebar.pre_generated_codes.import' => 'Import Codes',
+    'sidebar.pre_generated_codes.list' => 'List Codes',
+
     // Sidebar Secondary/User Menu
     'sidebar.help.title' => 'Help',
     'sidebar.help.documentation' => 'Documentation',
@@ -451,5 +455,46 @@ return [
     // Huobi translations
     'huobi' => [
         'money' => 'WOWCOIN',
+    ],
+
+    'pre_generated_codes' => [
+        'import_success' => ':count codes imported successfully!',
+        'import_error' => 'An error occurred during import. Please check the logs.',
+        'create' => [
+            'title' => 'Import Pre-Generated Codes',
+            'codes_label' => 'Codes (one per line)',
+            'codes_placeholder' => "code1\ncode2\ncode3\ncode4\ncode5",
+            'type_label' => 'Type',
+            'vendor_label' => 'Vendor',
+            'remark_label' => 'Remark',
+            'submit' => 'Import Codes',
+        ],
+        'index' => [
+            'title' => 'Pre-Generated Codes',
+            'import_button' => 'Import Codes',
+            'code_label' => 'Code',
+            'code_placeholder' => 'Enter code',
+            'status_label' => 'Status',
+            'status_all' => 'All',
+            'status_available' => 'Available',
+            'status_requested' => 'Requested',
+            'date_range_label' => 'Import Date Range',
+            'date_range_placeholder' => 'Select date range',
+            'search' => 'Search',
+            'table_title' => 'Code List',
+            'col_code' => 'Code',
+            'col_type' => 'Type',
+            'col_vendor' => 'Vendor',
+            'col_remark' => 'Remark',
+            'col_status' => 'Status',
+            'col_imported_by' => 'Imported By',
+            'col_imported_at' => 'Imported At',
+            'col_requested_by' => 'Requested By',
+            'col_requested_at' => 'Requested At',
+            'badge_available' => 'Available',
+            'badge_requested' => 'Requested',
+            'na' => 'N/A',
+            'empty' => 'No codes found.',
+        ],
     ],
 ];

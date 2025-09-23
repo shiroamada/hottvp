@@ -59,8 +59,8 @@ class NewLicenseCodeController extends Controller
         }
         unset($condition['date2']);
         $condition['is_try'] = ['=', 1];
-        if (\Auth::guard('admin')->user()->id != 1) {
-            $condition['user_id'] = ['=', \Auth::guard('admin')->user()->id];
+        if (Auth::guard('admin')->user()->id != 1) {
+            $condition['user_id'] = ['=', Auth::guard('admin')->user()->id];
         }
         if (isset($condition['auth_code']) && $condition['auth_code'] == "") {
             unset($condition['auth_code']);
@@ -109,8 +109,8 @@ class NewLicenseCodeController extends Controller
         }
         unset($condition['created_at']);
         $condition['is_try'] = ['=', 2];
-        if (\Auth::guard('admin')->user()->id != 1) {
-            $condition['user_id'] = ['=', \Auth::guard('admin')->user()->id];
+        if (Auth::guard('admin')->user()->id != 1) {
+            $condition['user_id'] = ['=', Auth::guard('admin')->user()->id];
         }
         if (isset($condition['auth_code']) && $condition['auth_code'] == "") {
             unset($condition['auth_code']);
@@ -143,8 +143,8 @@ class NewLicenseCodeController extends Controller
         $perPage = (int)$request->get('limit', env('APP_PAGE'));
         $this->formNames[] = 'created_at';
         $condition = $request->only($this->formNames);
-        if (\Auth::guard('admin')->user()->id != 1) {
-            $condition['user_id'] = ['=', \Auth::guard('admin')->user()->id];
+        if (Auth::guard('admin')->user()->id != 1) {
+            $condition['user_id'] = ['=', Auth::guard('admin')->user()->id];
         }
 
         $data = TryCodeRepository::list($perPage, $condition);
@@ -169,11 +169,11 @@ class NewLicenseCodeController extends Controller
     public function create(AdminUtilityService $utility) // Laravel auto-injects
     {
 
-        $level_id = \Auth::guard('admin')->user()->level_id;
-        $parent_id = $utility->getParentId(\Auth::guard('admin')->user()->id);
+        $level_id = Auth::guard('admin')->user()->level_id;
+        $parent_id = $utility->getParentId(Auth::guard('admin')->user()->id);
         // 如果级别为自定义，则从自定义里面获取数据
         if ($level_id == 8) {
-            $where = ['user_id' => \Auth::guard('admin')->user()->id];
+            $where = ['user_id' => Auth::guard('admin')->user()->id];
             $equipment = Defined::query()->where($where)->orderBy('assort_id')->get();
         } else {
             // 先验证该国代有没有自定义级别配置管理,如果没有则获取默认级别配置
@@ -203,7 +203,7 @@ class NewLicenseCodeController extends Controller
      */
     public function add()
     {
-        $availableTrialCodes = \Auth::guard('admin')->user()->try_num;
+        $availableTrialCodes = Auth::guard('admin')->user()->try_num;
         return view('trial.generate', compact('availableTrialCodes'));
     }
 
@@ -228,7 +228,7 @@ class NewLicenseCodeController extends Controller
                 ];
             }
             $data['day'] = 1;
-            if ( $data['number'] > \Auth::guard('admin')->user()->try_num) {
+            if ( $data['number'] > Auth::guard('admin')->user()->try_num) {
                 return [
                     'code' => 1,
                     'msg' => trans('authCode.exceed_num'),
@@ -236,22 +236,21 @@ class NewLicenseCodeController extends Controller
                 ];
             }
             $codes = getApiByBatch($data);
-            $auth_code = $codes[0];
-            if (strlen($auth_code) != 12) {
-                return [
-                    'code' => 1,
-                    'msg' => trans('authCode.exceed'),
-                    'redirect' => false
-                ];
-            }
-            for ($i = 1; $i <= $data['number']; $i++) {
+            foreach ($codes as $codeData) {
+                if (strlen($codeData['code']) > 10) {
+                    return [
+                        'code' => 1,
+                        'msg' => 'Invalid Code Generated: ' . $codeData['code'],
+                        'redirect' => false
+                    ];
+                }
                 $param = [
                     'assort_id' => 5,
-                    'user_id' => \Auth::guard('admin')->user()->id,
-                    'auth_code' => $codes[$i - 1],
+                    'user_id' => Auth::guard('admin')->user()->id,
+                    'auth_code' => $codeData['code'],
                     'num' => $data['number'],
-                    'type' => \Auth::guard('admin')->user()->type,
-                    'remark' => $data['remark'],
+                    'type' => Auth::guard('admin')->user()->type,
+                    'remark' => "Type: {$codeData['type']}, Vendor: {$codeData['vendor']}, Source: " . ($codeData['source'] ?? 'Unknown') . (isset($data['remark']) && $data['remark'] ? ' - ' . $data['remark'] : ''),
                     'is_try' => 2,
                     'created_at' => date("Y-m-d H:i:s", time()),
                     'updated_at' => date("Y-m-d H:i:s", time()),
@@ -261,7 +260,7 @@ class NewLicenseCodeController extends Controller
             // 生成code记录
             AuthCode::query()->insert($list);
             // 生成code用户的试看码相应减少
-            $where_user = ['id' => \Auth::guard('admin')->user()->id];
+            $where_user = ['id' => Auth::guard('admin')->user()->id];
             AdminUserRepository::decrByTry($where_user, $data['number']);
             DB::commit();  //提交
             return [
@@ -300,14 +299,14 @@ class NewLicenseCodeController extends Controller
                 ];
             }
             // 获取当前用户的级别
-            $level_id = \Auth::guard('admin')->user()->level_id;
-            $parent_id = (new AdminUtilityService())->getParentId(\Auth::guard('admin')->user()->id);
+            $level_id = Auth::guard('admin')->user()->level_id;
+            $parent_id = (new AdminUtilityService())->getParentId(Auth::guard('admin')->user()->id);
             // 获取管理员获得的利润
             $user_where = ['user_id' => $parent_id, 'assort_id' => $data['assort_id'], 'level_id' => 3];
             $user_profit = EquipmentRepository::findByWhere($user_where);
             // 如果级别为自定义，则从自定义里面获取数据
             if ($level_id == 8) {
-                $where = ['user_id' => \Auth::guard('admin')->user()->id, 'assort_id' => $data['assort_id']];
+                $where = ['user_id' => Auth::guard('admin')->user()->id, 'assort_id' => $data['assort_id']];
                 $equipment = Defined::query()->where($where)->first();
             } else {
                 // 先验证该国代有没有自定义级别配置管理,如果没有则获取默认级别配置
@@ -332,17 +331,23 @@ class NewLicenseCodeController extends Controller
                 ];
             }
             $total = $equipment->money * $data['number'];
-            \Log::info('User balance: ' . \Auth::guard('admin')->user()->balance);
-            \Log::info('Total cost: ' . $total);
-            $user_money = (float) \Auth::guard('admin')->user()->balance;
-            \Log::info('Checking balance and total: ', [
+            Log::info('User balance: ' . Auth::guard('admin')->user()->balance);
+            Log::info('Total cost: ' . $total);
+            $user_money = (float) Auth::guard('admin')->user()->balance;
+            Log::info('Checking balance and total: ', [
                 'total' => $total,
                 'user_money' => $user_money,
                 'total type' => gettype($total),
                 'user_money type' => gettype($user_money),
             ]);
 
+            // 余额不足
             if ($total > $user_money) {
+                Log::warning('User balance exceeded', [
+                    'user_id' => Auth::guard('admin')->user()->id,
+                    'user_balance' => $user_money,
+                    'required' => $total,
+                ]);
                 DB::rollback();
                 return [
                     'code' => 1,
@@ -360,9 +365,12 @@ class NewLicenseCodeController extends Controller
             // 从首页过来的
             $auth_code = "";
             if (isset($data['type']) && $data['type'] == 1) {
+
                 $codes = getApiByBatch($data);
-                $auth_code = $codes[0];
-                if (strlen($auth_code) != 12) {
+                Log::warning('Codes: ' . json_encode($codes));
+                $codeData = $codes[0];
+                $auth_code = $codeData['code'];
+                if (strlen($auth_code) > 10) {
                     DB::rollback();  //回滚
                     return [
                         'code' => 1,
@@ -372,35 +380,47 @@ class NewLicenseCodeController extends Controller
                 }
                 $param = [
                     'assort_id' => $data['assort_id'],
-                    'user_id' => \Auth::guard('admin')->user()->id,
+                    'user_id' => Auth::guard('admin')->user()->id,
                     'auth_code' => $auth_code,
                     'num' => 1,
-                    'type' => \Auth::guard('admin')->user()->type,
+                    'type' => Auth::guard('admin')->user()->type,
                     'profit' => isset($user_profit->money) ? $user_profit->money : 0.00,
+                    'remark' => "Type: {$codeData['type']}, Vendor: {$codeData['vendor']}, Source: " . ($codeData['source'] ?? 'Unknown') . (isset($data['remark']) && $data['remark'] ? ' - ' . $data['remark'] : ''),
                     'created_at' => date("Y-m-d H:i:s", time()),
                     'updated_at' => date("Y-m-d H:i:s", time()),
                 ];
                 $list[] = $param;
                 $total_money = $equipment->money;
                 $try_num = $equipment->assorts->try_num;
-            } else {  // 批量添加的
+            } else {
+                // 批量添加的
+                // call Helper function
                 $codes = getApiByBatch($data);
-                for ($i = 1; $i <= $data['number']; $i++) {
-                    if (strlen($codes[$i - 1]) != 12) {
+
+                if (count($codes) == 0) {
+                    return [
+                        'code' => 1,
+                        'msg' => __('No Code Generated, Please contact Administrator'),
+                        'redirect' => false
+                    ];
+                }
+
+                foreach ($codes as $codeData) {
+                    if (strlen($codeData['code']) < 10) {
                         return [
                             'code' => 1,
-                            'msg' => trans('authCode.exceed'),
+                            'msg' => __('Invalid Code Length Generated: ') . $codeData['code'],
                             'redirect' => false
                         ];
                     }
                     $param = [
                         'assort_id' => $data['assort_id'],
-                        'user_id' => \Auth::guard('admin')->user()->id,
-                        'auth_code' => $codes[$i - 1],
+                        'user_id' => Auth::guard('admin')->user()->id,
+                        'auth_code' => $codeData['code'],
                         'num' => $data['number'],
-                        'type' => \Auth::guard('admin')->user()->type,
+                        'type' => Auth::guard('admin')->user()->type,
                         'profit' => isset($user_profit->money) ? $user_profit->money : 0.00,
-                        'remark' => $data['remark'],
+                        'remark' => "Type: {$codeData['type']}, Vendor: {$codeData['vendor']}, Source: " . ($codeData['source'] ?? 'Unknown') . (isset($data['remark']) && $data['remark'] ? ' - ' . $data['remark'] : ''),
                         'created_at' => date("Y-m-d H:i:s", time()),
                         'updated_at' => date("Y-m-d H:i:s", time()),
                     ];
@@ -414,24 +434,24 @@ class NewLicenseCodeController extends Controller
             $info_where = ['auth_code' => $auth_code];
             $info_code = AuthCodeRepository::findByWhere($info_where);
             // 生成code用户的火币相应减少
-            $where_user = ['id' => \Auth::guard('admin')->user()->id];
+            $where_user = ['id' => Auth::guard('admin')->user()->id];
             AdminUserRepository::decr($where_user, $total_money);
             if ($try_num > 0) {
                 AdminUserRepository::incrByTry($where_user, $try_num);
             }
             // 上级增加相应的金额
-            $this->getSuperior($data, $total_money, \Auth::guard('admin')->user()->pid, \Auth::guard('admin')->user()->id, \Auth::guard('admin')->user()->name);
+            $this->getSuperior($data, $total_money, Auth::guard('admin')->user()->pid, Auth::guard('admin')->user()->id, Auth::guard('admin')->user()->name);
             // 添加火币日志记录（自己的火币记录）
             $huobi = [
-                'user_id' => \Auth::guard('admin')->user()->id,
+                'user_id' => Auth::guard('admin')->user()->id,
                 'money' => $equipment->money * $data['number'],
                 'status' => 0,
                 'type' => 2,
                 'number' => $data['number'],
-                'event' => \Auth::guard('admin')->user()->name . " " . trans('general.generate') . $equipment->assorts->assort_name,
-                'own_id' => \Auth::guard('admin')->user()->id,   // 事件用户id
+                'event' => Auth::guard('admin')->user()->name . " " . trans('general.generate') . $equipment->assorts->assort_name,
+                'own_id' => Auth::guard('admin')->user()->id,   // 事件用户id
                 'assort_id' => $equipment->assorts->id,
-                'user_account' => \Auth::guard('admin')->user()->account,
+                'user_account' => Auth::guard('admin')->user()->account,
                 'created_at' => date("Y-m-d H:i:s", time()),
                 'updated_at' => date("Y-m-d H:i:s", time()),
             ];
@@ -439,7 +459,7 @@ class NewLicenseCodeController extends Controller
             if ($try_num > 0) {
                 // 添加试用码记录(自己的试用码记录)
                 $try = [
-                    'user_id' => \Auth::guard('admin')->user()->id,
+                    'user_id' => Auth::guard('admin')->user()->id,
                     'number' => $try_num,
                     'description' => trans('general.generate') . $equipment->assorts->assort_name,
                     'created_at' => date("Y-m-d H:i:s", time()),
@@ -449,6 +469,7 @@ class NewLicenseCodeController extends Controller
             }
 
             DB::commit();  //提交
+            Log::info('Authorization code(s) created successfully for user ID ' . Auth::guard('admin')->user()->id . '. Total cost: ' . $total_money);
             return [
                 'code' => 0,
                 'msg' => trans('general.createSuccess'),
@@ -457,6 +478,7 @@ class NewLicenseCodeController extends Controller
                 'id' => isset($info_code->id) ? $info_code->id : "",
             ];
         } catch (QueryException $e) {
+            Log::warning('Error in save method: ' . $e->getMessage());
             DB::rollback();  //回滚
             return [
                 'code' => 1,
@@ -482,8 +504,8 @@ class NewLicenseCodeController extends Controller
             $level_where = ['id' => $pid];
             $level = AdminUserRepository::findByWhere($level_where);
             // 最顶级（国代）用户id
-            // $parent_id = $this->getParentId(\Auth::guard('admin')->user()->id);
-            $parent_id = (new AdminUtilityService())->getParentId(\Auth::guard('admin')->user()->id);
+            // $parent_id = $this->getParentId(Auth::guard('admin')->user()->id);
+            $parent_id = (new AdminUtilityService())->getParentId(Auth::guard('admin')->user()->id);
             // 1.1 如果上级用户已经注销，则直接获取国代用户
             if ($level->is_cancel == 2) {  // 代表该用户已经注销并已经国代管理员都审核通过
                 $parent_where = ['id' => $parent_id];
@@ -530,7 +552,7 @@ class NewLicenseCodeController extends Controller
                 'own_id' => $id,   // 事件用户id
                 'create_id' => $id, // 当前用户id
                 'assort_id' => $equipment->assorts->id,
-                'user_account' => \Auth::guard('admin')->user()->account,
+                'user_account' => Auth::guard('admin')->user()->account,
                 'created_at' => date("Y-m-d H:i:s", time()),
                 'updated_at' => date("Y-m-d H:i:s", time()),
             ];
@@ -673,7 +695,7 @@ class NewLicenseCodeController extends Controller
      */
     public function detail(Request $request)
     {
-        $where['user_id'] = \Auth::guard('admin')->user()->id;
+        $where['user_id'] = Auth::guard('admin')->user()->id;
         $where['is_try'] = 1;
         $info = AuthCode::query()->where($where)->orderBy('id', 'desc')->first();
         $code_list = AuthCode::query()->where($where)->orderBy('id', 'desc')->limit($info->num)->get();

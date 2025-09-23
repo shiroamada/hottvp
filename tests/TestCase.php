@@ -21,9 +21,8 @@ abstract class TestCase extends BaseTestCase
         config()->set('session.driver', 'array');
         \Illuminate\Support\Facades\Session::start();
 
-        // If you want to disable exception handling for all tests, keep this line.
-        // Otherwise, remove it to allow exceptions to be thrown during tests.
-        $this->withoutExceptionHandling();
+    // Allow Laravel to handle exceptions normally so validation errors are stored in session
+    // $this->withoutExceptionHandling();
     }
 
     //

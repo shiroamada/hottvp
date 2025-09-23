@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Kuala_Lumpur',
 
     /*
     |--------------------------------------------------------------------------
@@ -137,4 +137,14 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Pre-Generated Codes Feature Toggle
+    |--------------------------------------------------------------------------
+    |
+    | This option enables or disables the pre-generated codes feature.
+    | When enabled, users can import and manage pre-generated codes.
+    |
+    */
+    'pre_generated_codes_enabled' => env('PRE_GENERATED_CODES_ENABLED', false),
 ];

@@ -76,5 +76,35 @@ This project is a Laravel-based application designed for managing code redemptio
 *   The application uses Laravel Breeze for authentication and authorization.
 *   All pages should extend the `resources/views/layouts/master.blade.php` layout for a consistent look and feel.
 
+## Pre-generated Codes Toggle and Behavior
+
+The activation code retrieval pathway is controlled by the `PRE_GENERATED_CODES_ENABLED` toggle (config key `app.pre_generated_codes_enabled`).
+
+- When `PRE_GENERATED_CODES_ENABLED=true` (enabled):
+    - `getApiByBatch()` will use only locally stored pre-generated codes from the `pre_generated_codes` pool.
+    - If the pool has fewer codes than requested, it returns only the available codes, logs a warning, and notifies the admin. It will not call the external API nor generate local fallback codes.
+
+- When `PRE_GENERATED_CODES_ENABLED=false` (disabled):
+    - `getApiByBatch()` will call the external API first and retry up to 3 times on failure.
+    - If the API fails after retries, it falls back to pre-generated codes for the remainder.
+    - If there is still a shortfall after using pre-generated codes, it logs a warning, notifies the admin, and may generate local fallback codes to fulfill the request.
+
+Each returned code includes a `source` attribute indicating `API`, `PreGeneratedCode`, or `FallbackLocal`. Controllers append this source to the persisted remark for traceability.
+
+### Testing in SQLite
+
+This project includes a `.env.testing` configured for SQLite. To run the specific feature tests added for this behavior:
+
+```bash
+php artisan --env=testing migrate:fresh
+./vendor/bin/pest tests/Feature/GetApiByBatchTest.php
+```
+
+If you need to run only a single test by name, use Pest's `-t` filter:
+
+```bash
+./vendor/bin/pest -t "retries API 3 times"
+```
+
 ## GEMINI READ HERE IMPORTANT
 * NOW THE WAYS TO PROCEED THIS MIGRATION PROJECT, FIRST COPY THE WHOLE CONTENT OF THE CONTROLLERS AND ONLY THEN TO CREATE NEEDED REPOSITORY OR MODELS FILE AND THEN MIGRATE THE SYNTAX FROM LARAVEL 6 TO LARAVEL 12 IF NEEDED. main goal is to migrate the business logic from the project completely, and if you want to do a different or create different thing always ask me first

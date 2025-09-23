@@ -10,12 +10,7 @@
                 </h3>
                 @if (Route::has('admin.register'))
                 <div class="flex items-center justify-center font-medium">
-                    <span class="text-sm text-secondary-foreground me-1.5">
-                        Need an account?
-                    </span>
-                    <a class="text-sm link" href="{{ route('admin.register') }}">
-                        Sign up
-                    </a>
+
                 </div>
                 @endif
             </div>
@@ -76,11 +71,6 @@
                     <label for="password" class="kt-form-label font-normal text-mono">
                         Password
                     </label>
-                    @if (Route::has('admin.password.request'))
-                    <a class="text-sm kt-link shrink-0" href="{{ route('admin.password.request') }}">
-                        Forgot Password?
-                    </a>
-                    @endif
                 </div>
                 <div class="kt-input @error('password') border-danger @enderror" data-kt-toggle-password="true">
                     <input id="password" name="password" placeholder="Enter Password" type="password" required autocomplete="current-password"/>
@@ -93,6 +83,11 @@
                         </span>
                     </button>
                 </div>
+                @if (Route::has('admin.password.request'))
+                <a class="text-sm kt-link shrink-0" href="{{ route('admin.password.request') }}">
+                    Forgot Password?
+                </a>
+                @endif
                 @error('password')
                     <div class="text-danger text-sm mt-1">{{ $message }}</div>
                 @enderror
