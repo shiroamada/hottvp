@@ -2031,7 +2031,7 @@ namespace App\Http\Controllers\Admin;
 
                 return [
                     'code' => 0,
-                    'msg' => trans('general.createSuccess'),
+                    'msg' => trans('adminUser.adjust_success'),
                     'redirect' => true,
                 ];
             } catch (QueryException $e) {

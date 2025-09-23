@@ -44,7 +44,7 @@
                 <div class="kt-card-header">
                     <h3 class="kt-card-title">{{ __('messages.license_generate.title') }}</h3>
                 </div>
-                <form action="{{ route('admin.code.save') }}" method="post" id="form" onsubmit="return false;">
+                <form action="{{ route('admin.code.save') }}" method="post" id="form" onsubmit="return false;" data-list-url="{{ route('admin.code.index') }}">
 {{ csrf_field() }}
 <input class="kt-input" type="hidden" name="mini_money" value="" id="mini_money">
 

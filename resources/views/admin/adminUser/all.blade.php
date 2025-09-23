@@ -156,7 +156,7 @@
                                             <li>
                                               <a class="kt-dropdown-menu-link kt-link-stripe"
                                                  href="{{ route('admin.users.visual', ['id' => $list->id]) }}">
-                                                {{ trans('adminUser.check') }}
+                                                {{ trans('adminUser.detail') }}
                                               </a>
                                             </li>
 
@@ -169,7 +169,7 @@
                                               </li>
                                             @endif
 
-                                            @if($list->is_cancel != 2)
+                                            <!-- @if($list->is_cancel != 2)
                                               <li>
                                                 <a class="kt-dropdown-menu-link kt-link-stripe"
                                                    href="{{ route('admin.users.lower', ['id' => $list->id]) }}">
@@ -177,7 +177,7 @@
                                                 </a>
                                               </li>
                                               
-                                            @endif
+                                            @endif -->
                                           @else
                                             <li>
                                               <a class="kt-dropdown-menu-link kt-link-stripe"
