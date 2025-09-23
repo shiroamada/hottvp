@@ -108,7 +108,22 @@
     <tr>
         <td>{{ $code->auth_code }}</td>
         <td>{{ $code->assort->assort_name ?? 'N/A' }}</td>
-        <td>{{ $code->remark }}</td>
+        <td>
+            @if(mb_strlen($code->remark) > 10)
+                <div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative">
+                    <span class="cursor-pointer">
+                        {{ mb_substr($code->remark, 0, 10) }}...
+                    </span>
+                    <div x-show="open"
+                         x-transition
+                         class="absolute z-10 w-64 p-2 -mt-1 text-sm leading-tight text-white transform -translate-x-1/2 -translate-y-full bg-gray-800 rounded-lg shadow-lg">
+                        {{ $code->remark }}
+                    </div>
+                </div>
+            @else
+                {{ $code->remark }}
+            @endif
+        </td>
         <td>
             @if($code->status == 0)
                 <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">{{ __('authCode.status_unused') }}</span>

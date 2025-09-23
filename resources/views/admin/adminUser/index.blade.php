@@ -145,72 +145,75 @@
 
                                                 <td>{{ $v['created_at'] }}</td>
 
-                                                <!-- Actions dropdown (details/summary with purple left stripe highlight) -->
                                                 <td class="text-end">
-                                                  <details class="relative group" data-row="{{ $v['id'] }}">
-                                                    <summary
-                                                      class="kt-btn kt-btn-sm kt-btn-primary select-none cursor-pointer list-none"
-                                                      aria-haspopup="menu"
-                                                      aria-expanded="false"
-                                                    >
+                                                  <!-- KTUI Dropdown wrapper -->
+                                                  <div class="inline-flex"
+                                                       data-kt-dropdown="true"
+                                                       data-kt-dropdown-trigger="click"
+                                                       data-kt-dropdown-placement="bottom-end">
+                                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-primary"
+                                                            data-kt-dropdown-toggle="true">
                                                       {{ __('messages.agent_list.table.action') }}
-                                                    </summary>
+                                                    </button>
 
-                                                    <div
-                                                      role="menu"
-                                                      class="absolute right-0 mt-2 rounded-md shadow-md border border-border bg-card text-card-foreground py-2 z-50 min-w-[150px]"
-                                                      style="background-color: var(--background-card);"
-                                                    >
-                                                      @if(auth()->guard('admin')->user()->id != 2)
-                                                        <a class="block px-4 py-2 text-sm" role="menuitem"
-                                                           href="{{ route('admin.users.check', ['id' => $v['id']]) }}">
-                                                          {{ __('messages.agent_list.check') }}
-                                                        </a>
+                                                    <!-- KTUI Dropdown content -->
+                                                    <div class="kt-dropdown-menu w-56" data-kt-dropdown-menu="true">
+                                                      <ul class="kt-dropdown-menu-sub">
+                                                        @if(auth()->guard('admin')->user()->id != 2)
+                                                          <li>
+                                                            <a class="kt-dropdown-menu-link kt-link-stripe"
+                                                               href="{{ route('admin.users.check', ['id' => $v['id']]) }}">
+                                                              {{ __('messages.agent_list.check') }}
+                                                            </a>
+                                                          </li>
 
-                                                        @if($v['is_cancel'] == 0)
-                                                          <a class="block px-4 py-2 text-sm" role="menuitem"
-                                                             href="{{ route('admin.users.recharge', ['id' => $v['id']]) }}">
-                                                            {{ __('messages.agent_list.recharge') }}
-                                                          </a>
+                                                          @if($v['is_cancel'] == 0)
+                                                            <li>
+                                                              <a class="kt-dropdown-menu-link kt-link-stripe"
+                                                                 href="{{ route('admin.users.recharge', ['id' => $v['id']]) }}">
+                                                                {{ __('messages.agent_list.recharge') }}
+                                                              </a>
+                                                            </li>
+                                                          @endif
+
+                                                          @if($v['is_cancel'] != 2)
+                                                            <li>
+                                                              <a class="kt-dropdown-menu-link kt-link-stripe"
+                                                                 href="{{ route('admin.users.lower', ['id' => $v['id']]) }}">
+                                                                {{ __('messages.agent_list.lower_agent') }}
+                                                              </a>
+                                                            </li>
+                                                          @endif
+                                                        @else
+                                                          <li>
+                                                            <a class="kt-dropdown-menu-link kt-link-stripe"
+                                                               href="{{ route('admin.users.look', ['id' => $v['id']]) }}">
+                                                              {{ __('messages.agent_list.check_cost') }}
+                                                            </a>
+                                                          </li>
+                                                          <li>
+                                                            <a class="kt-dropdown-menu-link kt-link-stripe"
+                                                               href="{{ route('admin.users.lower', ['id' => $v['id']]) }}">
+                                                              {{ __('messages.agent_list.lower') }}
+                                                            </a>
+                                                          </li>
+                                                          <li>
+                                                            <a class="kt-dropdown-menu-link kt-link-stripe"
+                                                               href="{{ route('admin.users.check', ['id' => $v['id']]) }}">
+                                                              {{ __('messages.agent_list.check') }}
+                                                            </a>
+                                                          </li>
+                                                          <li>
+                                                            <a class="kt-dropdown-menu-link kt-link-stripe"
+                                                               href="{{ route('admin.users.recharge', ['id' => $v['id']]) }}">
+                                                              {{ __('messages.agent_list.recharge') }}
+                                                            </a>
+                                                          </li>
                                                         @endif
-
-                                                        @if($v['is_cancel'] != 2)
-                                                          
-
-                                                          <!-- <form action="{{ route('admin.users.delete', $v->id) }}" method="POST"
-                                                                onsubmit="return confirm('{{ __('messages.general.delete_confirm') }}');">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm" role="menuitem">
-                                                              {{ __('messages.agent_list.delete') }}
-                                                            </button>
-                                                          </form> -->
-
-                                                          <a class="block px-4 py-2 text-sm" role="menuitem"
-                                                             href="{{ route('admin.users.lower', ['id' => $v['id']]) }}">
-                                                            {{ __('messages.agent_list.lower_agent') }}
-                                                          </a>
-                                                        @endif
-                                                      @else
-                                                        <a class="block px-4 py-2 text-sm" role="menuitem"
-                                                           href="{{ route('admin.users.look', ['id' => $v['id']]) }}">
-                                                          {{ __('messages.agent_list.check_cost') }}
-                                                        </a>
-                                                        <a class="block px-4 py-2 text-sm" role="menuitem"
-                                                           href="{{ route('admin.users.lower', ['id' => $v['id']]) }}">
-                                                          {{ __('messages.agent_list.lower') }}
-                                                        </a>
-                                                        <a class="block px-4 py-2 text-sm" role="menuitem"
-                                                           href="{{ route('admin.users.check', ['id' => $v['id']]) }}">
-                                                          {{ __('messages.agent_list.check') }}
-                                                        </a>
-                                                        <a class="block px-4 py-2 text-sm" role="menuitem"
-                                                           href="{{ route('admin.users.recharge', ['id' => $v['id']]) }}">
-                                                          {{ __('messages.agent_list.recharge') }}
-                                                        </a>
-                                                      @endif
+                                                      </ul>
                                                     </div>
-                                                  </details>
+                                                  </div>
+                                                  <!-- End KTUI Dropdown -->
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -241,78 +244,19 @@
 
 @push('styles')
 <style>
-  :root {
-    --background-card: #ffffff;
-    --hover-background: #f3f4f6;      /* light hover bg */
-    --hover-text: #111827;            /* near-black text */
-    --active-color: #6366f1;          /* indigo-500 (purple-ish) */
-    --active-color-dark: #818cf8;     /* indigo-400 (for dark mode stripe) */
+  /* Reusable “left stripe + padding shift” for KTUI items */
+  .kt-link-stripe{
+    position:relative;display:block;padding:.5rem .75rem .5rem 1rem;transition:all .2s ease
   }
-  .dark {
-    --background-card: #1f2937;       /* gray-800 */
-    --hover-background: #374151;      /* gray-700 */
-    --hover-text: #f9fafb;            /* gray-50 */
-    --active-color: #818cf8;          /* lighter for contrast in dark */
-    --active-color-dark: #a5b4fc;     /* even lighter stripe in dark */
+  .kt-link-stripe::before{
+    content:"";position:absolute;inset-block:0;inset-inline-start:0;width:3px;
+    background: var(--kt-primary, rgb(99 102 241));opacity:0;transition:opacity .2s ease
   }
-
-  /* Hide default ▶ marker on <summary> */
-  details > summary::-webkit-details-marker { display: none; }
-  details > summary { outline: none; }
-
-  /* Base item style in the dropdown */
-  [role="menu"] a,
-  [role="menu"] button {
-    position: relative;
-    border-left: 3px solid transparent;
-    transition: all 0.2s ease;
-    overflow: hidden; /* keep the stripe snug */
+  .kt-link-stripe:hover,.kt-link-stripe:focus-visible{
+    background: rgba(0,0,0,.06);padding-inline-start: calc(1rem - 3px);outline:none
   }
-
-  /* Hover/Focus states + purple left stripe */
-  [role="menu"] a:hover,
-  [role="menu"] a:focus,
-  [role="menu"] button:hover,
-  [role="menu"] button:focus {
-    background-color: var(--hover-background);
-    color: var(--hover-text);
-    border-left-color: var(--active-color);
-    padding-left: calc(1rem - 3px); /* compensate for border-left */
-    outline: none;
-  }
-
-  /* The visual stripe itself */
-  [role="menu"] a:hover::before,
-  [role="menu"] a:focus::before,
-  [role="menu"] button:hover::before,
-  [role="menu"] button:focus::before {
-    content: "";
-    position: absolute;
-    left: 0; top: 0;
-    height: 100%; width: 3px;
-    background-color: var(--active-color);
-  }
-
-  /* Active press feedback */
-  [role="menu"] a:active,
-  [role="menu"] button:active {
-    background-color: var(--active-color);
-    color: #fff;
-  }
-
-  /* Dark-mode: use lighter purple for the stripe & border */
-  .dark [role="menu"] a:hover,
-  .dark [role="menu"] a:focus,
-  .dark [role="menu"] button:hover,
-  .dark [role="menu"] button:focus {
-    border-left-color: var(--active-color-dark);
-  }
-  .dark [role="menu"] a:hover::before,
-  .dark [role="menu"] a:focus::before,
-  .dark [role="menu"] button:hover::before,
-  .dark [role="menu"] button:focus::before {
-    background-color: var(--active-color-dark);
-  }
+  .kt-link-stripe:hover::before,.kt-link-stripe:focus-visible::before{opacity:1}
+  .dark .kt-link-stripe:hover,.dark .kt-link-stripe:focus-visible{background: rgba(255,255,255,.10)}
 </style>
 @endpush
 

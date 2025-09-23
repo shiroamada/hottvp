@@ -128,11 +128,20 @@
                                     {{ number_format($profit, 2) }}
                                   </td>
 
-                                  <td title="{{ $list->remark }}">
+                                  <td>
                                     @if(mb_strlen($list->remark) > 10)
-                                      {{ mb_substr($list->remark, 0, 10) }}...
+                                        <div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative">
+                                            <span class="cursor-pointer">
+                                                {{ mb_substr($list->remark, 0, 10) }}...
+                                            </span>
+                                            <div x-show="open"
+                                                 x-transition
+                                                 class="absolute z-10 w-64 p-2 -mt-1 text-sm leading-tight text-white transform -translate-x-1/2 -translate-y-full bg-gray-800 rounded-lg shadow-lg">
+                                                {{ $list->remark }}
+                                            </div>
+                                        </div>
                                     @else
-                                      {{ $list->remark }}
+                                        {{ $list->remark }}
                                     @endif
                                   </td>
 
