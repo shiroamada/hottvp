@@ -10,6 +10,8 @@ class PreGeneratedCode extends Model
     use HasFactory;
 
     public const TYPES = [
+        '1days' => '1 Day',
+        '7days' => '7 Days',
         '30days' => '30 Days',
         '90days' => '90 Days',
         '180days' => '180 Days',
