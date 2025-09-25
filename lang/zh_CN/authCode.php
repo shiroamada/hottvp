@@ -69,4 +69,6 @@ return [
     'generated_codes' => '生成的授权码',
     'new_remark' => '新备注',
     'generated_trial_codes' => '生成的试用授权码',
+    'insufficient_pregenerated_codes' => '授权码不足，请联系管理员',
+
 ];

@@ -69,4 +69,6 @@ return [
     'generated_codes' => 'Kod yang Dihasilkan',
     'new_remark' => 'Catatan Baharu',
     'generated_trial_codes' => 'Kod Percubaan yang Dihasilkan',
+    'insufficient_pregenerated_codes' => 'Kod pra-jana tidak mencukupi tersedia. Sia hubungi Admin',
+
 ];

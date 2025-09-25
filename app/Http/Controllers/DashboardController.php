@@ -14,6 +14,7 @@ use App\Repository\Admin\AdminUserRepository;
 use App\Repository\Admin\EquipmentRepository;
 use App\Models\Assort;
 use App\Models\AssortLevel;
+use App\Models\Defined;
 use App\Models\Admin\Huobi;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

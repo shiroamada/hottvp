@@ -13,6 +13,7 @@ use App\Repository\Admin\AuthCodeRepository;
 use App\Repository\Admin\AdminUserRepository;
 use App\Repository\Admin\EquipmentRepository;
 use App\Models\Assort;
+use App\Models\Defined;
 use App\Models\AssortLevel;
 use App\Models\Admin\Huobi;
 use Carbon\Carbon;

@@ -284,13 +284,17 @@
      @auth('admin')
      <!-- User -->
      <div data-kt-dropdown="true" data-kt-dropdown-offset="10px, 10px" data-kt-dropdown-offset-rtl="-20px, 10px" data-kt-dropdown-placement="bottom-start" data-kt-dropdown-placement-rtl="bottom-end" data-kt-dropdown-trigger="click">
+      @php
+          $userPhoto = Auth::guard('admin')->user()->photo ?? null;
+          $profileImage = $userPhoto ? $userPhoto : asset('public/images/users/user-09-247x247.png');
+      @endphp
       <div class="cursor-pointer shrink-0" data-kt-dropdown-toggle="true">
-       <img alt="" class="size-9 rounded-full border-2 border-mono/25 shrink-0" src="/assets/media/avatars/gray/5.png"/>
+       <img alt="" class="size-9 rounded-full border-2 border-mono/25 shrink-0" src="{{ $profileImage }}"/>
       </div>
       <div class="kt-dropdown-menu w-[250px]" data-kt-dropdown-menu="true">
        <div class="flex items-center justify-between px-2.5 py-1.5 gap-1.5">
         <div class="flex items-center gap-2">
-         <img alt="" class="size-9 shrink-0 rounded-full border-2 border-green-500" src="/assets/media/avatars/300-2.png"/>
+         <img alt="" class="size-9 shrink-0 rounded-full border-2 border-green-500" src="{{ $profileImage }}"/>
          <div class="flex flex-col gap-1.5">
           <span class="text-sm text-foreground font-semibold leading-none">
            {{ Auth::guard('admin')->user()->name }}

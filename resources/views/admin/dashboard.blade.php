@@ -78,7 +78,7 @@
                 </select>
             </div>
             <!-- Button that triggers the modal -->
-            <button class="kt-btn kt-btn-primary w-full sm:w-auto whitespace-nowrap" type="button" data-kt-modal-toggle="#activationModal" id="submitBtn">
+            <button class="kt-btn kt-btn-primary w-full sm:w-auto whitespace-nowrap" type="button" id="submitBtn" disabled>
                 {{ __('general.authorization_code') }}
             </button>
         </div>
@@ -330,11 +330,46 @@ document.addEventListener('DOMContentLoaded', function() {
     var csrf_token = $('meta[name="csrf-token"]').attr('content') || '{{csrf_token()}}';
     console.log('Authorization Code Script: CSRF Token:', csrf_token);
 
-    // Modal toggle functions
-    
+    var submitBtn = document.getElementById('submitBtn');
+    var standardSelect = document.getElementById('standardSelect');
+    var activationModalElement = document.getElementById('activationModal');
+
+    function updateSubmitButtonState() {
+        if (submitBtn && standardSelect) {
+            if (standardSelect.value === "") {
+                submitBtn.setAttribute('disabled', 'true');
+                submitBtn.classList.add('kt-btn-disabled'); // Add a class for styling disabled state
+            } else {
+                submitBtn.removeAttribute('disabled');
+                submitBtn.classList.remove('kt-btn-disabled'); // Remove the class
+            }
+        }
+    }
+
+    function showActivationModal() {
+        if (activationModalElement) {
+            // Assuming KTUI provides a way to get an instance and show it
+            var ktModal = KTModal.getInstance(activationModalElement);
+            if (ktModal) {
+                ktModal.show();
+            } else {
+                // If no instance exists, create one (common for first time use)
+                new KTModal(activationModalElement).show();
+            }
+        }
+    }
+
+    // Initial state update
+    updateSubmitButtonState();
+
+    // Event listener for dropdown changes
+    if (standardSelect) {
+        standardSelect.addEventListener('change', updateSubmitButtonState);
+    } else {
+        console.error('Authorization Code Script: standardSelect not found');
+    }
 
     // Button click handler for generating code
-    var submitBtn = document.getElementById('submitBtn');
     if (submitBtn) {
         console.log('Authorization Code Script: submitBtn found');
         submitBtn.addEventListener('click', function() {
@@ -380,12 +415,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (result.remark) {
                             $("#standardRemark").val(result.remark);
                         }
+                        showActivationModal(); // Manually show the modal on success
                     },
                     error: function (resp, stat, text) {
                         console.error('Authorization Code Script: AJAX Error:', resp.status, text, resp.responseText);
-                        alert("{{ __('home.error_generating_code') }}");
-                        // KTUI will hide the modal via data-kt-modal-dismiss
-                        // hideModal(); // Removed custom hideModal call
+                        // Simplified error messages for code generation
+                        if (resp.status === 404) {
+                            alert("{{ __('home.save_feature_not_found') }}");
+                        } else if (resp.status === 422) {
+                            alert("{{ __('home.invalid_data_provided') }}");
+                        } else if (resp.status === 500) {
+                            alert("{{ __('home.server_error') }}");
+                        } else {
+                            alert("{{ __('home.unknown_error') }}");
+                        }
                     }
                 });
             });

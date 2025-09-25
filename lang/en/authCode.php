@@ -71,5 +71,5 @@ return [
     'generated_codes' => 'Generated Codes',
     'new_remark' => 'New Remark',
     'generated_trial_codes' => 'Generated Trial Codes',
-    'insufficient_pregenerated_codes' => 'Insufficient pre-generated codes available.',
+    'insufficient_pregenerated_codes' => 'Insufficient pre-generated codes available.Please Contact Admin',
 ];

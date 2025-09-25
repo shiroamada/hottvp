@@ -380,6 +380,14 @@ class NewLicenseCodeController extends Controller
 
                 $codes = getApiByBatch($data);
                 Log::warning('Codes: ' . json_encode($codes));
+                if (empty($codes)) {
+                    DB::rollback();
+                    return [
+                        'code' => 1,
+                        'msg' => trans('authCode.insufficient_pregenerated_codes'),
+                        'redirect' => false
+                    ];
+                }
                 $codeData = $codes[0];
                 $auth_code = $codeData['code'];
                 if (strlen($auth_code) < 10) {
