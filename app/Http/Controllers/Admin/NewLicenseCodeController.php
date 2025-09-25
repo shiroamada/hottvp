@@ -237,7 +237,7 @@ class NewLicenseCodeController extends Controller
             }
             $codes = getApiByBatch($data);
             foreach ($codes as $codeData) {
-                if (strlen($codeData['code']) > 10) {
+                if (strlen($codeData['code']) < 10) {
                     return [
                         'code' => 1,
                         'msg' => 'Invalid Code Generated: ' . $codeData['code'],
@@ -370,7 +370,7 @@ class NewLicenseCodeController extends Controller
                 Log::warning('Codes: ' . json_encode($codes));
                 $codeData = $codes[0];
                 $auth_code = $codeData['code'];
-                if (strlen($auth_code) > 10) {
+                if (strlen($auth_code) < 10) {
                     DB::rollback();  //回滚
                     return [
                         'code' => 1,

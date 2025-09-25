@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('content')
 <!-- Page -->
@@ -8,7 +8,7 @@
 <header class="flex lg:hidden items-center fixed z-10 top-0 start-0 end-0 shrink-0 bg-muted h-(--header-height)" id="header">
 <!-- Container -->
 <div class="kt-container-fixed flex items-center justify-between flex-wrap gap-3">
-
+   
     <button class="kt-btn kt-btn-icon kt-btn-ghost -me-2" data-kt-drawer-toggle="#sidebar">
     <i class="ki-filled ki-menu">
     </i>
@@ -18,10 +18,10 @@
 </header>
 <!-- End of Header -->
 @include('layouts/partials/_sidebar')
-<!-- Wrapper -->
+<!-- Wrapper -->         
 <div class="flex flex-col lg:flex-row grow pt-(--header-height) lg:pt-0">
 <!-- Main -->
-<div class="flex flex-col grow items-stretch rounded-xl bg-background border border-input lg:ms-(--sidebar-width) mt-0 lg:mt-[15px] m-[15px]">
+    <div class="flex flex-col grow items-stretch bg-background border border-input lg:ms-(--sidebar-width) mt-0">
     <div class="flex flex-col grow kt-scrollable-y-auto [--kt-scrollbar-width:auto] pt-5" id="scrollable_content">
     <main class="grow" role="content">
     <!-- Toolbar -->
@@ -44,28 +44,38 @@
                 <div class="kt-card-header">
                     <h3 class="kt-card-title">{{ __('messages.license_generate.title') }}</h3>
                 </div>
-                <form action="{{ route('admin.code.save') }}" method="post" id="form" onsubmit="return false;" data-list-url="{{ route('admin.code.index') }}">
+                <form action="{{ route('admin.code.save') }}" method="post" id="form" onsubmit="return false;" data-list-url="{{ route('admin.code.index') }}"
+    data-msg-quantity-required="{{ __('messages.license_generate.quantity_required') }}"
+    data-msg-quantity-digits="{{ __('messages.license_generate.quantity_digits') }}"
+    data-msg-amount-required="{{ __('messages.license_generate.amount_required') }}"
+    data-msg-amount-number="{{ __('messages.license_generate.amount_number') }}"
+    data-msg-type-required="{{ __('messages.license_generate.type_required') }}"
+>
 {{ csrf_field() }}
 <input class="kt-input" type="hidden" name="mini_money" value="" id="mini_money">
 
 <div class="kt-card-content grid gap-5">
     <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
         <label class="kt-form-label max-w-56">{{ __('messages.license_generate.type') }}</label>
-        <select class="kt-select grow" id="standardSelect" name="assort_id">
-            <option value="0">{{ __('messages.license_generate.choose_code_type') }}</option>
-            @foreach($equipment ?? null as $v)
-                <option value="{{ $v->assort_id }}"
-                        emoney="{{ $v->money }}">{{ $v->assorts->assort_name }} {{ $v->money }} {{ trans('huobi.money') }}
-                </option>
-            @endforeach
-        </select>
+        <div class="grow">
+            <select class="kt-select w-full" id="standardSelect" name="assort_id">
+                <option value="0">{{ __('messages.license_generate.choose_code_type') }}</option>
+                @foreach($equipment ?? null as $v)
+                    <option value="{{ $v->assort_id }}"
+                            emoney="{{ $v->money }}">{{ $v->assorts->assort_name }} {{ $v->money }} {{ trans('huobi.money') }}
+                    </option>
+                @endforeach
+            </select>
+            <div class="kt-form-message"></div>
+        </div>
     </div>
 
     <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
         <label class="kt-form-label max-w-56">{{ __('messages.license_generate.quantity') }}</label>
-        <input class="kt-input grow" id="num" name="number" type="text" maxlength="3" autocomplete="off" />
-
-        <div class="kt-form-message"></div>
+        <div class="grow">
+            <input class="kt-input w-full" id="num" name="number" type="text" maxlength="3" autocomplete="off" />
+            <div class="kt-form-message"></div>
+        </div>
     </div>
 
     <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
@@ -113,7 +123,19 @@
 <!-- End of Base -->
 <!-- End of Page -->
 @endsection
+@push('styles')
+<style>
+    .is-invalid {
+        border-color: red !important;
+    }
 
+    .has-error .select2-selection,
+    .has-error select,
+    .has-error input {
+        border-color: red !important;
+    }
+</style>
+@endpush
 @push('scripts')
 @vite('resources/js/license-generator.js')
 @endpush

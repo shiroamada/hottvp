@@ -87,6 +87,17 @@ return [
         ],
     ],
 
+    'license_list.code' => '授权码',
+    'license_list.type' => '类型',
+    'license_list.remark' => '备注',
+    'license_list.status' => '状态',
+    'license_list.created_at' => '创建于',
+    'license_list.expired_at' => '到期于',
+    'license_list.status_unused' => '未使用',
+    'license_list.status_used' => '已使用',
+    'license_list.status_expired' => '已过期',
+    'license_list.no_codes_found' => '未找到授权码。',
+
     'trial_code_list' => [
         'title' => '试用码列表',
         'trial_code_id' => '试用码ID',
@@ -165,7 +176,7 @@ return [
     'license_generate' => [
         'title' => '批量生成激活码',
         'type' => '类型',
-        'choose_code_type' => '请选择代码类型',
+        'choose_code_type' => '请选择授权码类型',
         'quantity' => '数量',
         'remarks' => '备注',
         'need_hotcoin' => '需要WOW币',
@@ -179,25 +190,30 @@ return [
         'license_365_day' => '365天许可证授权码 60.00WOW币',
         'license_1_day' => '1天许可证授权码 1.00WOW币',
         'license_7_day' => '7天许可证授权码 3.00WOW币',
+        'quantity_required' => '请输入数量',
+        'quantity_digits' => '请输入正确数量',
+        'amount_required' => '请输入金额',
+        'amount_number' => '请输入正确金额',
+        'type_required' => '未选择授权码类型',
     ],
 
     'pre_generated_codes' => [
-        'import_success' => '成功导入 :count 个代码！',
+        'import_success' => '成功导入 :count 个授权码！',
         'import_error' => '导入过程中发生错误。请检查日志。',
         'create' => [
-            'title' => '导入预生成代码',
-            'codes_label' => '代码（每行一个）',
+            'title' => '导入预生成授权码',
+            'codes_label' => '授权码（每行一个）',
             'codes_placeholder' => "code1\ncode2\ncode3\ncode4\ncode5",
             'type_label' => '类型',
             'vendor_label' => '供应商',
             'remark_label' => '备注',
-            'submit' => '导入代码',
+            'submit' => '导入授权码',
         ],
         'index' => [
-            'title' => '预生成代码',
-            'import_button' => '导入代码',
-            'code_label' => '代码',
-            'code_placeholder' => '输入代码',
+            'title' => '预生成授权码',
+            'import_button' => '导入授权码',
+            'code_label' => '授权码',
+            'code_placeholder' => '输入授权码',
             'status_label' => '状态',
             'status_all' => '全部',
             'status_available' => '可用',
@@ -205,8 +221,8 @@ return [
             'date_range_label' => '导入日期范围',
             'date_range_placeholder' => '选择日期范围',
             'search' => '搜索',
-            'table_title' => '代码列表',
-            'col_code' => '代码',
+            'table_title' => '授权码列表',
+            'col_code' => '授权码',
             'col_type' => '类型',
             'col_vendor' => '供应商',
             'col_remark' => '备注',
@@ -218,7 +234,7 @@ return [
             'badge_available' => '可用',
             'badge_requested' => '已请求',
             'na' => '无',
-            'empty' => '未找到代码。',
+            'empty' => '未找到授权码。',
         ],
     ],
 
@@ -231,6 +247,8 @@ return [
         'apply_for_trial_code' => '申请试用码',
         'reset' => '重置',
         'return' => '返回',
+        'quantity_required' => '请输入数量。',
+        'quantity_digits' => '请输入有效的数量。',
     ],
 
     // Costing Page
@@ -279,6 +297,14 @@ return [
         'auth_code_fail' => '授权码生成失败',
         'exceed' => '超出限制',
     ],
+
+    'license_detail' => [
+        'title' => '最后一批详情',
+        'download_batch' => '下载批次',
+        'back_to_list' => '返回列表',
+        'last_batch_codes' => '最后一批生成的授权码',
+    ],
+
     // Agent Detail Page
     'agent_detail' => [
         'title' => '代理人详情',
@@ -304,9 +330,9 @@ return [
     'huobi' => [
         'money' => 'WOW币',
     ],
-    'sidebar.pre_generated_codes.title' => '预生成代码',
-    'sidebar.pre_generated_codes.import' => '导入代码',
-    'sidebar.pre_generated_codes.list' => '代码列表',
-    'pre_generated_codes.import_success' => '成功导入 :count 个代码！',
+    'sidebar.pre_generated_codes.title' => '预生成授权码',
+    'sidebar.pre_generated_codes.import' => '导入授权码',
+    'sidebar.pre_generated_codes.list' => '授权码列表',
+    'pre_generated_codes.import_success' => '成功导入 :count 个授权码！',
     'pre_generated_codes.import_error' => '导入过程中发生错误。请检查日志。',
 ];

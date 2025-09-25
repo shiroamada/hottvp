@@ -96,7 +96,7 @@ return [
     'cancel_tips1' => "You have ",
     'cancel_tips2' => " WOWCOIN, obtain after account deletion",
     'cancel_tips3' =>"Please fill the information：",
-
+    'photo_upload_tip' => "Maximum file size: 5MB",
     'define_set' => "agent cost information is incomplete, please fill in",
     'define_empty' => "Agent cost information can not be empty, please fill in",
     'define_cost' => "Agent cost can not lower than the minimum limit.",

@@ -173,6 +173,10 @@ return [
 
     // License Generation Page
     'license_generate' => [
+        'quantity_required' => 'Please enter quantity',
+        'quantity_digits' => 'Please enter a valid quantity',
+        'amount_required' => 'Please enter amount',
+        'amount_number' => 'Please enter a valid amount',
         'title' => 'Batch Generation Activation Code',
         'type' => 'Type',
         'choose_code_type' => 'Please Choose the Code Type',
@@ -189,6 +193,7 @@ return [
         'license_365_day' => '365-day license code 60.00 WOWCOIN',
         'license_1_day' => '1-day license code 1.00 WOWCOIN',
         'license_7_day' => '7-day license code 3.00 WOWCOIN',
+        'type_required' => 'Please select a code type',
     ],
 
     // Trial Generation Page
@@ -200,6 +205,8 @@ return [
         'apply_for_trial_code' => 'APPLY FOR TRIAL CODE',
         'reset' => 'RESET',
         'return' => 'RETURN',
+        'quantity_required' => 'Please enter a quantity.',
+        'quantity_digits' => 'Please enter a valid quantity.',
     ],
 // Agent Detail Page
 'agent_detail' => [
@@ -384,6 +391,13 @@ return [
     // AdminUser
     'adminUser.assort' => 'Assort',
     'adminUser.entry_barriers' => 'Entry Barriers',
+
+    'license_detail' => [
+        'title' => 'Last Batch Details',
+        'download_batch' => 'Download Batch',
+        'back_to_list' => 'Back to List',
+        'last_batch_codes' => 'Last Batch Generated Codes',
+    ],
 
     'license_generate.return' => 'Return',
 

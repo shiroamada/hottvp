@@ -129,6 +129,17 @@ return [
         ],
     ],
 
+    'license_list.code' => 'Kod',
+    'license_list.type' => 'Jenis',
+    'license_list.remark' => 'Catatan',
+    'license_list.status' => 'Status',
+    'license_list.created_at' => 'Dicipta Pada',
+    'license_list.expired_at' => 'Tarikh Luput',
+    'license_list.status_unused' => 'Belum Digunakan',
+    'license_list.status_used' => 'Telah Digunakan',
+    'license_list.status_expired' => 'Telah Luput',
+    'license_list.no_codes_found' => 'Tiada kod ditemui.',
+
     'agent_list' => [
         'title' => 'Senarai Ejen',
         'add_new_agent' => 'Tambah Ejen Baharu',
@@ -160,6 +171,11 @@ return [
 
     // License Generation Page
     'license_generate' => [
+        'type_required' => 'Belum Pilih Jenis Kod',
+         'quantity_required' => 'Sila masukkan kuantiti',
+        'quantity_digits' => 'Sila masukkan kuantiti yang sah',
+        'amount_required' => 'Sila masukkan amaun',
+        'amount_number' => 'Sila masukkan amaun yang sah',
         'title' => 'Penjanaan Kod Pengaktifan Secara Berkelompok',
         'type' => 'Jenis',
         'choose_code_type' => 'Sila Pilih Jenis Kod',
@@ -228,6 +244,8 @@ return [
         'apply_for_trial_code' => 'MOHON KOD PERCUBAAN',
         'reset' => 'TETAPKAN SEMULA',
         'return' => 'KEMBALI',
+        'quantity_required' => 'Sila masukkan kuantiti.',
+        'quantity_digits' => 'Sila masukkan kuantiti yang sah.',
     ],
 // Agent Detail Page
 'agent_detail' => [
@@ -300,6 +318,14 @@ return [
     'huobi' => [
         'money' => 'WOWCOIN',
     ],
+
+    'license_detail' => [
+        'title' => 'Butiran Kumpulan Terakhir',
+        'download_batch' => 'Muat Turun Kumpulan',
+        'back_to_list' => 'Kembali ke Senarai',
+        'last_batch_codes' => 'Kod Dihasilkan Kumpulan Terakhir',
+    ],
+
     'sidebar.pre_generated_codes.title' => 'Kod Pra-Jana',
     'sidebar.pre_generated_codes.import' => 'Import Kod',
     'sidebar.pre_generated_codes.list' => 'Senarai Kod',

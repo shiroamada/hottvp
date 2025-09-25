@@ -12,7 +12,7 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-
+'user_info' => 'Info Peribadi',
     'id' => 'ID',
     'status' => 'Status',
     'hotcoin_transaction.title'  => 'Pengurusan WOWCOIN',
@@ -89,7 +89,7 @@ return [
     'captcha_code' => "Jawapan",
     'captcha_refresh' => "Klik untuk memuat semula kod pengesahan",
     'log_in' => "Log masuk",
-    'as_lower' => "Bawahan kepada",
+    'as_lower' => "Bawahan -",
     'generate' => "jana",
     'uploading' => "sedang memuat naik...",
     'illegal_request' => "Halaman tidak sah, sila muat semula dan cuba lagi",
@@ -110,7 +110,7 @@ return [
     "max_length" => "Data melebihi had maksimum",
 
     "excel" => "Eksport Excel",
-    "export_excel" => "Pilih Bulan untuk Eksport",
+    "export_excel" => "Eksport Excel",
     "resources_not" => "Sumber tidak wujud",
     "login_first" => "Sila log masuk dahulu",
     "Overvisiting" => "Akses terlalu kerap, sila cuba lagi nanti",

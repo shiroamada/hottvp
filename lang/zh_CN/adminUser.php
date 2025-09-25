@@ -44,7 +44,7 @@ return [
     'recharge_time' => '充值时间',
     'recharge_num' => '充值金额',
 
-
+'photo_upload_tip' => "最大文件容量: 5MB",
     'create_form_title' => '代理人资料填写',
     'agent_name_placeholder' => '代理人名字',
     'assort' => '授权码类型',

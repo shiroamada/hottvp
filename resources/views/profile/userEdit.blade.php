@@ -4,8 +4,7 @@
 <div class="flex grow">
     @include('layouts.partials._sidebar')
     <div class="flex flex-col lg:flex-row grow pt-(--header-height) lg:pt-0">
-        <div class="flex flex-col grow items-stretch rounded-xl bg-background border border-input lg:ms-(--sidebar-width) mt-0 lg:mt-[15px] m-[15px]">
-            <div class="flex flex-col grow kt-scrollable-y-auto [--kt-scrollbar-width:auto] pt-5" id="scrollable_content">
+      <div class="flex flex-col grow items-stretch bg-background border border-input lg:ms-(--sidebar-width) mt-0">            <div class="flex flex-col grow kt-scrollable-y-auto [--kt-scrollbar-width:auto] pt-5" id="scrollable_content">
                 <main class="grow" role="content">
                     <div class="pb-5">
                         <div class="kt-container-fixed flex items-center justify-between flex-wrap gap-3">
@@ -71,7 +70,7 @@
                                             <!-- Remark (Editable) -->
                                             <div class="md:col-span-2">
                                                 <label for="remark" class="text-sm text-muted-foreground">{{ trans('adminUser.remark') }}:</label>
-                                                <textarea id="remark" name="remark" class="kt-input w-full" maxlength="128">{{ old('remark', $info->remark ?? '') }}</textarea>
+                                                <textarea id="remark" name="remark" class="kt-textarea w-full" maxlength="128">{{ old('remark', $info->remark ?? '') }}</textarea>
                                                 @error('remark')
                                                     <p class="text-danger text-xs mt-1">{{ $message }}</p>
                                                 @enderror

@@ -107,9 +107,9 @@ return [
     "range" => "请选择日期范围",
     "to" => "至",
     "max_length" => "数据已超出最大限制",
-
+'user_info' => '个人资料',
     "excel" => "导出Excel",
-    "export_excel" => "请选择月份导出",
+    "export_excel" => "导出Excel",
     "resources_not" => "资源不存在",
     "login_first" => "请先登录",
     "Overvisiting" => "访问太过频繁,请稍后再试",
