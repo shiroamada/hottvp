@@ -236,8 +236,20 @@ class NewLicenseCodeController extends Controller
                 ];
             }
             $codes = getApiByBatch($data);
+
+            // Check if enough codes were generated
+            if (count($codes) < (int)$data['number']) {
+                DB::rollback();
+                return [
+                    'code' => 1,
+                    'msg' => trans('authCode.insufficient_pregenerated_codes'),
+                    'redirect' => false
+                ];
+            }
+
             foreach ($codes as $codeData) {
                 if (strlen($codeData['code']) < 10) {
+                    DB::rollback(); // Rollback if an invalid code is found
                     return [
                         'code' => 1,
                         'msg' => 'Invalid Code Generated: ' . $codeData['code'],
@@ -476,6 +488,7 @@ class NewLicenseCodeController extends Controller
                 'redirect' => true,
                 'data' => $auth_code,
                 'id' => isset($info_code->id) ? $info_code->id : "",
+                'remark' => isset($info_code->remark) ? $info_code->remark : "",
             ];
         } catch (QueryException $e) {
             Log::warning('Error in save method: ' . $e->getMessage());

@@ -133,6 +133,7 @@ return [
     "inconformity" => 'Nisbah Lebar Dan Tinggi Tidak Konsisten',
     "select_level" => 'Sila pilih tahap',
     "param_all" => 'Parameter Tidak Lengkap',
+    'photo_upload_tip' => "Saiz fail maksimum: 5MB",
     "entry_barriers" => 'Ambang masuk',
     "recharge_money" => 'Jumlah Pengisian Tidak Boleh Kurang Dari 1',
     "type" => 'Jenis terbuka',

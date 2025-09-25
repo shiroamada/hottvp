@@ -377,6 +377,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         $("#auth_code").html(result.data);
                         $("#copy").attr("data-clipboard-text", result.data);
                         window.code_id = result.id;
+                        if (result.remark) {
+                            $("#standardRemark").val(result.remark);
+                        }
                     },
                     error: function (resp, stat, text) {
                         console.error('Authorization Code Script: AJAX Error:', resp.status, text, resp.responseText);
