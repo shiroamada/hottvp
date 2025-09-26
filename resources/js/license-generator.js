@@ -13,18 +13,40 @@ function onlyNumber(str) {
 
 // Retain decimal places
 function RetainedDecimalPlaces(val, places) {
-    if (!val) return '';
-    return parseFloat(val).toFixed(places);
+    const num = parseFloat(val);
+    if (isNaN(num)) {
+        return '0.00'; // Return 0.00 for invalid numbers
+    }
+    return num.toFixed(places);
 }
 
 $(function () {
-    // Input filtering for #number
-    $('#number').on('input', function () {
+    // Function to update the hotcoin needed field and hidden mini_money
+    function updateHuobi() {
+        const emoney = parseFloat($('#standardSelect option:selected').attr('emoney')) || 0;
+        const quantity = parseInt($('#num').val()) || 0;
+        const total = emoney * quantity;
+
+        $('#huobi').val(RetainedDecimalPlaces(total, 2));
+        $('#mini_money').val(emoney);
+    }
+
+    // Input filtering for #num
+    $('#num').on('input', function () {
         const filtered = onlyNumber($(this).val());
         if (filtered !== $(this).val()) {
             $(this).val(filtered);
         }
+        updateHuobi(); // update hotcoin when quantity changes
     });
+
+    // Update #huobi and #mini_money when #standardSelect changes
+    $('#standardSelect').on('change', function () {
+        updateHuobi();
+    });
+
+    // Initial calculation on page load
+    updateHuobi();
 
     // jQuery validation setup
     $('#form').validate({
@@ -48,8 +70,8 @@ $(function () {
             $(element).removeClass('is-invalid');
         },
         errorPlacement: function (error, element) {
-            // Put the error right after the input
-            error.insertAfter(element);
+            // Put the error right after the input and set color to red
+            error.insertAfter(element).css('color', 'red');
         },
         submitHandler: function (form) {
             $.ajax({
