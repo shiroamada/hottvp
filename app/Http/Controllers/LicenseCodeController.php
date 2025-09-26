@@ -118,7 +118,7 @@ class LicenseCodeController extends Controller
 
             DB::commit();
 
-            return redirect()->route('license.list')->with('success', 'Successfully generated '.$quantity.' license codes.');
+            return redirect()->route('admin.license.list')->with('success', 'Successfully generated '.$quantity.' license codes.');
         } catch (\Exception $e) {
             DB::rollBack();
 

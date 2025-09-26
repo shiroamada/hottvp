@@ -32,13 +32,13 @@
                                 </h1>
                             </div>
                             <div class="flex items-center gap-3">
-                                <a href="{{ route('license.generate') }}" class="kt-btn kt-btn-primary">
+                                <a href="{{ route('admin.license.generate') }}" class="kt-btn kt-btn-primary">
                                     {{ __('authCode.newAuthCode') }}
                                 </a>
-                                <a href="{{ route('license.detail') }}" class="kt-btn kt-btn-outline kt-btn-secondary">
+                                <a href="{{ route('admin.license.detail') }}" class="kt-btn kt-btn-outline kt-btn-secondary">
                                     {{ __('authCode.view_last_batch') }}
                                 </a>
-                                <a href="{{ route('license.down') }}" class="kt-btn kt-btn-outline kt-btn-secondary">
+                                <a href="{{ route('admin.license.down') }}" class="kt-btn kt-btn-outline kt-btn-secondary">
                                     {{ __('authCode.export_last_batch') }}
                                 </a>
                             </div>
@@ -50,7 +50,7 @@
                     <div class="kt-container-fixed">
                         <div class="kt-card mb-5">
                             <div class="kt-card-content">
-                                <form action="{{ route('license.list') }}" method="GET" class="grid sm:grid-cols-2 md:grid-cols-4 gap-5">
+                                <form action="{{ route('admin.license.list') }}" method="GET" class="grid sm:grid-cols-2 md:grid-cols-4 gap-5">
                                     <div class="kt-form-item">
                                         <label for="auth_code" class="kt-form-label">{{ __('authCode.auth_code') }}</label>
                                         <input type="text" id="auth_code" name="auth_code" class="kt-input" placeholder="{{ __('authCode.enter_code') }}" value="{{ request('auth_code') }}">
@@ -79,7 +79,7 @@
                                     </div>
                                     <div class="md:col-span-4 flex justify-end gap-3">
                                         <button type="submit" class="kt-btn kt-btn-primary">{{ __('general.search') }}</button>
-                                        <a href="{{ route('license.export', request()->query()) }}" class="kt-btn kt-btn-outline kt-btn-primary">{{ __('general.export_excel') }}</a>
+                                        <a href="{{ route('admin.license.export', request()->query()) }}" class="kt-btn kt-btn-outline kt-btn-primary">{{ __('general.export_excel') }}</a>
                                     </div>
                                 </form>
                             </div>
@@ -181,7 +181,7 @@
                 </button>
             </div>
             <div class="kt-modal-body">
-                <form id="update-remark-form-{{ $list->id }}" action="{{ route('license.update', $list->id) }}" method="POST">
+                <form id="update-remark-form-{{ $list->id }}" action="{{ route('admin.license.update', $list->id) }}" method="POST">
                     @csrf
                     <div class="mb-5">
                         <label for="remark-{{ $list->id }}" class="kt-form-label">{{ __('authCode.remark') }}</label>
@@ -239,7 +239,7 @@
         if(exportBtn) {
             exportBtn.addEventListener('click', function (e) {
                 e.preventDefault();
-                const form = document.querySelector('form[action="{{ route('license.list') }}"]');
+                const form = document.querySelector('form[action="{{ route('admin.license.list') }}"]');
                 const formData = new FormData(form);
                 const params = new URLSearchParams(formData);
                 // remove empty params

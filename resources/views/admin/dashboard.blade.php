@@ -460,7 +460,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         return false;
                     }
                     if (result.redirect) {
-                        location.href = '{{ route('license.list') ?? '/admin/code' }}';
+                        location.href = '{{ route('admin.license.list') ?? '/admin/code' }}';
                     }
                     // KTUI will hide the modal via data-kt-modal-dismiss
                     // hideModal(); // Removed custom hideModal call

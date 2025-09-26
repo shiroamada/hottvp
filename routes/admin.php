@@ -16,12 +16,58 @@ use App\Http\Controllers\Admin\EquipmentController;
 use App\Http\Controllers\Admin\HuobiController;
 use App\Http\Controllers\Admin\LevelController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AgentController;
+use App\Http\Controllers\TrialCodeController;
+use App\Http\Controllers\CostingController;
 
 // Start with the most essential routes for admin users
 Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
     ->group(function () {
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+
+        // Profile Management (moved from web.php)
+        Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+
+        // Agent Management (moved from web.php)
+        Route::prefix('agents')->name('agent.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\AgentController::class, 'list'])->name('list');
+            Route::get('/create', [\App\Http\Controllers\AgentController::class, 'create'])->name('create');
+        });
+
+        // License Code Management (moved from web.php)
+        Route::get('/license/generate', [NewLicenseCodeController::class, 'create'])->name('license.generate');
+        Route::post('/license/generate', [NewLicenseCodeController::class, 'store'])->name('license.store');
+        Route::get('/license/list', [NewLicenseCodeController::class, 'index'])->name('license.list');
+        Route::get('/license/export', [NewLicenseCodeController::class, 'export'])->name('license.export');
+        Route::get('/license/detail', [NewLicenseCodeController::class, 'detail'])->name('license.detail');
+        Route::get('/license/down', [NewLicenseCodeController::class, 'down'])->name('license.down');
+        Route::post('/license/{code_id}/update', [NewLicenseCodeController::class, 'update'])->name('license.update');
+
+        // Agent Management (views, moved from web.php)
+        Route::get('/agent/list', function () {
+            return view('agent.list');
+        })->name('agent.list.view');
+        Route::get('/agent/create', function () {
+            return view('agent.create');
+        })->name('agent.create.view');
+
+        // Other menus (views, moved from web.php)
+        Route::get('/hotcoin/transaction', function () {
+            return view('hotcoin.transaction');
+        })->name('hotcoin.transaction');
+        Route::get('/all-agents/list', function () {
+            return view('all-agents.list');
+        })->name('all-agents.list');
+        Route::get('/password/change', function () {
+            return view('password.change');
+        })->name('password.change');
+        Route::get('/costing', [\App\Http\Controllers\CostingController::class, 'index'])->name('costing.index')->middleware('check.level');
+        Route::post('/costing/update', [\App\Http\Controllers\CostingController::class, 'update'])->name('costing.update')->middleware('check.level');
 
 
 

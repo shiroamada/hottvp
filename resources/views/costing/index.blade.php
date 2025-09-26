@@ -128,7 +128,7 @@
                     customized_minimum_cost: row.querySelector('input[name="customized_minimum_cost"]').value,
                 };
 
-                fetch('{{ route('costing.update') }}', {
+                fetch('{{ route('admin.costing.update') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

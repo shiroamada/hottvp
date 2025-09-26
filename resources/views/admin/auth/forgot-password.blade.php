@@ -39,7 +39,7 @@
         </button>
 
         <div class="text-center mt-2">
-            <a href="{{ route('login') }}" class="text-sm text-primary hover:underline">
+            <a href="{{ route('admin.login') }}" class="text-sm text-primary hover:underline">
                 Back to login
             </a>
         </div>

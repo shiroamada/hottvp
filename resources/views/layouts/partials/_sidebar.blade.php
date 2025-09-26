@@ -57,14 +57,14 @@
         </div>
         <div class="kt-menu-accordion gap-px ps-7">
          <div class="kt-menu-item {{ request()->routeIs('license.generate') ? 'active' : '' }}">
-          <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('license.generate') }}">
+          <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('admin.license.generate') }}">
            <span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
             {{ __('messages.sidebar.license_code_management.generate') }}
            </span>
           </a>
          </div>
          <div class="kt-menu-item {{ request()->routeIs('license.list') ? 'active' : '' }}">
-          <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('license.list') }}">
+          <a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('admin.license.list') }}">
            <span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
             {{ __('messages.sidebar.license_code_management.list') }}
            </span>
@@ -246,7 +246,7 @@
          </div>
          @if(Auth::guard('admin')->check() && Auth::guard('admin')->user()->level_id == 3)
          <div class="kt-menu-item {{ request()->routeIs('costing.index') ? 'active' : '' }}">
-          <a class="kt-menu-link py-1 px-2 my-0.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('costing.index') }}">
+          <a class="kt-menu-link py-1 px-2 my-0.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('admin.costing.index') }}">
            <span class="kt-menu-icon text-secondary-foreground kt-menu-link-hover:text-mono rounded-md flex place-content-center size-7 me-2.5 bg-border border border-input kt-menu-item-active:border-none kt-menu-link-hover:border-light kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-none kt-menu-icon-xs">
             <i class="ki-filled ki-abstract-39">
             </i>
@@ -258,7 +258,7 @@
          </div>
          @endif
          <div class="kt-menu-item {{ request()->routeIs('license.list') ? 'active' : '' }}">
-          <a class="kt-menu-link py-1 px-2 my-0.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('license.list') }}">
+          <a class="kt-menu-link py-1 px-2 my-0.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('admin.license.list') }}">
            <span class="kt-menu-icon text-secondary-foreground kt-menu-link-hover:text-mono rounded-md flex place-content-center size-7 me-2.5 bg-border border border-input kt-menu-item-active:border-none kt-menu-link-hover:border-light kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-none kt-menu-icon-xs">
             <i class="ki-filled ki-abstract-39">
             </i>

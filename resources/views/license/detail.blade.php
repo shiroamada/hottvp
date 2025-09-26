@@ -32,10 +32,10 @@
                                 </h1>
                             </div>
                             <div class="flex items-center gap-3">
-                                <a href="{{ route('license.down') }}" class="kt-btn kt-btn-primary">
+                                <a href="{{ route('admin.license.down') }}" class="kt-btn kt-btn-primary">
                                     {{ __('messages.license_detail.download_batch') }}
                                 </a>
-                                <a href="{{ route('license.list') }}" class="kt-btn kt-btn-outline kt-btn-primary">
+                                <a href="{{ route('admin.license.list') }}" class="kt-btn kt-btn-outline kt-btn-primary">
                                     {{ __('messages.license_detail.back_to_list') }}
                                 </a>
                             </div>
