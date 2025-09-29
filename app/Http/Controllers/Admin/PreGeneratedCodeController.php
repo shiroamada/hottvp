@@ -36,7 +36,6 @@ class PreGeneratedCodeController extends Controller
                 $query->whereNotNull('requested_at');
             }
         }
-cc cc
         if ($request->filled('type')) {
             $query->where('type', $request->input('type'));
         }
