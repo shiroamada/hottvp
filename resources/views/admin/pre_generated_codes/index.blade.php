@@ -43,10 +43,19 @@
                     <div class="kt-container-fixed pb-5">
                         <div class="kt-card mb-5">
                             <div class="kt-card-content">
-                                <form action="{{ route('admin.pre_generated_codes.index') }}" method="GET" class="grid sm:grid-cols-2 md:grid-cols-3 gap-5" id="filter-form">
+                                <form action="{{ route('admin.pre_generated_codes.index') }}" method="GET" class="grid sm:grid-cols-2 md:grid-cols-4 gap-5" id="filter-form">
                                     <div class="kt-form-item">
                                         <label for="code" class="kt-form-label">{{ __('messages.pre_generated_codes.index.code_label') }}</label>
                                         <input type="text" id="code" name="code" class="kt-input" placeholder="{{ __('messages.pre_generated_codes.index.code_placeholder') }}" value="{{ request('code') }}">
+                                    </div>
+                                    <div class="kt-form-item">
+                                        <label for="type" class="kt-form-label">{{ __('messages.pre_generated_codes.index.type_label') }}</label>
+                                        <select id="type" name="type" class="kt-select">
+                                            <option value="">{{ __('messages.pre_generated_codes.index.type_all') }}</option>
+                                            @foreach($types as $key => $value)
+                                                <option value="{{ $key }}" @if(request('type') === $key) selected @endif>{{ $value }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="kt-form-item">
                                         <label for="status" class="kt-form-label">{{ __('messages.pre_generated_codes.index.status_label') }}</label>
@@ -60,7 +69,7 @@
                                         <label for="date_range" class="kt-form-label">{{ __('messages.pre_generated_codes.index.date_range_label') }}</label>
                                         <input type="text" id="date_range" name="imported_at" class="kt-input" placeholder="{{ __('messages.pre_generated_codes.index.date_range_placeholder') }}" value="{{ request('imported_at') }}">
                                     </div>
-                                    <div class="md:col-span-3 flex justify-end gap-3">
+                                    <div class="md:col-span-4 flex justify-end gap-3">
                                         <button type="submit" class="kt-btn kt-btn-primary">{{ __('messages.pre_generated_codes.index.search') }}</button>
                                     </div>
                                 </form>

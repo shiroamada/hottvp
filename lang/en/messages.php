@@ -488,6 +488,8 @@ return [
             'import_button' => 'Import Codes',
             'code_label' => 'Code',
             'code_placeholder' => 'Enter code',
+            'type_label' => 'Type',
+            'type_all' => 'All Types',
             'status_label' => 'Status',
             'status_all' => 'All',
             'status_available' => 'Available',

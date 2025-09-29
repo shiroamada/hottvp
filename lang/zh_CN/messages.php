@@ -214,6 +214,8 @@ return [
             'import_button' => '导入授权码',
             'code_label' => '授权码',
             'code_placeholder' => '输入授权码',
+            'type_label' => '类型',
+            'type_all' => '所有类型',
             'status_label' => '状态',
             'status_all' => '全部',
             'status_available' => '可用',

@@ -211,6 +211,8 @@ return [
             'import_button' => 'Import Kod',
             'code_label' => 'Kod',
             'code_placeholder' => 'Masukkan kod',
+            'type_label' => 'Jenis',
+            'type_all' => 'Semua Jenis',
             'status_label' => 'Status',
             'status_all' => 'Semua',
             'status_available' => 'Tersedia',
