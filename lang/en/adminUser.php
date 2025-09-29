@@ -50,7 +50,7 @@ return [
     'a_cost_limit' => 'Agent Cost Limit',
     'u_profit' => 'Your Profit',
     'use_huobi' => 'Your Available WOWCOIN Amount:',
-    'tips1' => 'Select Level Is ',
+    'tips1' => 'Selected Level Is ',
     'tips2' => 'Agent, Minimum Top Up is ',
     'tips3' => ' WOWCOIN',
     'agency_tips' => 'Agent cost can not be lower than your own cost',

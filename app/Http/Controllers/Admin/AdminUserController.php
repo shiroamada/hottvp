@@ -829,6 +829,10 @@ namespace App\Http\Controllers\Admin;
                 $utility->isAjax($request);
                 $data = $request->only($this->formNames);
 
+                // The form may submit extra data ('agency', 'assort', etc.) that are not columns
+                // in the admin_users table. We must unset them before the update operation.
+                unset($data['agency'], $data['assort'], $data['choice'], $data['own'], $data['price']);
+
                 if ($request->input('password') == '') {
                     unset($data['password']);
                 }

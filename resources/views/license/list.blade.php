@@ -213,9 +213,10 @@
             </div>
             <div class="kt-modal-body">
                 <input type="hidden" id="modal_code_id_input">
+                <label for="modal_remark_input" class="form-label">{{ __('authCode.new_remark') }}:</label>
+
                 <div class="mb-3">
-                    <label for="modal_remark_input" class="form-label">{{ __('authCode.new_remark') }}:</label>
-                    <input type="text" class="form-control" id="modal_remark_input" maxlength="128">
+                    <textarea class="form-control" id="modal_remark_input" rows="4" maxlength="128"></textarea>
                 </div>
             </div>
             <div class="kt-modal-footer">

@@ -44,7 +44,7 @@
               <div class="grid gap-5 lg:gap-7.5">
                 <div class="kt-card kt-card-grid min-w-full">
                   <!-- Card Header: Filters + Totals -->
-                  <div class="kt-card-header flex-wrap gap-4 justify-between">
+                  <div class="kt-card-header flex-wrap gap-4 justify-between p-4">
                     <form
                       name="admin_list_sea"
                       class="form-search flex flex-wrap items-end gap-2"
@@ -53,7 +53,7 @@
                     >
                       @csrf
                       <div class="flex flex-col gap-1">
-                        <label for="date2" class="text-sm text-muted-foreground">{{ __('general.range') }}</label>
+                        <!-- <label for="date2" class="text-sm text-muted-foreground">{{ __('general.range') }}</label> -->
                         <input
                           class="kt-input w-60"
                           placeholder="{{ __('general.range') }}"
@@ -72,9 +72,8 @@
                         </button>
                       </div>
                     </form>
-
                     <!-- Totals -->
-                    <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex flex-wrap items-center gap-4 mb-4">
                       <div class="text-sm">
                         <span class="text-muted-foreground">{{ __('adminUser.all_num') }}:</span>
                         <span class="font-medium">{{ $total_person }}</span>
@@ -110,7 +109,7 @@
                         @endforeach
                       @endisset
                     </div>
-                  <!-- </div> -->
+                  </div>
                   <!-- End Card Header -->
 
                   <!-- Card Content -->
@@ -205,7 +204,8 @@
       laydate.render({
         elem: '#date2',
         range: true,
-        trigger: 'click'
+        trigger: 'click',
+        lang: 'en'
       });
     }
 

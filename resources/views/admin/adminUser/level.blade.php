@@ -80,12 +80,12 @@
                           <span class="text-muted-foreground">{{trans('adminUser.account')}}:</span>
                           <span class="font-medium">{{ $info['account'] }}</span>
                         </div>
-                        @if($info['is_new'] == 0)
+                        <!-- @if($info['is_new'] == 0) //show password if not verified
                           <div class="flex gap-2">
                             <span class="text-muted-foreground">{{trans('adminUser.password')}}:</span>
                             <span class="font-medium">{{ $info['password'] }}</span>
                           </div>
-                        @endif
+                        @endif -->
 
                         <div class="md:col-span-2 flex gap-2">
                           <span class="text-muted-foreground">{{trans('adminUser.remark')}}:</span>
@@ -151,18 +151,21 @@
                             <div class="grid sm:grid-cols-12 gap-2">
                                 <div class="sm:col-start-2 sm:col-span-11">
                                     <span>{{trans('adminUser.use_huobi')}} <span
-                                                style="color: yellow;">{{ number_format(\Auth::guard('admin')->user()->balance, 2)  }}</span></span>
+                                                style="color: white;">{{ number_format(\Auth::guard('admin')->user()->balance, 2)  }}</span></span>
                                 </div>
                             </div>
 
                             <div class="grid sm:grid-cols-12 gap-2 items-center">
                                 <label class="sm:col-span-1 text-sm text-muted-foreground" for="balance">{{trans('adminUser.recharge')}}</label>
-                                <div class="sm:col-span-5">
+                                <div class="sm:col-span-11">
                                     <input class="kt-input" type="text" name="balance" aria-label="Balance"
                                            aria-describedby="icon-addon1" value="" id="balance" onkeyup="onlyNumber(this)"
                                            onblur="onlyNumber(this)" onmouseover="onlyNumber(this)">
                                 </div>
-                                <div class="sm:col-span-6">
+                            </div>
+
+                            <div class="grid sm:grid-cols-12 gap-2">
+                                <div class="sm:col-start-2   sm:col-span-11">
                                     <span class="text-sm" id="choice"></span>
                                 </div>
                             </div>
@@ -200,7 +203,7 @@
         obj.value = obj.value.replace(/^\./g, '');
         obj.value = obj.value.replace(/\.{2,}/g, '.');
         obj.value = obj.value.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.');
-        obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+        obj.value = obj.value.replace(/^(?:-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
         var a = $('#balance').val();
         var b = TripartiteMethod(a);
         $('#balance').val(b);
@@ -252,56 +255,38 @@
         var url = '{{ route('admin.users.info') }}';
         if (level_id > 0) {
             $.ajax({
-                type: "POST",
+                type: "GET",
                 url: url,
                 data: {level_id: level_id},
                 headers: {'X-CSRF-Token': token},
                 success: function (result) {
-                    if (result.code !== 0) {
-                        $("#list-content").html(result);
-                        return false;
+                    // Check if the result is a JSON object with a 'code' property
+                    if (typeof result === 'object' && result.hasOwnProperty('code')) {
+                        if (result.code === 0) {
+                            // JSON success
+                            toastr.success(result.msg, null, {
+                                onHidden: function() {
+                                    if (result.reload || result.redirect) {
+                                        location.reload();
+                                    }
+                                }
+                            });
+                        } else {
+                            // JSON error
+                            toastr.error(result.msg);
+                        }
+                    } else {
+                        // Assumed to be an HTML response for the table
+                        var tableRows = $(result).find('tbody').html();
+                        $("#list-content").html(tableRows);
                     }
-                    layer.msg(result.msg, {shift: 1}, function () {
-                        if (result.reload) {
-                            location.reload();
-                        }
-                        if (result.redirect) {
-                            location.reload(); // ✅ now handles redirect
-                        }
-                    });
                 },
                 error: function (resp, stat, text) {
-                    if (window.form_submit) {
-                        form_submit.prop('disabled', false);
+                    var message = "{{trans('general.internal_error')}}";
+                    if (resp.responseJSON && resp.responseJSON.message) {
+                        message = resp.responseJSON.message;
                     }
-                    if (resp.status === 422) {
-                        var parse = $.parseJSON(resp.responseText);
-                        if (parse) {
-                            layer.msg(parse.msg, {shift: 6, skin: 'alert-secondary alert-lighter'});
-                        }
-                        return false;
-                    } else if (resp.status === 404) {
-                        layer.msg("{{trans('general.resources_not')}}", {icon: 5, skin: 'alert-secondary alert-lighter'});
-                        return false;
-                    } else if (resp.status === 401) {
-                        layer.msg("{{trans('general.login_first')}}", {shift: 6, skin: 'alert-secondary alert-lighter'});
-                        return false;
-                    } else if (resp.status === 429) {
-                        layer.msg("{{trans('general.Overvisiting')}}", {shift: 6, skin: 'alert-secondary alert-lighter'});
-                        return false;
-                    } else if (resp.status === 419) {
-                        layer.msg("{{trans('general.illegal_request')}}", {shift: 6, skin: 'alert-secondary alert-lighter'});
-                        return false;
-                    } else if (resp.status === 500) {
-                        layer.msg("{{trans('general.internal_error')}}", {shift: 6, skin: 'alert-secondary alert-lighter'});
-                        return false;
-                    } else {
-                        var parse = $.parseJSON(resp.responseText);
-                        if (parse) {
-                            layer.alert(parse.msg, {title: false});
-                        }
-                        return false;
-                    }
+                    toastr.error(message);
                 }
             });
         }
@@ -319,45 +304,26 @@
             success: function (result) {
                 if (result.code !== 0) {
                     form_submit.prop('disabled', false);
-                    layer.msg(result.msg, {shift: 6});
+                    toastr.error(result.msg);
                     return false;
                 }
-                layer.msg(result.msg, {shift: 1}, function () {
-                    location.reload();
+                toastr.success(result.msg, null, {
+                    onHidden: function() {
+                        location.reload();
+                    }
                 });
             },
             error: function (resp, stat, text) {
                 if (window.form_submit) {
                     form_submit.prop('disabled', false);
                 }
-                if (resp.status === 422) {
-                    var parse = $.parseJSON(resp.responseText);
-                    if (parse) {
-                        layer.msg(parse.msg, {shift: 6, skin: 'alert-secondary alert-lighter'});
-                    }
-                    return false;
-                } else if (resp.status === 404) {
-                    layer.msg("{{trans('general.resources_not')}}", {icon: 5, skin: 'alert-secondary alert-lighter'});
-                    return false;
-                } else if (resp.status === 401) {
-                    layer.msg("{{trans('general.login_first')}}", {shift: 6, skin: 'alert-secondary alert-lighter'});
-                    return false;
-                } else if (resp.status === 429) {
-                    layer.msg("{{trans('general.Overvisiting')}}", {shift: 6, skin: 'alert-secondary alert-lighter'});
-                    return false;
-                } else if (resp.status === 419) {
-                    layer.msg("{{trans('general.illegal_request')}}", {shift: 6, skin: 'alert-secondary alert-lighter'});
-                    return false;
-                } else if (resp.status === 500) {
-                    layer.msg("{{trans('general.internal_error')}}", {shift: 6, skin: 'alert-secondary alert-lighter'});
-                    return false;
-                } else {
-                    var parse = $.parseJSON(resp.responseText);
-                    if (parse) {
-                        layer.alert(parse.msg);
-                    }
-                    return false;
+                var message = "{{trans('general.internal_error')}}";
+                if (resp.responseJSON && resp.responseJSON.message) {
+                    message = resp.responseJSON.message;
+                } else if (resp.responseJSON && resp.responseJSON.msg) {
+                    message = resp.responseJSON.msg;
                 }
+                toastr.error(message);
             }
         });
 

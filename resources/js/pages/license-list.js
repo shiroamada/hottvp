@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const newRemark = updateRemarkModal.querySelector('#modal_remark_input').value;
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            fetch(`/license/${codeIdToUpdate}/update`, {
+            fetch(`/admin/license/${codeIdToUpdate}/update`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
