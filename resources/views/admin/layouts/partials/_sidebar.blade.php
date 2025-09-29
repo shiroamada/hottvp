@@ -157,6 +157,7 @@
          </span>
         </a>
        </div>
+       @if(Auth::guard('admin')->user()->level_id <= 3)
        <div class="kt-menu-item {{ request()->routeIs('all-agents.list') ? 'active' : '' }}">
         <a class="kt-menu-link gap-2.5 py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="{{ route('all-agents.list') }}">
          <span class="kt-menu-icon items-start text-lg text-secondary-foreground kt-menu-item-active:text-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
@@ -168,6 +169,7 @@
          </span>
         </a>
        </div>
+       @endif
        
       </div>
       <!-- End of Primary Menu -->
