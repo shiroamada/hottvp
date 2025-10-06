@@ -1,6 +1,6 @@
 <x-guest-layout title="Forgot Password">
     <div class="kt-card max-w-[370px] w-full">
-        <form method="POST" action="{{ route('password.email') }}" class="kt-card-content flex flex-col gap-5 p-10" id="reset_password_enter_email_form">
+        <form method="POST" action="{{ route('admin.password.email') }}" class="kt-card-content flex flex-col gap-5 p-10" id="reset_password_enter_email_form">
         @csrf
 
         <!-- Session Status -->

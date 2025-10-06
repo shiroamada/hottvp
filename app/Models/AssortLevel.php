@@ -11,7 +11,7 @@ class AssortLevel extends Model
 
     protected $table = 'assort_levels';
 
-    protected $fillable = ['id', 'level_id', 'assort_id', 'money', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'level_id', 'assort_id', 'money', 'user_id', 'created_at', 'updated_at'];
     
     public function levels()
     {

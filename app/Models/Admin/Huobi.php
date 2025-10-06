@@ -11,15 +11,21 @@ class Huobi extends Model
 
     protected $table = 'huobis'; // Explicitly set table name to match existing usage
 
-    protected $fillable = [
-        'user_id',
-        'event',
-        'money',
-        'description',
-        'related_activation_code_id',
-        'related_agent_id',
-        'transaction_date',
-    ];
+    protected $fillable = ['id', 'user_id', 'event', 'money', 'status', 'created_at', 'updated_at'];
+
+    // protected $fillable = [
+    //     'user_id',
+    //     'event',
+    //     'money',
+    //     'status',
+    //     'type',
+    //     'is_try',
+    //     'number',
+    //     'own_id',
+    //     'create_id',
+    //     'assort_id',
+    //     'user_account',
+    // ];
 
     protected $casts = [
         'transaction_date' => 'datetime',

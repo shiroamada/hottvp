@@ -97,7 +97,7 @@ function getApiByBatch($data)
     $fetchFromApi = function (int $take) use ($user, $data) {
         $apiType = $user->type == 1 ? 2 : 1;
         $apiStr = 'createCode';
-        $api = new APIHelper();
+        $api = app(APIHelper::class);
         $attempts = 0;
         while ($attempts < 3) {
             $attempts++;

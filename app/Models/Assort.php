@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Assort extends Model
 {
+    use HasFactory;
     protected $guarded = [];
     protected $table = 'en_assorts';
 

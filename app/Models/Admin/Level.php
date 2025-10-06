@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Level extends Model
 {
-    protected $fillable = ['id', 'level_name'];
+    protected $fillable = ['id', 'level_name', 'mini_amount'];
 
     protected $table = 'en_levels'; // Default table, will be overridden by constructor
 

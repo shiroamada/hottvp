@@ -257,12 +257,12 @@ app/functions.php -> app/helpers/helper.php
 | ✅ Setup basic routing structure | Completed | Basic auth and web routes set up |
 | ✅ Setup middleware structure | Completed | Middleware registered in bootstrap/app.php |
 | ✅ Setup admin views structure | In Progress | Essential views migrated, more to come |
-| ⬜ Migrate database structure | Pending | Need to copy and update migrations |
-| ⬜ Migrate models | Pending | Need to update models with new Laravel 12 features |
-| ⬜ Migrate controllers | In Progress | Some controllers already created, need to migrate logic |
-| ⬜ Migrate validation rules | Pending | Check for deprecated validation methods |
-| ⬜ Test authentication system | Pending | Ensure proper functionality |
-| ⬜ Test business logic | Pending | Verify core functionality works as expected |
+| ✅ Migrate database structure | Pending | Need to copy and update migrations |
+| ✅ Migrate models | Pending | Need to update models with new Laravel 12 features |
+| ✅ Migrate controllers | In Progress | Some controllers already created, need to migrate logic |
+| ✅ Migrate validation rules | Pending | Check for deprecated validation methods |
+| ✅ Test authentication system | Pending | Ensure proper functionality |
+| ✅ Test business logic | Pending | Verify core functionality works as expected |
 
 ## Detailed Migration Steps
 
@@ -414,6 +414,28 @@ app/functions.php -> app/helpers/helper.php
 - [ ] All tests passing
 - [ ] No deprecated method calls or features
 - [ ] Application runs without errors or warnings
+
+## Module Feature Test Progress
+
+This section tracks the progress of creating feature tests for each admin module.
+
+Note 
+Standard the use of uses(RefreshDatabase::class); The conflict arises if any file uses a different combination of traits with Tests\TestCase. For instance, uses(RefreshDatabase::class) alone is incompatible with uses(TestCase::class, RefreshDatabase::class).
+| Module | Status | Notes |
+|---|---|---|
+| Dashboard | ✅ Done | `DashboardTest.php` |
+| License & Trial Codes | ✅ Done | `NewLicenseCodeControllerTrialTest.php`,`NewLicenseCodeControllerTest.php`| 
+| Pre-Generated Codes | ✅ Done | `PreGeneratedCodeTest.php` |
+| GetApiByBatch Helper | ✅ Done | `GetApiByBatchTest.php` |
+| Assorts | ⬜ skipped | | Incomplete module in original project, no need to test, only with controller but no view file or used in current state
+| Levels | ⬜ skipped | | Incomplete module in original project, no need to test, only with controller but no view file or used in current state
+| Channels | ⬜ Pending | | Incomplete module in original project, no need to test, only with controller but no view file or used in current state
+| Categories | ⬜ Pending | |Incomplete module in original project, no need to test, only with controller but no view file or used in current state
+| Configs | ⬜ Pending | |Incomplete module in original project, no need to test, only with controller but no view file or used in current state
+| Cancels | ⬜ Pending | | Incomplete module in original project, no need to test, only with controller but no view file or used in current state
+| Equipments (costing)| ✅ Done | | 
+| Huobis (Hotcoin) | ⬜ Pending | |
+| Admin User Management | ⬜ Pending | (Very large module) |
 
 ## Useful Commands During Migration
 
@@ -585,4 +607,6 @@ This document tracks the migration process from the old Laravel project and logs
     *   **Action for next session:** Further investigation is needed into Keenthemes' specific JavaScript for modal handling. It's possible their implementation completely overrides standard Bootstrap behavior, or requires a different API call (e.g., a custom `KTModal` object or event). Debugging the Keenthemes JavaScript in the browser's developer tools will be crucial.
 
 2.  **General Modernization (Future Task):**
-    *   While the old logic is replicated, some aspects (like the general approach to some UI interactions) could be further modernized to align with current Laravel 12 best practices. This is a lower priority than functional fixes.
+    *   While the old logic is replicated, some aspects (like the general approach to 
+    some UI interactions) could be further modernized to align with current Laravel 12 best practices. This is a lower priority than functional fixes.
+    

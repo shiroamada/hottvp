@@ -28,20 +28,20 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 
-        // Profile Management (moved from web.php)
-        Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
-        Route::patch('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
-        Route::delete('/profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+        // // Profile Management (moved from web.php)
+        // Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+        // Route::patch('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+        // Route::delete('/profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
 
-        // Agent Management (moved from web.php)
-        Route::prefix('agents')->name('agent.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\AgentController::class, 'list'])->name('list');
-            Route::get('/create', [\App\Http\Controllers\AgentController::class, 'create'])->name('create');
-        });
+        // // Agent Management (moved from web.php)
+        // Route::prefix('agents')->name('agent.')->group(function () {
+        //     Route::get('/', [\App\Http\Controllers\AgentController::class, 'list'])->name('list');
+        //     Route::get('/create', [\App\Http\Controllers\AgentController::class, 'create'])->name('create');
+        // });
 
-        // License Code Management (moved from web.php)
+   //     License Code Management (moved from web.php)
         Route::get('/license/generate', [NewLicenseCodeController::class, 'create'])->name('license.generate');
-        Route::post('/license/generate', [NewLicenseCodeController::class, 'store'])->name('license.store');
+        // Route::post('/license/generate', [NewLicenseCodeController::class, 'store'])->name('license.store');
         Route::get('/license/list', [NewLicenseCodeController::class, 'index'])->name('license.list');
         Route::get('/license/export', [NewLicenseCodeController::class, 'export'])->name('license.export');
         Route::get('/license/detail', [NewLicenseCodeController::class, 'detail'])->name('license.detail');
@@ -63,9 +63,8 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
         Route::get('/all-agents/list', function () {
             return view('all-agents.list');
         })->name('all-agents.list');
-        Route::get('/password/change', function () {
-            return view('password.change');
-        })->name('password.change');
+        Route::get('/password/change', [AdminUserController::class, 'changePwd'])->name('password.change');
+        Route::post('/password/save', [AdminUserController::class, 'savePwd'])->name('password.save');
         Route::get('/costing', [\App\Http\Controllers\CostingController::class, 'index'])->name('costing.index')->middleware('check.level');
         Route::post('/costing/update', [\App\Http\Controllers\CostingController::class, 'update'])->name('costing.update')->middleware('check.level');
 
@@ -189,9 +188,7 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
     Route::get('pre-generated-codes/create', 'PreGeneratedCodeController@create')->name('pre_generated_codes.create');
     Route::post('pre-generated-codes', 'PreGeneratedCodeController@store')->name('pre_generated_codes.store');
 
-    // 个人中心
-    Route::get('center', 'CenterController@index')->name('center.index');
-
+    
         Route::get('/try/list', [NewLicenseCodeController::class, 'list'])->name('try.list');
         Route::get('/try/add', [NewLicenseCodeController::class, 'add'])->name('try.add');
         Route::post('/try/hold', [NewLicenseCodeController::class, 'hold'])->name('try.hold');

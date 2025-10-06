@@ -1,6 +1,6 @@
 <x-guest-layout title="Reset Password">
     <div class="kt-card max-w-[370px] w-full">
-        <form method="POST" action="{{ route('password.store') }}" class="kt-card-content flex flex-col gap-5 p-10" id="reset_password_change_password_form">
+        <form method="POST" action="{{ route('admin.password.store') }}" class="kt-card-content flex flex-col gap-5 p-10" id="reset_password_change_password_form">
         @csrf
 
         <!-- Password Reset Token -->

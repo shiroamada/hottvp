@@ -215,80 +215,85 @@ class NewLicenseCodeController extends Controller
      * @Author: 李军伟
      */
     public function hold(Request $request)
-    {
-        DB::beginTransaction(); //开启事务
-        try {
-            $data = $request->only($this->formNames);
-            $list = [];
-            if ($data['number'] <= 0) {
-                return [
-                    'code' => 1,
-                    'msg' => trans('authCode.code_num'),
-                    'redirect' => false
-                ];
-            }
-            $data['day'] = 1;
-            if ( $data['number'] > Auth::guard('admin')->user()->try_num) {
-                return [
-                    'code' => 1,
-                    'msg' => trans('authCode.exceed_num'),
-                    'redirect' => false
-                ];
-            }
-            $codes = getApiByBatch($data);
-
-            // Check if enough codes were generated
-            if (count($codes) < (int)$data['number']) {
-                DB::rollback();
-                return [
-                    'code' => 1,
-                    'msg' => trans('authCode.insufficient_pregenerated_codes'),
-                    'redirect' => false
-                ];
-            }
-
-            foreach ($codes as $codeData) {
-                if (strlen($codeData['code']) < 10) {
-                    DB::rollback(); // Rollback if an invalid code is found
-                    return [
-                        'code' => 1,
-                        'msg' => 'Invalid Code Generated: ' . $codeData['code'],
-                        'redirect' => false
-                    ];
-                }
-                $param = [
-                    'assort_id' => 5,
-                    'user_id' => Auth::guard('admin')->user()->id,
-                    'auth_code' => $codeData['code'],
-                    'num' => $data['number'],
-                    'type' => Auth::guard('admin')->user()->type,
-                    'remark' => "Type: {$codeData['type']}, Vendor: {$codeData['vendor']}, Source: " . ($codeData['source'] ?? 'Unknown') . (isset($data['remark']) && $data['remark'] ? ' - ' . $data['remark'] : ''),
-                    'is_try' => 2,
-                    'created_at' => date("Y-m-d H:i:s", time()),
-                    'updated_at' => date("Y-m-d H:i:s", time()),
-                ];
-                $list[] = $param;
-            }
-            // 生成code记录
-            AuthCode::query()->insert($list);
-            // 生成code用户的试看码相应减少
-            $where_user = ['id' => Auth::guard('admin')->user()->id];
-            AdminUserRepository::decrByTry($where_user, $data['number']);
-            DB::commit();  //提交
-            return [
-                'code' => 0,
-                'msg' => trans('general.createSuccess'),
-                'redirect' => true,
-            ];
-        } catch (QueryException $e) {
-            DB::rollback();  //回滚
+{
+    DB::beginTransaction(); // Start transaction early for atomicity
+    try {
+        $data = $request->only($this->formNames);
+        $list = [];
+        if ($data['number'] <= 0) {
+            DB::rollBack();
             return [
                 'code' => 1,
-                'msg' => $e->getMessage(),
+                'msg' => trans('authCode.code_num'),
                 'redirect' => false
             ];
         }
+        $data['day'] = 1;
+        if ($data['number'] > Auth::guard('admin')->user()->try_num) {
+            DB::rollBack();
+            return [
+                'code' => 1,
+                'msg' => trans('authCode.exceed_num'),
+                'redirect' => false
+            ];
+        }
+        $codes = getApiByBatch($data);
+
+        // Check if enough codes were generated
+        if (count($codes) < (int)$data['number']) {
+            DB::rollBack();
+            return [
+                'code' => 1,
+                'msg' => trans('authCode.insufficient_pregenerated_codes'),
+                'redirect' => false
+            ];
+        }
+
+        foreach ($codes as $codeData) {
+            if (strlen($codeData['code']) < 10) {
+                DB::rollBack();
+                return [
+                    'code' => 1,
+                    'msg' => 'Invalid Code Generated: ' . $codeData['code'],
+                    'redirect' => false
+                ];
+            }
+            $param = [
+                'assort_id' => 5,
+                'user_id' => Auth::guard('admin')->user()->id,
+                'auth_code' => $codeData['code'],
+                'num' => $data['number'],
+                'type' => Auth::guard('admin')->user()->type,
+                'remark' => "Type: {$codeData['type']}, Vendor: {$codeData['vendor']}, Source: " . ($codeData['source'] ?? 'Unknown') . (isset($data['remark']) && $data['remark'] ? ' - ' . $data['remark'] : ''),
+                'is_try' => 2,
+                'created_at' => date("Y-m-d H:i:s", time()),
+                'updated_at' => date("Y-m-d H:i:s", time()),
+            ];
+            $list[] = $param;
+        }
+
+        // Generate code records
+        AuthCode::query()->insert($list);
+        // Decrease user's trial code count
+        $where_user = ['id' => Auth::guard('admin')->user()->id];
+        AdminUserRepository::decrByTry($where_user, $data['number']);
+
+        DB::commit();
+        return [
+            'code' => 0,
+            'msg' => trans('general.createSuccess'),
+            'redirect' => true,
+        ];
+    } catch (Exception $e) {
+        // Catch QueryException or other exceptions (e.g., from getApiByBatch)
+        DB::rollBack();
+        return [
+            'code' => 1,
+            'msg' => $e->getMessage(),
+            'redirect' => false
+        ];
     }
+}
 
     /**
      * @Title: save

@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Storage;
 
 class LevelController extends Controller
 {
-    protected $formNames = ['id', 'level_name'];
+    protected $formNames = ['id', 'level_name', 'mini_amount'];
 
     /**
      * @Title: index

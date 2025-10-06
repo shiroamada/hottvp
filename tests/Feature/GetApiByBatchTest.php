@@ -4,6 +4,7 @@ use App\Models\PreGeneratedCode;
 use Database\Factories\Admin\AdminUserFactory;
 use Illuminate\Support\Facades\Log;
 use Mockery as M;
+use App\Repository\APIHelper;
 
 // Test case and RefreshDatabase are configured in tests/Pest.php
 
@@ -11,6 +12,13 @@ beforeEach(function () {
     // Authenticate as an admin user for guard 'admin'
     $this->admin = AdminUserFactory::new()->create();
     $this->actingAs($this->admin, 'admin');
+    $this->originalConfig = config('app.pre_generated_codes_enabled');
+});
+
+afterEach(function () {
+    config(['app.pre_generated_codes_enabled' => $this->originalConfig]);
+    M::close();
+    app()->instance(\App\Repository\APIHelper::class, null);
 });
 
 it('uses pre-generated codes when toggle is enabled', function () {
@@ -26,7 +34,7 @@ it('uses pre-generated codes when toggle is enabled', function () {
     )->count(3)->create();
 
     // Ensure API is NOT called by mocking the overload and forbidding calls
-    $apiMock = M::mock('overload:App\\Repository\\APIHelper');
+    $apiMock = $this->mock(APIHelper::class);
     $apiMock->shouldNotReceive('post');
 
     $result = getApiByBatch(['number' => 3, 'day' => 30]);
@@ -48,7 +56,7 @@ it('falls back to API when toggle is disabled and API succeeds', function () {
 
     // Mock API to return 2 codes successfully
     $payload = json_encode(['data' => ['ABCDEFGHIJKL','MNOPQRSTUVWX']]);
-    $apiMock = M::mock('overload:App\\Repository\\APIHelper');
+    $apiMock = $this->mock(APIHelper::class);
     $apiMock->shouldReceive('post')->once()->andReturn($payload);
 
     $result = getApiByBatch(['number' => 2, 'day' => 90]);
@@ -74,7 +82,7 @@ it('retries API 3 times then falls back to pre-generated codes when disabled', f
     )->count(2)->create();
 
     // Mock API to fail (return null) for each retry
-    $apiMock = M::mock('overload:App\\Repository\\APIHelper');
+    $apiMock = $this->mock(APIHelper::class);
     $apiMock->shouldReceive('post')->times(3)->andReturn(null);
 
     // Spy on logs to assert warnings
@@ -109,7 +117,7 @@ it('logs and notifies admin when pre-generated pool is insufficient and returns 
     )->count(1)->create();
 
     // API should not be called at all when toggle enabled
-    $apiMock = M::mock('overload:App\\Repository\\APIHelper');
+    $apiMock = $this->mock(APIHelper::class);
     $apiMock->shouldNotReceive('post');
 
     // Spy on logs to assert notification

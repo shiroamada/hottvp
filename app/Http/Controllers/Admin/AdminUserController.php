@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Admin;
 
     use App\Exports\AuthCodeExport;
-    use App\Http\Controllers\Admin\Auth\LoginController;
+    use App\Http\Controllers\Admin\Auth\AdminAuthenticatedSessionController;
     use App\Http\Controllers\Controller;
     use App\Http\Requests\Admin\AdminUserRequest;
     use App\Http\Requests\Admin\LogoffUserRequest;
@@ -42,7 +42,7 @@ namespace App\Http\Controllers\Admin;
     {
         public $count = 0;
 
-        protected $formNames = ['id', 'name', 'password', 'status', 'level_id', 'account', 'photo', 'remark', 'balance', 'recharge', 'phone', 'email', 'channel_id', 'agency', 'own', 'choice', 'assort', 'price'];
+        protected $formNames = ['id', 'name', 'password', 'status', 'level_id', 'account', 'photo', 'remark', 'balance', 'recharge', 'phone', 'email', 'channel_id', 'agency', 'own', 'choice', 'assort', 'price', 'type'];
 
         public function __construct()
         {
@@ -1550,7 +1550,7 @@ namespace App\Http\Controllers\Admin;
                 }
                 $param['password'] = $data['password'];
                 AdminUserRepository::update(auth()->guard('admin')->user()->id, $param);
-                (new LoginController)->logout($request);
+                (new AdminAuthenticatedSessionController())->destroy($request);
 
                 return [
                     'code' => 0,
