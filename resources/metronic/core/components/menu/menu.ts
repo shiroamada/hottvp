@@ -256,7 +256,7 @@ export class KTMenu extends KTComponent implements KTMenuInterface {
 	protected _isItemSubShown(itemElement: HTMLElement): boolean {
 		const subElement = this._getItemSubElement(itemElement);
 
-		if (subElement !== null) {
+		if (subElement) {
 			if (this._getItemToggleMode(itemElement) === 'dropdown') {
 				if (
 					subElement.classList.contains('show') === true &&
