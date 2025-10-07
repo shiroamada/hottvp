@@ -204,7 +204,7 @@
 
 @push('scripts')
   {{-- Ensure KTUI JS is available (remove if your master already loads it) --}}
-  <script src="{{ asset('assets/js/ktui.min.js') }}"></script>
+  <script src="{{ asset('js/ktui.min.js') }}"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       if (window.KTDropdown && typeof KTDropdown.createInstances === 'function') {

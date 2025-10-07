@@ -312,23 +312,31 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {  
+    @if (app()->environment('local'))
     console.log('Authorization Code Script: TOP OF SCRIPT BLOCK EXECUTED.');
     console.log('Authorization Code Script: Script started.');
     console.log('Authorization Code Script: DOMContentLoaded');
+    @endif
 
     // Check dependencies
     if (typeof jQuery === 'undefined') {
+        @if (app()->environment('local'))
         console.error('Authorization Code Script: jQuery is not loaded');
+        @endif
         alert('jQuery is required but not loaded.');
         return;
     }
     if (typeof ClipboardJS === 'undefined') {
+        @if (app()->environment('local'))
         console.error('Authorization Code Script: ClipboardJS is not loaded');
+        @endif
     }
 
     var $ = jQuery;
     var csrf_token = $('meta[name="csrf-token"]').attr('content') || '{{csrf_token()}}';
+    @if (app()->environment('local'))
     console.log('Authorization Code Script: CSRF Token:', csrf_token);
+    @endif
 
     var submitBtn = document.getElementById('submitBtn');
     var standardSelect = document.getElementById('standardSelect');
@@ -366,21 +374,29 @@ document.addEventListener('DOMContentLoaded', function() {
     if (standardSelect) {
         standardSelect.addEventListener('change', updateSubmitButtonState);
     } else {
+        @if (app()->environment('local'))
         console.error('Authorization Code Script: standardSelect not found');
+        @endif
     }
 
     // Button click handler for generating code
     if (submitBtn) {
+        @if (app()->environment('local'))
         console.log('Authorization Code Script: submitBtn found');
+        @endif
         submitBtn.addEventListener('click', function() {
+                @if (app()->environment('local'))
                 console.log('Authorization Code Script: Authorization Code button clicked');
+                @endif
                 
                 var mini_money = $("#standardSelect").find("option:selected").attr("data-money");
                 var iteValue = $("#standardSelect").find("option:selected").attr("data-name");
                 var duration = $("#standardSelect").find("option:selected").attr("data-duration");
                 var assort_id = $("#standardSelect").find("option:selected").val();
                 
+                @if (app()->environment('local'))
                 console.log('Authorization Code Script: Selected values:', {mini_money, iteValue, duration, assort_id});
+                @endif
                 
                 $("#users").html(iteValue ? iteValue + " {{ __('home.authorization_code') }}" : "{{ __('home.membership_authorization_code') }}");
                 
@@ -393,7 +409,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // showModal(); // Removed custom showModal call
 
                 var url = '{{ route('admin.code.save') ?? '/admin/code/save' }}';
+                @if (app()->environment('local'))
                 console.log('Authorization Code Script: Sending AJAX to:', url);
+                @endif
                 
                 $.ajax({
                     url: url,
@@ -402,7 +420,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     dataType: 'json',
                     headers: {'X-CSRF-Token': csrf_token},
                     success: function (result) {
+                        @if (app()->environment('local'))
                         console.log('Authorization Code Script: AJAX Success:', result);
+                        @endif
                         if (result.code !== 0) {
                             alert(result.msg || "{{ __('home.failed_to_generate_code') }}");
                             // KTUI will hide the modal via data-kt-modal-dismiss
@@ -418,7 +438,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         showActivationModal(); // Manually show the modal on success
                     },
                     error: function (resp, stat, text) {
+                        @if (app()->environment('local'))
                         console.error('Authorization Code Script: AJAX Error:', resp.status, text, resp.responseText);
+                        @endif
                         // Simplified error messages for code generation
                         if (resp.status === 404) {
                             alert("{{ __('home.save_feature_not_found') }}");
@@ -433,19 +455,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
     } else {
+        @if (app()->environment('local'))
         console.error('Authorization Code Script: submitBtn not found');
+        @endif
     }
 
     
 
     // Confirm button function
         function authCode() {
+            @if (app()->environment('local'))
             console.log('Authorization Code Script: Confirm button clicked');
+            @endif
             var remark = $("#standardRemark").val();
             var code = $("#auth_code").html();
             var url = '{{ route('admin.code.remark') ?? '/admin/code/remark' }}';
             
+            @if (app()->environment('local'))
             console.log('Authorization Code Script: Sending remark AJAX to:', url, {remark, code});
+            @endif
             
             $.ajax({
                 url: url,
@@ -454,7 +482,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 dataType: 'json',
                 headers: {'X-CSRF-Token': csrf_token},
                 success: function (result) {
+                    @if (app()->environment('local'))
                     console.log('Authorization Code Script: Remark AJAX Success:', result);
+                    @endif
                     if (result.code !== 0) {
                         alert(result.msg || "{{ __('home.failed_to_save_remark') }}");
                         return false;
@@ -466,7 +496,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     // hideModal(); // Removed custom hideModal call
                 },
                 error: function (resp, stat, text) {
+                    @if (app()->environment('local'))
                     console.error('Authorization Code Script: Remark AJAX Error:', resp.status, text, resp.responseText);
+                    @endif
                     // Simplified error messages
                     if (resp.status === 404) {
                         alert("{{ __('home.save_feature_not_found') }}");
@@ -485,19 +517,25 @@ document.addEventListener('DOMContentLoaded', function() {
         if (confirmBtn) {
             confirmBtn.addEventListener('click', authCode);
         } else {
+            @if (app()->environment('local'))
             console.error('Authorization Code Script: confirmBtn not found');
+            @endif
         }
 
     // Clipboard functionality
     if (typeof ClipboardJS !== 'undefined') {
         var clipboard = new ClipboardJS('#copy');
         clipboard.on('success', function (e) {
+            @if (app()->environment('local'))
             console.log('Authorization Code Script: Clipboard copy success:', e.text);
+            @endif
             alert("{{ __('home.code_copied_successfully') }}");
             e.clearSelection();
         });
         clipboard.on('error', function (e) {
+            @if (app()->environment('local'))
             console.error('Authorization Code Script: Clipboard copy error:', e.action, e.trigger);
+            @endif
             alert("{{ __('home.failed_to_copy_code') }}");
         });
     } else {

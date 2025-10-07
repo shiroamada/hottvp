@@ -238,7 +238,8 @@
 
 @push('scripts')
   {{-- Ensure KTUI JS is available (remove if your master already loads it) --}}
-  <script src="{{ asset('assets/js/ktui.min.js') }}"></script>
+  <script src="{{ asset('js/ktui.min.js') }}"></script>
+  <script src="{{ asset('vendor/layui-v2.4.5/layui.js') }}"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       if (window.KTDropdown && typeof KTDropdown.createInstances === 'function') {
@@ -246,10 +247,15 @@
       }
     });
 
-    laydate.render({
-        elem: '#date2',
+    layui.use('laydate', function(){
+      var laydate = layui.laydate;
+      
+      //执行一个laydate实例
+      laydate.render({
+        elem: '#date2', //指定元素
         range: true,
         trigger: 'click'
+      });
     });
   </script>
 @endpush
