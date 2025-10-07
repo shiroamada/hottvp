@@ -69,8 +69,13 @@
   <!-- End of Theme Mode -->
   
    <!--end::Custom Javascript-->
-    <script src="{{ asset('public/admin/js/jquery.min.js') }}"></script>
-    <script src="{{ asset('public/vendor/layui-v2.4.5/lay/modules/layer.js') }}"></script>
+    <script src="{{ asset('admin/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/layui-v2.4.5/layui.js') }}"></script>
+    <script>
+        layui.use('layer', function(){
+            var layer = layui.layer;
+        });
+    </script>
     @stack('scripts')
     <!--end::Javascript-->
  </body>

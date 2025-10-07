@@ -2,24 +2,24 @@
 // It handles the AJAX update for remarks and modal dismissal.
 
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('license-list.js: DOMContentLoaded fired.');
+    
     const updateRemarkModal = document.getElementById('kt_modal_update_remark');
-    console.log('license-list.js: updateRemarkModal element:', updateRemarkModal);
+    
 
     if (!updateRemarkModal) {
-        console.error('license-list.js: Modal element #kt_modal_update_remark not found.');
+        
         return;
     }
 
     const titleTemplate = updateRemarkModal.dataset.titleTemplate || 'Update Remark for Code: :code';
-    console.log('Title Template from data attribute:', titleTemplate); // DEBUG
+    
     const modalTitle = updateRemarkModal.querySelector('.kt-modal-title');
     const saveRemarkButton = updateRemarkModal.querySelector('#modal_save_remark_button');
 
     // Event listener for the "Update Remark" buttons
     document.querySelectorAll('.update-remark-button').forEach(button => {
         button.addEventListener('click', function () {
-            console.log('license-list.js: Update Remark button clicked.');
+            
             const codeId = this.getAttribute('data-id');
             const currentRemark = this.getAttribute('data-remark');
 
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (modalTitle) {
                 const newTitle = titleTemplate.replace(':code', codeId);
-                console.log('Setting modal title to:', newTitle); // DEBUG
+                
                 modalTitle.textContent = newTitle;
             }
             if (remarkInput) remarkInput.value = currentRemark;
@@ -36,13 +36,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Manually show the Metronic modal and force z-index
             if (typeof KTModal !== 'undefined') {
-                console.log('license-list.js: KTModal is defined.');
+                
                 let modalInstance = KTModal.getInstance(updateRemarkModal);
                 if (!modalInstance) {
-                    console.log('license-list.js: Creating new KTModal instance.');
+                    
                     modalInstance = new KTModal(updateRemarkModal);
                 }
-                console.log('license-list.js: Showing modal instance.', modalInstance);
+                
                 modalInstance.show();
 
                 // Force a very high z-index for the modal and its backdrop
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
             } else {
-                console.error('license-list.js: KTModal is NOT defined. Cannot show modal.');
+                
                 // Fallback for showing if KTModal is not available (though it should be)
                 updateRemarkModal.classList.add('show');
                 updateRemarkModal.style.display = 'block';
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Attach click listener for the save button (only once)
     if (saveRemarkButton && !saveRemarkButton._hasClickListener) {
         saveRemarkButton.addEventListener('click', function () {
-            console.log('license-list.js: Save remark button clicked.');
+            
             const codeIdToUpdate = updateRemarkModal.querySelector('#modal_code_id_input').value;
             const newRemark = updateRemarkModal.querySelector('#modal_remark_input').value;
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -113,8 +113,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     toastr.error(data.message || 'Failed to update remark.');
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
+            .catch(() => {
+                
                 toastr.error('An error occurred while updating the remark.');
             });
         });

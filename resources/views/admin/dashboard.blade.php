@@ -501,7 +501,9 @@ document.addEventListener('DOMContentLoaded', function() {
             alert("{{ __('home.failed_to_copy_code') }}");
         });
     } else {
+@if (app()->environment('local'))
         console.error('Authorization Code Script: ClipboardJS not initialized');
+@endif
     }
 });
 </script>
