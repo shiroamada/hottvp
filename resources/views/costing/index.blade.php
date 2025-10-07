@@ -71,8 +71,8 @@
                                                 <td><input type="number" step="0.01" name="bronze_agent_cost" value="{{ $item['bronze_agent_cost'] }}" class="kt-input" disabled></td>
                                                 <td><input type="number" step="0.01" name="customized_minimum_cost" value="{{ $item['customized_minimum_cost'] }}" class="kt-input" disabled></td>
                                                 <td class="text-end">
-                                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-primary edit-btn">EDIT</button>
-                                                    <button type="submit" class="kt-btn kt-btn-sm kt-btn-success save-btn" style="display:none;">SAVE</button>
+                                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-primary edit-btn">{{ __('messages.costing.table.edit') }}</button>
+                                                    <button type="submit" class="kt-btn kt-btn-sm kt-btn-success save-btn" style="display:none;">{{ __('messages.costing.table.save') }}</button>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -151,7 +151,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while saving.');
+                    alert("{{ __('messages.costing.an_error_occurred') }}");
                 });
             });
         });

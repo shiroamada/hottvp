@@ -105,7 +105,7 @@ class CostingController extends Controller
         ]);
         foreach ($all_costs as $key => $cost) {
             if (!is_numeric($cost)) {
-                return response()->json(['success' => false, 'message' => "Price for " . str_replace('_', ' ', $key) . " must be numeric."]);
+                return response()->json(['success' => false, 'message' => trans('messages.costing.price_numeric', ['field' => str_replace('_', ' ', $key)])]);
             }
         }
 
@@ -118,18 +118,18 @@ class CostingController extends Controller
         ];
         for ($i = 0; $i < count($agent_costs_for_ordering) - 1; $i++) {
             if ($agent_costs_for_ordering[$i] > $agent_costs_for_ordering[$i+1]) {
-                return response()->json(['success' => false, 'message' => 'Invalid agent cost order: higher tier agents must have a lower or equal cost.']);
+                return response()->json(['success' => false, 'message' => trans('messages.costing.invalid_agent_cost_order')]);
             }
         }
 
         // Agent costs should be less than or equal to retail price
         if ((float)$bronze_agent_cost > (float)$retail_price) {
-            return response()->json(['success' => false, 'message' => 'Agent costs cannot be higher than the retail price.']);
+            return response()->json(['success' => false, 'message' => trans('messages.costing.agent_cost_higher_than_retail')]);
         }
 
         // Customized minimum cost should be >= the best agent price (diamond)
         if ((float)$customized_minimum_cost < (float)$diamond_agent_cost) {
-            return response()->json(['success' => false, 'message' => 'Customized minimum cost cannot be lower than the Diamond Agent cost.']);
+            return response()->json(['success' => false, 'message' => trans('messages.costing.custom_cost_lower_than_diamond')]);
         }
 
         // Custom Price vs Existing Custom Users
@@ -137,7 +137,7 @@ class CostingController extends Controller
                                     ->where('assort_id', $assort_id)
                                     ->min('money');
         if ($min_defined_cost !== null && (float)$customized_minimum_cost > $min_defined_cost) {
-            return response()->json(['success' => false, 'message' => 'Customized minimum cost cannot be higher than a price already assigned to an existing custom user.']);
+            return response()->json(['success' => false, 'message' => trans('messages.costing.custom_cost_higher_than_existing')]);
         }
 
         // 3. Custom Price vs Retail Price
@@ -145,11 +145,11 @@ class CostingController extends Controller
         if ($assort) {
             if ($assort->id < 5) {
                 if ((float)$customized_minimum_cost >= (float)$retail_price) {
-                    return response()->json(['success' => false, 'message' => 'Customized minimum cost must be strictly less than retail price for this item.']);
+                    return response()->json(['success' => false, 'message' => trans('messages.costing.custom_cost_not_less_than_retail')]);
                 }
             } else {
                 if ((float)$customized_minimum_cost > (float)$retail_price) {
-                    return response()->json(['success' => false, 'message' => 'Customized minimum cost cannot be greater than retail price for this item.']);
+                    return response()->json(['success' => false, 'message' => trans('messages.costing.custom_cost_not_greater_than_retail')]);
                 }
             }
         }
@@ -157,7 +157,7 @@ class CostingController extends Controller
         // 4. Manager's own cost check (for National Agents, level 3)
         if ($user->level_id == 3) {
             if ((float)$diamond_agent_cost < (float)$your_cost) {
-                return response()->json(['success' => false, 'message' => 'You cannot set an agent cost that is lower than your own cost.']);
+                return response()->json(['success' => false, 'message' => trans('messages.costing.agent_cost_lower_than_own')]);
             }
         }
 
@@ -216,11 +216,11 @@ class CostingController extends Controller
 
             DB::commit();
 
-            return response()->json(['success' => true, 'message' => 'Costing updated successfully!']);
+            return response()->json(['success' => true, 'message' => trans('messages.costing.update_success')]);
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return response()->json(['success' => false, 'message' => 'Error updating costing: '.$e->getMessage()]);
+            return response()->json(['success' => false, 'message' => trans('messages.costing.update_error', ['error' => $e->getMessage()])]);
         }
     }
 

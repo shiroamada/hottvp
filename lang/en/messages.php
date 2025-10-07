@@ -230,6 +230,16 @@ return [
     ],
     // Costing Page
     'costing' => [
+        'price_numeric' => 'Price for :field must be numeric.',
+        'invalid_agent_cost_order' => 'Invalid agent cost order: higher tier agents must have a lower or equal cost.',
+        'agent_cost_higher_than_retail' => 'Agent costs cannot be higher than the retail price.',
+        'custom_cost_lower_than_diamond' => 'Customized minimum cost cannot be lower than the Diamond Agent cost.',
+        'custom_cost_higher_than_existing' => 'Customized minimum cost cannot be higher than a price already assigned to an existing custom user.',
+        'custom_cost_not_less_than_retail' => 'Customized minimum cost must be strictly less than retail price for this item.',
+        'custom_cost_not_greater_than_retail' => 'Customized minimum cost cannot be greater than retail price for this item.',
+        'agent_cost_lower_than_own' => 'You cannot set an agent cost that is lower than your own cost.',
+        'update_success' => 'Costing updated successfully!',
+        'update_error' => 'Error updating costing: :error',
         'title' => 'Level Configuration List',
         'table' => [
             'license_code_type' => 'LICENSE CODE TYPE',
