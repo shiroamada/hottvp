@@ -87,10 +87,10 @@ class MetVBoxService
     /**
      * List activation codes with filters
      *
-     * @param string|null $status Filter by status (active, used, revoked, expired)
+     * @param string|null $status Filter by status (inactive, active, expired, revoked)
      * @param int $page Page number
      * @param int $limit Results per page
-     * @return array|null
+     * @return array|null Normalized response with codes array and pagination
      */
     public function listCodes(?string $status = null, int $page = 1, int $limit = 20): ?array
     {
@@ -124,6 +124,20 @@ class MetVBoxService
             \Log::info("=== MetVBox List Codes Response ===");
             \Log::info("Status Code: " . $response->getStatusCode());
             \Log::info("Response: " . json_encode($data, JSON_PRETTY_PRINT));
+
+            // Normalize response
+            if ($data['success'] && isset($data['data']['codes'])) {
+                return [
+                    'success' => true,
+                    'codes' => $data['data']['codes'] ?? [],
+                    'pagination' => $data['data']['pagination'] ?? [
+                        'page' => $page,
+                        'limit' => $limit,
+                        'total' => 0,
+                        'total_pages' => 0,
+                    ]
+                ];
+            }
 
             return $data;
         } catch (GuzzleException $e) {

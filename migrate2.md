@@ -849,3 +849,93 @@ Failed: 2
 *   Scheduler runs in UTC by default (configure in `config/app.php` if needed)
 *   Each code is processed individually to handle failures gracefully
 *   Batch size prevents database locks and memory issues with large datasets
+
+---
+
+## February 9, 2026 - Production Fix & Sync Command Implementation
+
+**Overall Goal:** Fix production error where refresh command referenced non-existent vendor column, and implement code sync functionality from MetVBox API to database.
+
+**Key Files Created/Modified:**
+
+*   `app/Console/Commands/RefreshMetVBoxCodeStatus.php` - Updated with production fixes
+*   `app/Console/Commands/SyncMetVBoxCodesToDatabase.php` (NEW) - New sync command
+*   `migrate2.md` - This documentation
+
+**Issues Addressed:**
+
+1.  **Production Error - Missing vendor Column:**
+    *   Error: `SQLSTATE[42S22]: Column not found: 1054 Unknown column 'vendor' in 'WHERE'`
+    *   Root Cause: Previous session modified RefreshMetVBoxCodeStatus to filter by `where('vendor', 'metvbox')` but vendor column was never added to auth_codes table
+    *   Discovery: Vendor info only exists in `remark` field as metadata, no separate column
+    *   Solution: Removed vendor filter from refresh command - now refreshes all codes created after 2026
+
+2.  **Server Load Optimization:**
+    *   Added filter to only refresh codes with NULL expire_at (unused codes)
+    *   First refresh populates real expiry date from MetVBox API
+    *   Subsequent runs skip already-refreshed codes
+    *   Result: Significantly reduces API calls while database query cost remains minimal
+
+**Detailed Implementation:**
+
+1.  **Updated RefreshMetVBoxCodeStatus Command:**
+    *   Filter 1: `where('created_at', '>=', '2026-01-01 00:00:00')` - Only refresh 2026+ codes
+    *   Filter 2: `whereNull('expire_at')` - Only refresh codes without expiry date set
+    *   Purpose: Prevents redundant API calls, reduces server load
+    *   Still processes all codes in batches of 50
+
+2.  **Created SyncMetVBoxCodesToDatabase Command:**
+    *   Signature: `metvbox:sync-codes {--limit=100} {--status=}`
+    *   Fetches all codes from MetVBox API with pagination
+    *   For each API code:
+        *   Checks if it already exists in database by auth_code
+        *   Inserts new codes with:
+            *   `user_id = 1` (system admin - not generated in production)
+            *   `profit = 0` (no commission deducted)
+            *   Status mapped from MetVBox: 0=inactive, 1=active, 2=revoked
+            *   Expiry date parsed from API and converted to MySQL format
+            *   assort_id matched from duration (valid_days)
+    *   Remark: "Not generated in {$currentEnv}, in other environment. Synced from MetVBox API. Status: X, Valid Days: Y"
+    *   Features:
+        *   Dynamic environment detection via `app()->environment()`
+        *   Batch processing (50 codes per API page)
+        *   Comprehensive error handling and logging
+        *   Colored console output with progress indicators
+        *   Summary statistics (total, inserted, duplicates, failed)
+
+**Usage:**
+
+```bash
+# Sync all available codes from MetVBox API
+php artisan metvbox:sync-codes
+
+# Sync only active codes
+php artisan metvbox:sync-codes --status=active
+
+# Adjust batch size
+php artisan metvbox:sync-codes --limit=200
+
+# Refresh code statuses (production)
+php artisan metvbox:refresh-all-codes
+```
+
+**Business Logic Preservation:**
+
+*   ✅ Synced codes don't affect accounting (user_id=1, profit=0)
+*   ✅ Transaction history stays clean (marked clearly in remark)
+*   ✅ No balance deductions or commission calculations
+*   ✅ Can query staging/testing codes: `AuthCode::where('user_id', 1)->where('remark', 'LIKE', '%staging or testing%')`
+*   ✅ Perfect for syncing test codes from staging to production for testing purposes
+
+**Key Questions Answered:**
+
+1.  **Why remove vendor column filter?** - Column never existed in production database. Vendor info stored as metadata in remark field.
+2.  **Why add expire_at filter?** - Reduces API load by skipping already-refreshed codes. First refresh gets real expiry from API.
+3.  **Why assign to user_id=1?** - Prevents accounting impact while tracking non-production codes clearly.
+4.  **Why dynamic environment detection?** - Remark automatically shows which environment code was synced from (staging, testing, development, etc.)
+
+**Outstanding Tasks:**
+
+1. **Set up scheduler for sync command (Optional)** - Can add to bootstrap/app.php if you want automatic daily syncs
+2. **Monitor first refresh runs** - Verify the hour cron job is working correctly with new filters
+3. **Test sync functionality** - Run `php artisan metvbox:sync-codes` manually first to verify output
