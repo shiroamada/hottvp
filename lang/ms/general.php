@@ -22,7 +22,7 @@ return [
     'create' => 'Masa Dicipta',
     'update' => 'Masa Dikemas kini',
     'action' => 'Tindakan',
-
+    'refresh' => 'Kemas Kini',
     'isEnabled' => 'Dayakan atau Tidak',
     'enable' => 'Dayakan',
     'forbidden' => 'Dilarang',

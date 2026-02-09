@@ -19,7 +19,7 @@ return [
     'create' => 'Created Time',
     'update' => 'Updated Time',
     'action' => 'Action',
-
+    'refresh' => 'Refresh',
     'isEnabled' => 'Enable or Not',
     'enable' => 'Enable',
     'forbidden' => 'Forbidden',

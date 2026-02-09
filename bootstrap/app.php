@@ -45,4 +45,17 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         Integration::handles($exceptions);
-    })->create();
+    })
+    ->withSchedule(function ($schedule) {
+        // Refresh MetVBox code statuses every hour
+        $schedule->command('metvbox:refresh-all-codes')
+            ->hourly()
+            ->withoutOverlapping()
+            ->onFailure(function () {
+                \Illuminate\Support\Facades\Log::error('MetVBox refresh command failed');
+            })
+            ->onSuccess(function () {
+                \Illuminate\Support\Facades\Log::info('MetVBox refresh command completed successfully');
+            });
+    })
+    ->create();

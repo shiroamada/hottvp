@@ -607,6 +607,245 @@ This document tracks the migration process from the old Laravel project and logs
     *   **Action for next session:** Further investigation is needed into Keenthemes' specific JavaScript for modal handling. It's possible their implementation completely overrides standard Bootstrap behavior, or requires a different API call (e.g., a custom `KTModal` object or event). Debugging the Keenthemes JavaScript in the browser's developer tools will be crucial.
 
 2.  **General Modernization (Future Task):**
-    *   While the old logic is replicated, some aspects (like the general approach to 
+    *   While the old logic is replicated, some aspects (like the general approach to
     some UI interactions) could be further modernized to align with current Laravel 12 best practices. This is a lower priority than functional fixes.
-    
+
+---
+
+## February 5, 2026 - MetVBox Partner API Integration
+
+**Overall Goal:** Replace the old supplier API with MetVBox Partner API for code generation while maintaining all existing business logic (pricing, commissions, profit distribution).
+
+**Context:** The system originally generated codes via external supplier API. User replaced supplier and implemented pre-generated codes as interim solution. Now integrated MetVBox Partner API to automate code generation directly.
+
+**Key Files Created/Modified:**
+
+*   `config/services.php` - Added MetVBox configuration
+*   `.env.example` - Added METVBOX_PARTNER_TOKEN and METVBOX_BASE_URL
+*   `app/Services/MetVBoxService.php` (NEW) - MetVBox API wrapper service
+*   `app/Helpers/helper.php` - Updated `getApiByBatch()` to use MetVBox API
+*   `app/Console/Commands/TestMetVBoxIntegration.php` (NEW) - CLI test command
+
+**Detailed Implementation:**
+
+1.  **MetVBoxService Class:**
+    *   Encapsulates all MetVBox API interactions using Guzzle HTTP client
+    *   Methods implemented:
+        *   `generateCode()` - Generate activation codes with configurable validity period
+        *   `listCodes()` - List codes with status filters (active, used, revoked, expired)
+        *   `checkCodeStatus()` - Check individual code status
+        *   `revokeCode()` - Revoke a code
+        *   `testConnection()` - Test API connectivity
+    *   Comprehensive logging for debugging
+    *   Handles MetVBox response format: `{ success, data: { codes: [...], points_deducted, balance_after } }`
+
+2.  **Integration with Code Generation (`getApiByBatch()`):**
+    *   Replaced old supplier API call with `MetVBoxService::generateCode()`
+    *   Changed vendor identifier from `'wowtv'` to `'metvbox'`
+    *   Updated pre-generated code queries to filter by `'metvbox'` vendor
+    *   Maintains 3-retry logic on API failure
+    *   Normalized response parsing to extract codes from nested `data.codes` structure
+    *   Logs MetVBox metadata (points_deducted, balance_after) for auditing
+
+3.  **Test Command (`metvbox:test`):**
+    *   Usage: `php artisan metvbox:test --quantity=5 --days=1`
+    *   Tests API connectivity
+    *   Generates test codes
+    *   Displays full API response and extracted codes
+
+**Business Logic Preservation:**
+
+*   ✅ No changes to pricing/cost calculations
+*   ✅ No changes to user balance deduction
+*   ✅ No changes to profit distribution (recursive upline logic)
+*   ✅ No changes to commission calculations
+*   ✅ Codes marked with vendor='metvbox' for tracking
+
+**Test Results:**
+
+Successfully generated 5 codes with 1-day validity via `php artisan metvbox:test --quantity=5 --days=1`:
+
+```json
+{
+    "success": true,
+    "data": [
+        "0101989298062262",
+        "1583084604829504",
+        "7908536611809785",
+        "2429433146080569",
+        "3990567530555998"
+    ],
+    "metadata": {
+        "points_deducted": 5,
+        "balance_after": 872
+    }
+}
+```
+
+All codes successfully extracted and formatted.
+
+**Outstanding Tasks / Next Steps:**
+
+1.  **Commission Verification (CRITICAL):**
+    *   Need to verify that commissions are charged correctly when codes are generated via MetVBox API
+    *   Ensure that the balance deduction and upline profit distribution work as expected
+    *   **Status:** User will check if the commission is charged correctly
+    *   **Action for next session:** Review transaction logs and verify profit distribution to all upline agents
+
+2.  **Optional Enhancements (Future):**
+    *   Create admin page to view/list/revoke codes via MetVBox API
+    *   Create sync command to periodically list codes from MetVBox for auditing
+    *   Add MetVBox balance monitoring dashboard
+
+**Configuration Required:**
+
+Add to `.env` file:
+```
+METVBOX_PARTNER_TOKEN=a97e84972b0b1f17fcaab1484f6ef0e1
+METVBOX_BASE_URL=https://ta.metvbox.com
+```
+
+**Notes:**
+
+*   Pre-generated codes feature remains available as fallback if MetVBox API fails
+*   All existing code generation workflows automatically use MetVBox now
+*   No UI changes required - system works transparently via API layer
+
+---
+
+## February 9, 2026 - MetVBox Code Status Auto-Refresh (Cron Job)
+
+**Overall Goal:** Automatically refresh all code statuses from MetVBox API on a scheduled basis.
+
+**Context:** Instead of manually refreshing code statuses, set up a cron job to refresh all MetVBox codes every hour.
+
+**Key Files Created/Modified:**
+
+*   `app/Console/Commands/RefreshMetVBoxCodeStatus.php` (NEW) - Artisan command for refreshing all code statuses
+*   `bootstrap/app.php` - Added scheduler configuration
+
+**Implementation:**
+
+1.  **Created Artisan Command (`RefreshMetVBoxCodeStatus.php`):**
+    *   Command signature: `metvbox:refresh-all-codes`
+    *   Fetches all codes with vendor='metvbox'
+    *   Processes codes in batches of 50 to avoid memory issues
+    *   Maps MetVBox status to numeric status (0=inactive, 1=active, 2=revoked)
+    *   Converts ISO 8601 dates to MySQL format
+    *   Logs results and displays colored output
+    *   Option: `--limit` (default: 100) to limit batch size if needed
+
+2.  **Scheduler Configuration (`bootstrap/app.php`):**
+    *   Added `withSchedule()` closure
+    *   Runs command every hour with `->hourly()`
+    *   Prevents overlapping executions with `->withoutOverlapping()`
+    *   Logs success/failure via `->onSuccess()` and `->onFailure()`
+
+**Features:**
+
+✅ Automatically refreshes all MetVBox code statuses every hour
+✅ Batch processing (50 codes per batch) for memory efficiency
+✅ Handles failures gracefully with try-catch
+✅ Detailed logging for debugging
+✅ Colored console output (green for success, red for errors)
+✅ Prevents overlapping executions
+✅ Logs all results for audit trail
+
+**Manual Usage:**
+
+```bash
+# Run command manually to test
+php artisan metvbox:refresh-all-codes
+
+# Run with custom batch size
+php artisan metvbox:refresh-all-codes --limit=200
+
+# Run in background (non-blocking)
+php artisan metvbox:refresh-all-codes > /dev/null 2>&1 &
+```
+
+**Cron Setup Instructions:**
+
+In production, you need to set up a cron job to run Laravel's scheduler every minute. Add this to your crontab:
+
+```bash
+# Edit crontab
+crontab -e
+
+# Add this line:
+* * * * * cd /Users/bw/Sites/hottvp && php artisan schedule:run >> /dev/null 2>&1
+```
+
+This runs the scheduler every minute, which then triggers our `metvbox:refresh-all-codes` command every hour.
+
+**Alternative: Using Supervisor:**
+
+If you're using Supervisor to manage long-running processes:
+
+```ini
+[program:laravel-scheduler]
+process_name=%(program_name)s_%(process_num)02d
+command=php /Users/bw/Sites/hottvp/artisan schedule:run
+autorestart=true
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/log/laravel-scheduler.log
+```
+
+**Monitoring the Scheduler:**
+
+Check the logs to see when the command runs:
+
+```bash
+# View recent logs
+tail -f storage/logs/laravel.log | grep -i "metvbox"
+
+# View logs for specific date
+grep "metvbox" storage/logs/laravel-2026-02-09.log
+```
+
+**What Gets Updated:**
+
+For each code in the database:
+- Calls MetVBox API to get current status
+- Updates `status` field (0=inactive, 1=active, 2=revoked)
+- Updates `expire_at` field with real expiry date from MetVBox
+- Logs each update in application logs
+
+**Output Example:**
+
+```
+🔄 Starting MetVBox code status refresh...
+Processing code: 1654909507579761...
+✓ Updated: 1654909507579761 - Status: active
+Processing code: 3317136996222050...
+✓ Updated: 3317136996222050 - Status: inactive
+...
+✅ Refresh completed!
+Total Codes: 245
+Updated: 243
+Failed: 2
+```
+
+**Status Mapping:**
+
+| Numeric | MetVBox API | Display |
+|---|---|---|
+| 0 | inactive | Inactive (Yellow badge) |
+| 1 | active | Active (Green badge) |
+| 2 | revoked | Revoked (Red badge) |
+
+**Outstanding Tasks / Next Steps:**
+
+1. **Set up cron job on production server** - Add the crontab entry
+2. **Monitor first runs** - Check logs to ensure scheduler is working
+3. **Optional: Adjust frequency** - Change `.hourly()` to `.everyThirtyMinutes()` or `.daily()` as needed
+4. **Optional: Add notifications** - Set up email/Slack alerts for failures
+
+**Notes:**
+
+*   Command is idempotent (safe to run multiple times)
+*   Failed codes are logged but don't stop the process
+*   Scheduler runs in UTC by default (configure in `config/app.php` if needed)
+*   Each code is processed individually to handle failures gracefully
+*   Batch size prevents database locks and memory issues with large datasets

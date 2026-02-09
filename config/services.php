@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'metvbox' => [
+        'partner_token' => env('METVBOX_PARTNER_TOKEN'),
+        'base_url' => env('METVBOX_BASE_URL', 'https://ta.metvbox.com'),
+    ],
+
 ];

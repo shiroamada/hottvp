@@ -28,6 +28,9 @@ return [
     'status_unused' => 'Baharu',
     'status_have_used' => 'Telah Digunakan',
     'status_was_due' => 'Telah Luput',
+    'status_inactive' => 'Tidak Aktif',
+    'status_active' => 'Aktif',
+    'status_revoked' => 'Dibatalkan',
     'up_remark' => 'Kemas kini Catatan',
     'up_remark_for_code' => 'Kemas kini Catatan untuk Kod: :code',
 

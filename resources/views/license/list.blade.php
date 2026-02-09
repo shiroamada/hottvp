@@ -41,6 +41,9 @@
                                 <a href="{{ route('admin.license.down') }}" class="kt-btn kt-btn-outline kt-btn-secondary">
                                     {{ __('authCode.export_last_batch') }}
                                 </a>
+                                <button id="refresh-all-btn" class="kt-btn kt-btn-outline kt-btn-info">
+                                    <i class="ki-filled ki-arrows-loop"></i> {{ __('general.refresh') }}
+                                </button>
                             </div>
                         </div>
                         <!-- End of Container -->
@@ -59,9 +62,9 @@
                                         <label for="status" class="kt-form-label">{{ __('general.status') }}</label>
                                         <select id="status" name="status" class="kt-select">
                                             <option value="">{{ __('general.all') }}</option>
-                                            <option value="0" @if(request('status') === '0') selected @endif>{{ __('authCode.status_unused') }}</option>
-                                            <option value="1" @if(request('status') === '1') selected @endif>{{ __('authCode.status_have_used') }}</option>
-                                            <option value="2" @if(request('status') === '2') selected @endif>{{ __('authCode.status_was_due') }}</option>
+                                            <option value="0" @if(request('status') === '0') selected @endif>{{ __('authCode.status_inactive') }}</option>
+                                            <option value="1" @if(request('status') === '1') selected @endif>{{ __('authCode.status_active') }}</option>
+                                            <option value="2" @if(request('status') === '2') selected @endif>{{ __('authCode.status_revoked') }}</option>
                                         </select>
                                     </div>
                                     <div class="kt-form-item">
@@ -125,23 +128,39 @@
             @endif
         </td>
         <td>
-            @if($code->status == 0)
-                <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">{{ __('authCode.status_unused') }}</span>
-            @elseif($code->status == 1)
-                <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-warning">{{ __('authCode.status_have_used') }}</span>
-            @else
-                <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-danger">{{ __('authCode.status_was_due') }}</span>
-            @endif
+            @php
+                $statusLabels = [
+                    0 => __('authCode.status_inactive'),
+                    1 => __('authCode.status_active'),
+                    2 => __('authCode.status_revoked'),
+                ];
+                $statusColors = [
+                    0 => 'warning',
+                    1 => 'success',
+                    2 => 'danger',
+                ];
+                $statusLabel = $statusLabels[$code->status] ?? __('general.unknown');
+                $statusColor = $statusColors[$code->status] ?? 'secondary';
+            @endphp
+            <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-{{ $statusColor }}">{{ $statusLabel }}</span>
         </td>
         <td>{{ $code->created_at->format('Y-m-d H:i:s') }}</td>
         <td>{{ $code->expire_at ? \Carbon\Carbon::parse($code->expire_at)->format('Y-m-d H:i:s') : 'N/A' }}</td>
         <td>
-            <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-light-primary update-remark-button"
-                data-kt-modal-toggle="#kt_modal_update_remark"
-                data-id="{{ $code->id }}"
-                data-remark="{{ $code->remark }}">
-                <i class="ki-filled ki-pencil"></i>
-            </button>
+            <div class="flex gap-2">
+                <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-light-primary update-remark-button"
+                    data-kt-modal-toggle="#kt_modal_update_remark"
+                    data-id="{{ $code->id }}"
+                    data-remark="{{ $code->remark }}">
+                    <i class="ki-filled ki-pencil"></i>
+                </button>
+                <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-light-info refresh-code-status-btn"
+                    data-code-id="{{ $code->id }}"
+                    data-code="{{ $code->auth_code }}"
+                    title="Refresh status from MetVBox API">
+                    <i class="ki-filled ki-arrows-loop"></i>
+                </button>
+            </div>
         </td>
     </tr>
 @empty
@@ -250,6 +269,95 @@
                     }
                 }
                 window.location.href = this.href + '?' + params.toString();
+            });
+        }
+
+        // Individual code refresh
+        document.querySelectorAll('.refresh-code-status-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const codeId = btn.getAttribute('data-code-id');
+                const code = btn.getAttribute('data-code');
+
+                btn.disabled = true;
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="ki-filled ki-loading animate-spin"></i>';
+
+                try {
+                    const response = await fetch('{{ route("admin.license.refresh-status") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({ code_id: codeId })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Reload the page to show updated status
+                        window.location.reload();
+                    } else {
+                        toastr.error(data.message || 'Failed to refresh code status');
+                        btn.disabled = false;
+                        btn.innerHTML = originalHTML;
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    toastr.error('Error refreshing code status: ' + error.message);
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
+                }
+            });
+        });
+
+        // Refresh all codes
+        const refreshAllBtn = document.getElementById('refresh-all-btn');
+        if (refreshAllBtn) {
+            refreshAllBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                // Get all code IDs from the table
+                const codeIds = Array.from(document.querySelectorAll('.refresh-code-status-btn'))
+                    .map(btn => btn.getAttribute('data-code-id'));
+
+                if (codeIds.length === 0) {
+                    toastr.warning('No codes to refresh');
+                    return;
+                }
+
+                refreshAllBtn.disabled = true;
+                const originalHTML = refreshAllBtn.innerHTML;
+                refreshAllBtn.innerHTML = '<i class="ki-filled ki-loading animate-spin"></i> Refreshing...';
+
+                try {
+                    const response = await fetch('{{ route("admin.license.refresh-status") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({ codes: codeIds })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        toastr.success(`Updated ${data.updated} code(s), failed ${data.failed} code(s)`);
+                        // Reload the page to show updated statuses
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        toastr.error(data.message || 'Failed to refresh codes');
+                        refreshAllBtn.disabled = false;
+                        refreshAllBtn.innerHTML = originalHTML;
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    toastr.error('Error refreshing codes: ' + error.message);
+                    refreshAllBtn.disabled = false;
+                    refreshAllBtn.innerHTML = originalHTML;
+                }
             });
         }
     });

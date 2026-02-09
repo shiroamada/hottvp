@@ -52,7 +52,7 @@ function getApiByBatch($data)
 
     $requested = (int) $data['number'];
     $typeLabel = ($data['day'] ?? 'N/A') . 'days';
-    $vendor = 'wowtv';
+    $vendor = 'metvbox';
     $results = [];
     $preGeneratedEnabled = (bool) config('app.pre_generated_codes_enabled');
 
@@ -77,7 +77,7 @@ function getApiByBatch($data)
         DB::transaction(function () use ($take, $user, &$codes, $typeLabel) {
             $selected = PreGeneratedCode::whereNull('requested_by')
                 ->where('type', $typeLabel)
-                ->where('vendor', 'wowtv')
+                ->where('vendor', 'metvbox')
                 ->lockForUpdate()
                 ->take($take)
                 ->get();
@@ -95,56 +95,65 @@ function getApiByBatch($data)
 
     // Helper to fetch from API with up to 3 retries
     $fetchFromApi = function (int $take) use ($user, $data) {
-        $apiType = $user->type == 1 ? 2 : 1;
-        $apiStr = 'createCode';
-        $api = app(APIHelper::class);
         $attempts = 0;
         while ($attempts < 3) {
             $attempts++;
-            $body = [
-                'num' => (int) $take,
-                'valid_day' => (int) $data['day'],
-                'channel_id' => $user->channel_id,
-                'enable_switch' => $apiType,
-            ];
-            $response = $api->post($body, $apiStr);
+
+            // Use MetVBox API to generate codes
+            $metvboxService = app(\App\Services\MetVBoxService::class);
+            $response = $metvboxService->generateCode(
+                validDays: (int) $data['day'],
+                deviceType: 'all',
+                quantity: (int) $take
+            );
+
             if (!$response) {
+                Log::warning('MetVBox API returned null', ['attempt' => $attempts]);
                 continue;
             }
-            $decoded = json_decode($response, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                Log::error('getApiByBatch JSON decode failed', [
-                    'error' => json_last_error_msg(),
-                    'raw_response' => $response
+
+            // Extract codes from response
+            // MetVBox normalizes response to have 'data' key with codes array
+            $codes = [];
+
+            if (isset($response['data']) && is_array($response['data'])) {
+                // Codes are directly in the data array
+                foreach ($response['data'] as $code) {
+                    if (is_string($code)) {
+                        $codes[] = $code;
+                    }
+                }
+            }
+
+            if (empty($codes)) {
+                Log::error('MetVBox API: No codes found in response', [
+                    'response' => $response,
+                    'attempt' => $attempts
                 ]);
                 continue;
             }
-            if (!isset($decoded['data']) || !is_array($decoded['data'])) {
-                Log::error('Invalid API response format', ['decoded' => $decoded]);
-                continue;
+
+            // Log success with metadata if available
+            if (isset($response['metadata'])) {
+                Log::info('MetVBox codes generated successfully', [
+                    'quantity' => count($codes),
+                    'points_deducted' => $response['metadata']['points_deducted'] ?? null,
+                    'balance_after' => $response['metadata']['balance_after'] ?? null,
+                ]);
             }
-            // Validate code lengths
-            $valid = [];
-            foreach ($decoded['data'] as $index => $code) {
-                if (is_string($code) && strlen($code) == 12) {
-                    $valid[] = $code;
-                } else {
-                    Log::error('Invalid code length from API', [
-                        'code' => $code,
-                        'length' => is_string($code) ? strlen($code) : 'not a string',
-                        'index' => $index
-                    ]);
-                }
+
+            // Return codes
+            if (count($codes) >= $take) {
+                return array_slice($codes, 0, $take);
             }
-            if (count($valid) >= $take) {
-                return array_slice($valid, 0, $take);
-            }
+
             // If partial, return what we have
-            if (!empty($valid)) {
-                return $valid;
+            if (!empty($codes)) {
+                return $codes;
             }
         }
-        Log::warning('API retries exhausted in getApiByBatch');
+
+        Log::warning('MetVBox API retries exhausted in getApiByBatch');
         return [];
     };
 

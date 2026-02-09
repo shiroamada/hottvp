@@ -28,7 +28,10 @@ return [
     'status_unused' => 'New',
     'status_have_used' => 'Used',
     'status_was_due' => 'Expired',
-        'up_remark' => 'Update Remark',
+    'status_inactive' => 'Inactive',
+    'status_active' => 'Active',
+    'status_revoked' => 'Revoked',
+    'up_remark' => 'Update Remark',
     'up_remark_for_code' => 'Update Remark for Code: :code',
 
     'new_remark' => 'New Remark',

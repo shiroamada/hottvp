@@ -28,6 +28,9 @@ return [
     'status_unused' => '全新',
     'status_have_used' => '已使用',
     'status_was_due' => '已过期',
+    'status_inactive' => '未激活',
+    'status_active' => '已激活',
+    'status_revoked' => '已撤销',
     'up_remark' => '修改备注',
     'up_remark_for_code' => '更新备注: :code',
 

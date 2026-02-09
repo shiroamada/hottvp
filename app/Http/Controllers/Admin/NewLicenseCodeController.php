@@ -32,6 +32,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\LicenseCodesExport;
 use App\Exports\LastBatchExport;
 use App\Exports\TrialCodesExport;
+use App\Services\MetVBoxService;
+use Carbon\Carbon;
 
 class NewLicenseCodeController extends Controller
 {
@@ -744,4 +746,135 @@ class NewLicenseCodeController extends Controller
         $filename = trans('authCode.auth_record') . '-' . $time . '.xlsx';
         return Excel::download(new TrialCodesExport($request), $filename);
     }
+
+    /**
+     * @Title: refreshCodeStatus
+     * @Description: 从MetVBox API刷新单个或多个授权码的状态
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refreshCodeStatus(Request $request)
+    {
+        $code_id = $request->get('code_id');
+        $codes = $request->get('codes'); // Array of code IDs for batch refresh
+
+        if (!$code_id && !$codes) {
+            return response()->json(['success' => false, 'message' => 'No code IDs provided'], 400);
+        }
+
+        $metvboxService = app(MetVBoxService::class);
+        $updated = 0;
+        $failed = 0;
+        $results = [];
+
+        try {
+            // Map MetVBox status to numeric status
+            // Status: 0 = inactive (unused/new), 1 = active (used), 2 = revoked
+            $statusMap = [
+                'inactive' => 0,
+                'active' => 1,
+                'revoked' => 2,
+            ];
+
+            // Single code refresh
+            if ($code_id) {
+                $authCode = AuthCode::findOrFail($code_id);
+                $status = $metvboxService->checkCodeStatus($authCode->auth_code);
+
+                if ($status && $status['success'] && isset($status['data'])) {
+                    $data = $status['data'];
+                    $metvboxStatus = $data['status'] ?? 'unknown';
+                    $newStatus = $statusMap[$metvboxStatus] ?? 0;
+
+                    // Convert ISO 8601 datetime to MySQL format
+                    $newExpireAt = null;
+                    if ($data['expires_at']) {
+                        try {
+                            $newExpireAt = Carbon::parse($data['expires_at'])->format('Y-m-d H:i:s');
+                        } catch (\Exception $e) {
+                            Log::warning('Failed to parse expires_at: ' . $data['expires_at']);
+                        }
+                    }
+
+                    // Update the code
+                    $authCode->update([
+                        'status' => $newStatus,
+                        'expire_at' => $newExpireAt,
+                    ]);
+
+                    $updated++;
+                    $results[] = [
+                        'code_id' => $code_id,
+                        'code' => $authCode->auth_code,
+                        'status' => $newStatus,
+                        'expire_at' => $newExpireAt,
+                        'metvbox_status' => $metvboxStatus,
+                    ];
+                } else {
+                    $failed++;
+                    $results[] = [
+                        'code_id' => $code_id,
+                        'error' => 'Failed to fetch status from MetVBox'
+                    ];
+                }
+            }
+            // Batch refresh
+            elseif ($codes && is_array($codes)) {
+                foreach ($codes as $codeId) {
+                    $authCode = AuthCode::find($codeId);
+                    if (!$authCode) {
+                        $failed++;
+                        continue;
+                    }
+
+                    $status = $metvboxService->checkCodeStatus($authCode->auth_code);
+
+                    if ($status && $status['success'] && isset($status['data'])) {
+                        $data = $status['data'];
+                        $metvboxStatus = $data['status'] ?? 'unknown';
+                        $newStatus = $statusMap[$metvboxStatus] ?? 0;
+
+                        // Convert ISO 8601 datetime to MySQL format
+                        $newExpireAt = null;
+                        if ($data['expires_at']) {
+                            try {
+                                $newExpireAt = Carbon::parse($data['expires_at'])->format('Y-m-d H:i:s');
+                            } catch (\Exception $e) {
+                                Log::warning('Failed to parse expires_at: ' . $data['expires_at']);
+                            }
+                        }
+
+                        $authCode->update([
+                            'status' => $newStatus,
+                            'expire_at' => $newExpireAt,
+                        ]);
+
+                        $updated++;
+                    } else {
+                        $failed++;
+                    }
+                }
+            }
+
+            Log::info('Code status refresh completed', [
+                'updated' => $updated,
+                'failed' => $failed,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'updated' => $updated,
+                'failed' => $failed,
+                'results' => $results,
+                'message' => "Updated $updated code(s), failed to update $failed code(s)"
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Code status refresh error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error refreshing code status: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

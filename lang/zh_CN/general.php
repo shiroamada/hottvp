@@ -32,6 +32,7 @@ return [
     'index' => '首页',
     'submit' => '提交',
     'reset' => '重置',
+    'refresh' => '刷新',
     'search' => '搜索',
     'page' => 50,
     'select' => "请选择",
