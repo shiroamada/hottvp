@@ -52,7 +52,8 @@ class RefreshMetVBoxCodeStatus extends Command
             $page = 0;
 
             while (true) {
-                $codes = AuthCode::where('vendor', 'metvbox')
+                $codes = AuthCode::where('created_at', '>=', '2026-01-01 00:00:00')
+                    ->whereNull('expire_at')
                     ->limit($batchSize)
                     ->offset($page * $batchSize)
                     ->get();
