@@ -939,3 +939,66 @@ php artisan metvbox:refresh-all-codes
 1. **Set up scheduler for sync command (Optional)** - Can add to bootstrap/app.php if you want automatic daily syncs
 2. **Monitor first refresh runs** - Verify the hour cron job is working correctly with new filters
 3. **Test sync functionality** - Run `php artisan metvbox:sync-codes` manually first to verify output
+
+---
+
+## February 10, 2026 - Enhanced Sync Command & Scheduling Discussion
+
+**Overall Goal:** Refine sync command to properly categorize 1-day trial codes and clarify scheduling approaches.
+
+**Key Implementation Details:**
+
+1.  **Assort ID Mapping (Dynamic):**
+    *   MetVBox API provides `valid_days` field
+    *   Sync command queries: `Assort::where('duration', $validDays)->first()`
+    *   Matches MetVBox `valid_days` with database `duration` column
+    *   Automatically finds correct `assort_id` regardless of ID mapping
+    *   Example: MetVBox `valid_days=1` → Queries duration=1 → Gets assort_id=5
+
+2.  **Trial Code Detection:**
+    *   When syncing 1-day codes: `$isTry = ($validDays == 1) ? 2 : 1`
+    *   1-day codes get `is_try = 2` (marked as trial/test code)
+    *   All other durations get `is_try = 1` (regular code)
+    *   Properly categorizes test codes in the system
+
+**Scheduling Approaches Discussed:**
+
+**Option 1: Direct Cron Jobs (Recommended for 2+ commands)**
+```bash
+# Add to production crontab
+0 * * * * cd /Users/bw/Sites/hottvp && php artisan metvbox:refresh-all-codes >> /dev/null 2>&1
+0 2 * * * cd /Users/bw/Sites/hottvp && php artisan metvbox:sync-codes >> /dev/null 2>&1
+```
+- Pros: Simple, direct, no overhead
+- Cons: Multiple cron entries to manage
+
+**Option 2: Laravel Scheduler (Recommended for many tasks)**
+```php
+// In bootstrap/app.php
+->withSchedule(function ($schedule) {
+    $schedule->command('metvbox:refresh-all-codes')->hourly()->withoutOverlapping();
+    $schedule->command('metvbox:sync-codes')->daily()->withoutOverlapping();
+})
+```
+Requires single cron: `* * * * * cd /path && php artisan schedule:run >> /dev/null 2>&1`
+
+**Recommendation:** Use direct cron jobs since you only have 2 commands. Less complexity.
+
+**Final Sync Command Behavior:**
+
+```bash
+php artisan metvbox:sync-codes
+```
+
+For each code from MetVBox API:
+1. Check if exists in database by `auth_code`
+2. If new:
+   - Map `valid_days` → `assort_id` via duration lookup
+   - Set `is_try = 2` if 1-day code, else `is_try = 1`
+   - Set `user_id = 1` (system admin)
+   - Mark in remark with environment name
+   - Parse expiry date from ISO 8601 to MySQL format
+3. If duplicate: Skip and count
+4. Return summary stats
+
+This properly categorizes test/staging codes while maintaining accounting integrity.
