@@ -253,6 +253,8 @@ return [
             'bronze_agent_cost' => 'BRONZE AGENT COST',
             'customized_minimum_cost' => 'CUSTOMIZED MINIMUM COST',
             'action' => 'ACTION',
+            'edit' => 'Edit',
+            'save' => 'Save',
         ],
     ],
 

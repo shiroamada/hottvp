@@ -48,6 +48,8 @@ Route::middleware(['auth.admin', 'admin.controller', 'admin.utility'])
         Route::get('/license/down', [NewLicenseCodeController::class, 'down'])->name('license.down');
         Route::post('/license/{code_id}/update', [NewLicenseCodeController::class, 'update'])->name('license.update');
         Route::post('/license/refresh-status', [NewLicenseCodeController::class, 'refreshCodeStatus'])->name('license.refresh-status');
+        Route::post('/license/refresh-all-artisan', [NewLicenseCodeController::class, 'refreshAllArtisan'])->name('license.refresh-all-artisan');
+        Route::post('/trial/refresh-all-artisan', [TrialCodeController::class, 'refreshAllArtisan'])->name('trial.refresh-all-artisan');
 
         // Agent Management (views, moved from web.php)
         Route::get('/agent/list', function () {

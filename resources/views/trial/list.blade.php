@@ -38,6 +38,9 @@
                                     <a href="{{ route('admin.try.add') }}" class="kt-btn kt-btn-primary">
                                         {{ __('authCode.tryNewAuthCode') }}
                                     </a>
+                                    <button id="refresh-all-btn" class="kt-btn kt-btn-outline kt-btn-info">
+                                        <i class="ki-filled ki-arrows-loop"></i> {{ __('general.refresh') }}
+                                    </button>
                                 </div>
                             </div>
                             <!-- End of Container -->
@@ -153,6 +156,45 @@
                     }
                 }
                 window.location.href = this.href + '?' + params.toString();
+            });
+        }
+
+        // Refresh all codes
+        const refreshAllBtn = document.getElementById('refresh-all-btn');
+        if (refreshAllBtn) {
+            refreshAllBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                refreshAllBtn.disabled = true;
+                const originalHTML = refreshAllBtn.innerHTML;
+                refreshAllBtn.innerHTML = '<i class="ki-filled ki-loading animate-spin"></i> Refreshing all...';
+
+                try {
+                    const response = await fetch('{{ route("admin.trial.refresh-all-artisan") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        toastr.success(data.message);
+                        // Reload the page to show updated statuses
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        toastr.error(data.message || 'Failed to refresh codes');
+                        refreshAllBtn.disabled = false;
+                        refreshAllBtn.innerHTML = originalHTML;
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    toastr.error('Error refreshing codes: ' + error.message);
+                    refreshAllBtn.disabled = false;
+                    refreshAllBtn.innerHTML = originalHTML;
+                }
             });
         }
     });

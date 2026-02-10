@@ -112,19 +112,29 @@
         <td>{{ $code->auth_code }}</td>
         <td>{{ $code->assort->assort_name ?? 'N/A' }}</td>
         <td>
-            @if(mb_strlen($code->remark) > 10)
+            @php
+                // For synced codes (containing "Synced from MetVBox"), only show to admins (level_id == 0)
+                $displayRemark = $code->remark;
+                $isSyncedCode = str_contains($code->remark, 'Synced from MetVBox');
+                $isAdmin = Auth::guard('admin')->user()->level_id == 0;
+
+                if ($isSyncedCode && !$isAdmin) {
+                    $displayRemark = 'Synced test code';
+                }
+            @endphp
+            @if(mb_strlen($displayRemark) > 10)
                 <div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative">
                     <span class="cursor-pointer">
-                        {{ mb_substr($code->remark, 0, 10) }}...
+                        {{ mb_substr($displayRemark, 0, 10) }}...
                     </span>
                     <div x-show="open"
                          x-transition
                          class="absolute z-10 w-64 p-2 -mt-1 text-sm leading-tight text-white transform -translate-x-1/2 -translate-y-full bg-gray-800 rounded-lg shadow-lg">
-                        {{ $code->remark }}
+                        {{ $displayRemark }}
                     </div>
                 </div>
             @else
-                {{ $code->remark }}
+                {{ $displayRemark }}
             @endif
         </td>
         <td>
@@ -148,12 +158,14 @@
         <td>{{ $code->expire_at ? \Carbon\Carbon::parse($code->expire_at)->format('Y-m-d H:i:s') : 'N/A' }}</td>
         <td>
             <div class="flex gap-2">
-                <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-light-primary update-remark-button"
-                    data-kt-modal-toggle="#kt_modal_update_remark"
-                    data-id="{{ $code->id }}"
-                    data-remark="{{ $code->remark }}">
-                    <i class="ki-filled ki-pencil"></i>
-                </button>
+                @if(Auth::guard('admin')->user()->level_id == 0 || !str_contains($code->remark, 'Synced from MetVBox'))
+                    <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-light-primary update-remark-button"
+                        data-kt-modal-toggle="#kt_modal_update_remark"
+                        data-id="{{ $code->id }}"
+                        data-remark="{{ $code->remark }}">
+                        <i class="ki-filled ki-pencil"></i>
+                    </button>
+                @endif
                 <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-light-info refresh-code-status-btn"
                     data-code-id="{{ $code->id }}"
                     data-code="{{ $code->auth_code }}"
@@ -318,33 +330,23 @@
             refreshAllBtn.addEventListener('click', async (e) => {
                 e.preventDefault();
 
-                // Get all code IDs from the table
-                const codeIds = Array.from(document.querySelectorAll('.refresh-code-status-btn'))
-                    .map(btn => btn.getAttribute('data-code-id'));
-
-                if (codeIds.length === 0) {
-                    toastr.warning('No codes to refresh');
-                    return;
-                }
-
                 refreshAllBtn.disabled = true;
                 const originalHTML = refreshAllBtn.innerHTML;
-                refreshAllBtn.innerHTML = '<i class="ki-filled ki-loading animate-spin"></i> Refreshing...';
+                refreshAllBtn.innerHTML = '<i class="ki-filled ki-loading animate-spin"></i> Refreshing all...';
 
                 try {
-                    const response = await fetch('{{ route("admin.license.refresh-status") }}', {
+                    const response = await fetch('{{ route("admin.license.refresh-all-artisan") }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        },
-                        body: JSON.stringify({ codes: codeIds })
+                        }
                     });
 
                     const data = await response.json();
 
                     if (data.success) {
-                        toastr.success(`Updated ${data.updated} code(s), failed ${data.failed} code(s)`);
+                        toastr.success(data.message);
                         // Reload the page to show updated statuses
                         setTimeout(() => window.location.reload(), 1000);
                     } else {
