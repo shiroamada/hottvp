@@ -5,7 +5,6 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Support\Facades\Route;
 use Sentry\Laravel\Integration;
-use Throwable;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -48,7 +47,7 @@ return Application::configure(basePath: dirname(__DIR__))
         Integration::handles($exceptions);
 
         // Redirect 419 (Token Mismatch) errors to login page
-        $exceptions->render(function (Throwable $e, $request) {
+        $exceptions->render(function (\Throwable $e, $request) {
             if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException && $e->getStatusCode() === 419) {
                 if ($request->expectsJson()) {
                     return response()->json(['message' => 'Token expired. Please refresh and try again.'], 419);
