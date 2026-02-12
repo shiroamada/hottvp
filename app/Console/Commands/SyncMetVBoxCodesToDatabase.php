@@ -105,6 +105,9 @@ class SyncMetVBoxCodesToDatabase extends Command
                         $assort = Assort::where('duration', $validDays)->first();
                         $assortId = $assort?->id ?? 1; // Default to assort_id=1 if not found
 
+                        // Set is_try=2 (trial code) if valid_days=1, otherwise is_try=1 (regular)
+                        $isTry = ($validDays == 1) ? 2 : 1;
+
                         // Create auth code record
                         $currentEnv = app()->environment();
                         $authCode = AuthCode::create([
@@ -114,7 +117,7 @@ class SyncMetVBoxCodesToDatabase extends Command
                             'remark' => "Not generated in {$currentEnv}, in other environment. Synced from MetVBox API. Status: {$metvboxStatus}, Valid Days: {$validDays}",
                             'status' => $newStatus,
                             'type' => 0, // Default type
-                            'is_try' => 1, // Not a trial code
+                            'is_try' => $isTry, // 2 if trial (1 day), 1 if regular
                             'profit' => 0,
                             'expire_at' => $expireAt,
                             'num' => 1,

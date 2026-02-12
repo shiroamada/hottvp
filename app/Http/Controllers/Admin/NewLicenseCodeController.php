@@ -28,6 +28,8 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use App\Models\TryCode;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Artisan;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\LicenseCodesExport;
 use App\Exports\LastBatchExport;
@@ -412,7 +414,7 @@ class NewLicenseCodeController extends Controller
                     'num' => 1,
                     'type' => Auth::guard('admin')->user()->type,
                     'profit' => isset($user_profit->money) ? $user_profit->money : 0.00,
-                    'remark' => "Type: {$codeData['type']}, Vendor: {$codeData['vendor']}, Source: " . ($codeData['source'] ?? 'Unknown') . (isset($data['remark']) && $data['remark'] ? ' - ' . $data['remark'] : ''),
+                    'remark' => isset($data['remark']) && $data['remark'] ? $data['remark'] : '',
                     'created_at' => date("Y-m-d H:i:s", time()),
                     'updated_at' => date("Y-m-d H:i:s", time()),
                 ];
@@ -447,7 +449,7 @@ class NewLicenseCodeController extends Controller
                         'num' => $data['number'],
                         'type' => Auth::guard('admin')->user()->type,
                         'profit' => isset($user_profit->money) ? $user_profit->money : 0.00,
-                        'remark' => "Type: {$codeData['type']}, Vendor: {$codeData['vendor']}, Source: " . ($codeData['source'] ?? 'Unknown') . (isset($data['remark']) && $data['remark'] ? ' - ' . $data['remark'] : ''),
+                        'remark' => isset($data['remark']) && $data['remark'] ? $data['remark'] : '',
                         'created_at' => date("Y-m-d H:i:s", time()),
                         'updated_at' => date("Y-m-d H:i:s", time()),
                     ];
@@ -873,6 +875,40 @@ class NewLicenseCodeController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error refreshing code status: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Run the metvbox:refresh-all-codes artisan command
+     * This refreshes all codes created after 2026 with expire_at = NULL
+     */
+    public function refreshAllArtisan(Request $request)
+    {
+        try {
+            Log::info('Running metvbox:refresh-all-codes artisan command');
+
+            // Run the artisan command
+            $exitCode = Artisan::call('metvbox:refresh-all-codes');
+
+            if ($exitCode === 0) {
+                // Success
+                return response()->json([
+                    'success' => true,
+                    'message' => 'All codes refreshed successfully from MetVBox API',
+                ]);
+            } else {
+                // Failure
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to run refresh command',
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error running refresh artisan command: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
             ], 500);
         }
     }

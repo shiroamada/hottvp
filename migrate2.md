@@ -939,3 +939,218 @@ php artisan metvbox:refresh-all-codes
 1. **Set up scheduler for sync command (Optional)** - Can add to bootstrap/app.php if you want automatic daily syncs
 2. **Monitor first refresh runs** - Verify the hour cron job is working correctly with new filters
 3. **Test sync functionality** - Run `php artisan metvbox:sync-codes` manually first to verify output
+
+---
+
+## February 10, 2026 - Enhanced Sync Command & Scheduling Discussion
+
+**Overall Goal:** Refine sync command to properly categorize 1-day trial codes and clarify scheduling approaches.
+
+**Key Implementation Details:**
+
+1.  **Assort ID Mapping (Dynamic):**
+    *   MetVBox API provides `valid_days` field
+    *   Sync command queries: `Assort::where('duration', $validDays)->first()`
+    *   Matches MetVBox `valid_days` with database `duration` column
+    *   Automatically finds correct `assort_id` regardless of ID mapping
+    *   Example: MetVBox `valid_days=1` → Queries duration=1 → Gets assort_id=5
+
+2.  **Trial Code Detection:**
+    *   When syncing 1-day codes: `$isTry = ($validDays == 1) ? 2 : 1`
+    *   1-day codes get `is_try = 2` (marked as trial/test code)
+    *   All other durations get `is_try = 1` (regular code)
+    *   Properly categorizes test codes in the system
+
+**Scheduling Approaches Discussed:**
+
+**Option 1: Direct Cron Jobs (Recommended for 2+ commands)**
+```bash
+# Add to production crontab
+0 * * * * cd /Users/bw/Sites/hottvp && php artisan metvbox:refresh-all-codes >> /dev/null 2>&1
+0 2 * * * cd /Users/bw/Sites/hottvp && php artisan metvbox:sync-codes >> /dev/null 2>&1
+```
+- Pros: Simple, direct, no overhead
+- Cons: Multiple cron entries to manage
+
+**Option 2: Laravel Scheduler (Recommended for many tasks)**
+```php
+// In bootstrap/app.php
+->withSchedule(function ($schedule) {
+    $schedule->command('metvbox:refresh-all-codes')->hourly()->withoutOverlapping();
+    $schedule->command('metvbox:sync-codes')->daily()->withoutOverlapping();
+})
+```
+Requires single cron: `* * * * * cd /path && php artisan schedule:run >> /dev/null 2>&1`
+
+**Recommendation:** Use direct cron jobs since you only have 2 commands. Less complexity.
+
+**Final Sync Command Behavior:**
+
+```bash
+php artisan metvbox:sync-codes
+```
+
+For each code from MetVBox API:
+1. Check if exists in database by `auth_code`
+2. If new:
+   - Map `valid_days` → `assort_id` via duration lookup
+   - Set `is_try = 2` if 1-day code, else `is_try = 1`
+   - Set `user_id = 1` (system admin)
+   - Mark in remark with environment name
+   - Parse expiry date from ISO 8601 to MySQL format
+3. If duplicate: Skip and count
+4. Return summary stats
+
+This properly categorizes test/staging codes while maintaining accounting integrity.
+
+---
+
+## February 10, 2026 - Remark Template Simplification (Approach C)
+
+**Overall Goal:** Simplify user-generated code remarks while protecting technical details from non-admin users.
+
+**Implementation:**
+
+1.  **Simplified User-Generated Remarks:**
+    *   Modified `NewLicenseCodeController::save()` method (two locations)
+    *   Old format: `"Type: 1days, Vendor: metvbox, Source: API - {user_input}"`
+    *   New format: `"{user_input}"` (or empty string if no input)
+    *   Removed all technical metadata from user-generated codes
+    *   Benefits: Clean remarks, user-friendly display
+
+2.  **Synced Codes Remain Technical:**
+    *   SyncMetVBoxCodesToDatabase command keeps full technical remark
+    *   Format: `"Not generated in {$currentEnv}, in other environment. Synced from MetVBox API. Status: X, Valid Days: Y"`
+    *   Only synced codes contain "Synced from MetVBox" marker
+
+3.  **Permission-Based Display Control:**
+    *   Added access control in `resources/views/license/list.blade.php`
+    *   Logic: `str_contains($code->remark, 'Synced from MetVBox')`
+    *   Display rules:
+        *   **Admin (level_id == 0):** See full remark (user input or technical details)
+        *   **Non-admin:** See user input remarks normally, but synced code remarks show as "Synced test code"
+    *   Update button also restricted: Non-admins cannot edit synced code remarks
+
+**Code Changes:**
+
+**In NewLicenseCodeController::save():**
+- Line 415: Changed from complex template to `$data['remark'] ? $data['remark'] : ''`
+- Line 450: Same change for batch generation
+- Result: User input stored directly, no technical prefix
+
+**In license/list.blade.php:**
+- Added PHP block (lines 115-123) to determine display remark based on permissions
+- Updated remark display (lines 125-138) to show filtered version
+- Added permission check (line 161) to hide edit button for non-admins on synced codes
+
+**Behavior:**
+
+| Scenario | User sees | Admin sees |
+|----------|-----------|-----------|
+| User-generated with remark | "Custom remark text" | "Custom remark text" |
+| User-generated empty | "" | "" |
+| Synced code | "Synced test code" | "Not generated in staging, in other environment. Synced from MetVBox API. Status: active, Valid Days: 1" |
+
+**Benefits:**
+
+✅ Simplified user-generated remarks (no technical clutter)
+✅ Full technical audit trail for admins
+✅ Non-admins see clean, professional remarks
+✅ Synced codes clearly marked and protected
+✅ No database migration needed
+✅ Easy to maintain and understand
+
+---
+
+## February 10, 2026 - Artisan Command Integration for Refresh Buttons
+
+**Overall Goal:** Replace page-specific refresh logic with artisan command execution for both license and trial code pages.
+
+**Key Modifications:**
+
+1.  **New Routes Added:**
+    *   `POST /admin/license/refresh-all-artisan` → NewLicenseCodeController@refreshAllArtisan
+    *   `POST /admin/trial/refresh-all-artisan` → TrialCodeController@refreshAllArtisan
+
+2.  **New Controller Methods:**
+    *   `NewLicenseCodeController::refreshAllArtisan()` - Executes `php artisan metvbox:refresh-all-codes`
+    *   `TrialCodeController::refreshAllArtisan()` - Executes `php artisan metvbox:refresh-all-codes`
+    *   Both use `Artisan::call('metvbox:refresh-all-codes')` to run the same command as the cron job
+    *   Returns JSON response with success/failure status and message
+
+3.  **Updated Views:**
+    *   `/admin/license/list` - Replaced page-specific refresh with artisan command call
+    *   `/admin/try/list` - Added refresh button and artisan command call
+
+4.  **UI/UX Changes:**
+    *   Refresh button now shows "Refreshing all..." with loading spinner
+    *   Calls `/admin/license/refresh-all-artisan` or `/admin/trial/refresh-all-artisan`
+    *   No longer passes code IDs (processes all codes like cron job)
+    *   Shows toastr notification on success/failure
+    *   Reloads page to show updated statuses
+
+**Benefits:**
+
+✅ Refresh button now runs the same logic as cron job
+✅ Processes all codes (not just page codes)
+✅ Consistent behavior across production and manual refresh
+✅ Both pages (license and trial) have refresh button
+✅ Simple JSON API for future integrations
+
+**Before vs After:**
+
+**Before:**
+- License list: Refresh button → refreshes only codes on current page
+- Trial list: No refresh button
+- Logic: Loop through page code IDs and refresh individually
+
+**After:**
+- License list: Refresh button → executes `php artisan metvbox:refresh-all-codes`
+- Trial list: Refresh button → executes `php artisan metvbox:refresh-all-codes`
+- Logic: Same as hourly cron job (processes all 2026+ codes with expire_at = NULL)
+
+---
+
+## February 10, 2026 - CSRF Token (419) Error Handling
+
+**Overall Goal:** Redirect 419 Token Mismatch errors to login page instead of showing error page.
+
+**Problem:** Users get 419 errors when session expires (especially after logout), causing confusion.
+
+**Solution:** Added exception handler in `bootstrap/app.php` to redirect 419 errors to login page.
+
+**Implementation:**
+
+In `bootstrap/app.php` `withExceptions()` closure:
+```php
+$exceptions->render(function (Throwable $e, $request) {
+    if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException && $e->getStatusCode() === 419) {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Token expired. Please refresh and try again.'], 419);
+        }
+
+        // Redirect to appropriate login based on admin or web user
+        if ($request->is('admin/*')) {
+            return redirect()->route('admin.login')->with('error', 'Your session has expired. Please login again.');
+        } else {
+            return redirect()->route('login')->with('error', 'Your session has expired. Please login again.');
+        }
+    }
+});
+```
+
+**Behavior:**
+
+- **Web request with 419 error**: Redirects to login page with message
+- **API request with 419 error**: Returns JSON response
+- **Admin routes**: Redirects to `admin.login`
+- **Web routes**: Redirects to `login`
+- **User experience**: Clear message instead of error page
+
+**Benefits:**
+
+✅ User sees friendly redirect instead of 419 error page
+✅ Automatically redirects to correct login (admin or web)
+✅ API requests still get JSON response
+✅ Session expiry handled gracefully
+✅ No confusing error messages for end users

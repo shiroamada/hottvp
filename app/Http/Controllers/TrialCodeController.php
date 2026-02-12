@@ -6,8 +6,10 @@ use App\Models\AuthCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Artisan;
 
 class TrialCodeController extends Controller
 {
@@ -93,6 +95,40 @@ class TrialCodeController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'An error occurred while generating the codes. Please try again.'])->withInput();
+        }
+    }
+
+    /**
+     * Run the metvbox:refresh-all-codes artisan command
+     * This refreshes all codes created after 2026 with expire_at = NULL
+     */
+    public function refreshAllArtisan(Request $request)
+    {
+        try {
+            Log::info('Running metvbox:refresh-all-codes artisan command for trial codes');
+
+            // Run the artisan command
+            $exitCode = Artisan::call('metvbox:refresh-all-codes');
+
+            if ($exitCode === 0) {
+                // Success
+                return response()->json([
+                    'success' => true,
+                    'message' => 'All trial codes refreshed successfully from MetVBox API',
+                ]);
+            } else {
+                // Failure
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to run refresh command',
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error running refresh artisan command: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
+            ], 500);
         }
     }
 }

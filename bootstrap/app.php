@@ -45,6 +45,22 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         Integration::handles($exceptions);
+
+        // Redirect 419 (Token Mismatch) errors to login page
+        $exceptions->render(function (\Throwable $e, $request) {
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException && $e->getStatusCode() === 419) {
+                if ($request->expectsJson()) {
+                    return response()->json(['message' => 'Token expired. Please refresh and try again.'], 419);
+                }
+
+                // Redirect to appropriate login based on admin or web user
+                if ($request->is('admin/*')) {
+                    return redirect()->route('admin.login')->with('error', 'Your session has expired. Please login again.');
+                } else {
+                    return redirect()->route('login')->with('error', 'Your session has expired. Please login again.');
+                }
+            }
+        });
     })
     ->withSchedule(function ($schedule) {
         // Refresh MetVBox code statuses every hour
